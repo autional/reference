@@ -1,19 +1,42 @@
 ---
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import RefLayout from '../layouts/RefLayout.astro';
 
 export async function getStaticPaths() {
   const svcs = ["identity-service","profile-service","tenant-service","session-service","mfa-service","oauth-service","wallet-service","point-service","audit-service","notification-service","communication-service","storage-service","billing-service","compliance-service","status-service","secret-service","saml-service","pay-service","thirdparty-service","verification-service","rbac-service","gateway-service"];
   return svcs.map(n => ({ params: { service: n } }));
 }
+
 const { service } = Astro.params;
+
+let specTitle = `${service} API Reference — Autional`;
+let specDescription = `Interactive API reference for ${service}.`;
+let endpointCount = 0;
+
+try {
+  const specPath = join(process.cwd(), 'public/specs', `${service}-en.json`);
+  const spec = JSON.parse(readFileSync(specPath, 'utf-8'));
+  specTitle = `${spec.info.title} — Autional`;
+  specDescription = spec.info.description || `Interactive API reference for ${service} with OpenAPI 3.0 specification.`;
+
+  const paths = spec.paths || {};
+  for (const methods of Object.values(paths)) {
+    if (typeof methods === 'object' && methods !== null) {
+      endpointCount += Object.keys(methods).filter(k => k !== 'parameters').length;
+    }
+  }
+} catch {
+  // Use fallback metadata
+}
 ---
 
-<RefLayout title={`${service} API Reference — Autional`}>
+<RefLayout title={specTitle} description={specDescription} keywords={`Autional, API, ${service}, reference, OpenAPI, Swagger`}>
   <div id="scalar-wrapper" class="flex-1 flex flex-col min-h-0" style="overflow:hidden">
     <div class="px-4 py-2 border-b border-neutral-100 bg-white flex items-center gap-2 text-xs">
       <span class="font-mono font-bold text-primary-600">{service}</span>
       <span class="text-neutral-300">|</span>
-      <span class="text-neutral-500">OpenAPI 3.0</span>
+      <span class="text-neutral-500">{endpointCount} endpoints</span>
       <span class="text-neutral-300">|</span>
       <span class="text-neutral-400 font-mono text-[11px]">/bff/{service}/api/v1/</span>
     </div>

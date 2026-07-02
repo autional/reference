@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://reference.autional.com/sitemap-index.xml
