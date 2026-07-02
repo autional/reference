@@ -31,7 +31,7 @@ const services = [
   { name:'gateway-service', title:'Gateway Service' },
 ];
 
-const { title = 'Aucial API Reference' } = Astro.props;
+const { title = 'Autional API Reference' } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const currentSvc = Astro.url.pathname.split('/')[1] || '';
 ---
@@ -53,11 +53,11 @@ const currentSvc = Astro.url.pathname.split('/')[1] || '';
   <!-- Top bar -->
   <header class="sticky top-0 z-50 h-12 flex items-center justify-between px-5 border-b border-primary-100/70 bg-white/90 backdrop-blur-xl">
     <a href="/" class="flex items-center gap-2.5 no-underline">
-      <img src="/logo-mark.svg" alt="Aucial" class="h-5 w-5 object-contain">
+      <img src="/logo-mark.svg" alt="Autional" class="h-5 w-5 object-contain">
       <span class="text-sm font-extrabold tracking-[-0.03em] text-primary-900">API Reference</span>
     </a>
     <div class="flex items-center gap-5">
-      <a href="https://wiki.aucial.com" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">API Wiki</a>
+      <a href="https://wiki.autional.com" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">API Wiki</a>
       <a href="https://www.autional.com" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">autional.com &rarr;</a>
     </div>
   </header>
