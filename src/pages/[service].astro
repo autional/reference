@@ -9,7 +9,7 @@ const { service } = Astro.params;
 ---
 
 <RefLayout title={`${service} API Reference — Autional`}>
-  <div class="flex-1 flex flex-col min-h-0">
+  <div id="scalar-wrapper" class="flex-1 flex flex-col min-h-0" style="overflow:hidden">
     <div class="px-4 py-2 border-b border-neutral-100 bg-white flex items-center gap-2 text-xs">
       <span class="font-mono font-bold text-primary-600">{service}</span>
       <span class="text-neutral-300">|</span>
@@ -17,14 +17,16 @@ const { service } = Astro.params;
       <span class="text-neutral-300">|</span>
       <span class="text-neutral-400 font-mono text-[11px]">/bff/{service}/api/v1/</span>
     </div>
-    <div id="api-reference" class="flex-1"
+    <div
+      id="api-reference"
       data-url={`/specs/${service}-en.json`}
       data-locale="en-US"
       data-theme="bluePlanet"
       data-layout="classic"
       data-show-side-bar="true"
       data-search-hotkey="k"
-      style="width:100%;min-height:0">
+      style="min-height:0"
+    >
     </div>
   </div>
   <script is:inline src="/scalar/api-reference.js"></script>

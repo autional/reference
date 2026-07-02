@@ -115,21 +115,14 @@
   }
 }
 
-/* Scalar API Reference: ensure the detail/code sections scroll rather than clip */
-#api-reference {
-  overflow: hidden;
+/* Constrain the Scalar-created container to wrapper height so detail content scrolls */
+#scalar-wrapper > div:has(.scalar-api-reference) {
+  overflow-y: auto !important;
+  max-height: calc(100% - 33px) !important;
+  min-height: 0 !important;
 }
 
-/* Override max-height/overflow-hidden on Scalar response and schema detail panels */
-.scalar-container [role="tabpanel"],
-.scalar-client [role="tabpanel"] {
-  overflow: auto !important;
-}
-
-/* Ensure code blocks/pre blocks within Scalar always scroll horizontally */
-.scalar-client pre,
-.scalar-container pre,
-#api-reference pre {
-  overflow: auto !important;
-  max-width: 100% !important;
+/* Remove Scalar's 100dvh min-height so short content doesn't produce useless scrollbar */
+#scalar-wrapper .scalar-api-reference {
+  min-height: 0 !important;
 }
