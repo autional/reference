@@ -114,3 +114,22 @@
     @apply mt-5 rounded-2xl border border-sky-100 bg-sky-50/80 px-5 py-4 text-sm leading-7 text-neutral-700;
   }
 }
+
+/* Scalar API Reference: ensure the detail/code sections scroll rather than clip */
+#api-reference {
+  overflow: hidden;
+}
+
+/* Override max-height/overflow-hidden on Scalar response and schema detail panels */
+.scalar-container [role="tabpanel"],
+.scalar-client [role="tabpanel"] {
+  overflow: auto !important;
+}
+
+/* Ensure code blocks/pre blocks within Scalar always scroll horizontally */
+.scalar-client pre,
+.scalar-container pre,
+#api-reference pre {
+  overflow: auto !important;
+  max-width: 100% !important;
+}
