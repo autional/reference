@@ -3,6 +3,6 @@ import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
   output: 'static',
-  site: 'https://reference.aucial.com',
+  site: 'https://reference.autional.com',
   integrations: [tailwind()],
 });
