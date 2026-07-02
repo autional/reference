@@ -1,5 +1,10 @@
 ---
 import '../styles/global.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/inter/800.css';
 
 const services = [
   { name:'identity-service', title:'Identity Service' },
@@ -43,19 +48,24 @@ const currentSvc = Astro.url.pathname.split('/')[1] || '';
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=7">
   <link rel="manifest" href="/site.webmanifest?v=7">
   <meta name="theme-color" content="#ffffff">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="min-h-screen flex flex-col text-neutral-900">
-  <div class="flex h-screen overflow-hidden">
+  <!-- Top bar -->
+  <header class="sticky top-0 z-50 h-12 flex items-center justify-between px-5 border-b border-primary-100/70 bg-white/90 backdrop-blur-xl">
+    <a href="/" class="flex items-center gap-2.5 no-underline">
+      <img src="/logo-mark.svg" alt="Aucial" class="h-5 w-5 object-contain">
+      <span class="text-sm font-extrabold tracking-[-0.03em] text-primary-900">API Reference</span>
+    </a>
+    <div class="flex items-center gap-5">
+      <a href="https://wiki.aucial.com" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">API Wiki</a>
+      <a href="https://www.aucial.com" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">aucial.com &rarr;</a>
+    </div>
+  </header>
+  <div class="flex h-[calc(100vh-48px)] overflow-hidden">
     <!-- LEFT SIDEBAR -->
     <aside class="w-60 shrink-0 border-r border-neutral-100 overflow-y-auto bg-neutral-50/50 flex flex-col">
-      <div class="px-4 py-3 border-b border-neutral-100">
-        <a href="/" class="flex items-center gap-2 text-decoration-none">
-          <img src="/logo-mark.svg" alt="Aucial" class="h-6 w-6">
-          <span class="text-sm font-extrabold text-[#1e3a5f]">API Reference</span>
-        </a>
+      <div class="px-4 py-2.5">
+        <span class="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary-500">Services</span>
       </div>
       <nav class="flex-1 overflow-y-auto py-2">
         {services.map(s => (
