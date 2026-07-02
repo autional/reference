@@ -1,0 +1,31 @@
+---
+import RefLayout from '../layouts/RefLayout.astro';
+
+export async function getStaticPaths() {
+  const svcs = ["identity-service","profile-service","tenant-service","session-service","mfa-service","oauth-service","wallet-service","point-service","audit-service","notification-service","communication-service","storage-service","billing-service","compliance-service","status-service","secret-service","saml-service","pay-service","thirdparty-service","verification-service","rbac-service","gateway-service"];
+  return svcs.map(n => ({ params: { service: n } }));
+}
+const { service } = Astro.params;
+---
+
+<RefLayout title={`${service} API Reference — Aucial`}>
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="px-4 py-2 border-b border-neutral-100 bg-white flex items-center gap-2 text-xs">
+      <span class="font-mono font-bold text-primary-600">{service}</span>
+      <span class="text-neutral-300">|</span>
+      <span class="text-neutral-500">OpenAPI 3.0</span>
+      <span class="text-neutral-300">|</span>
+      <span class="text-neutral-400 font-mono text-[11px]">/bff/{service}/api/v1/</span>
+    </div>
+    <div id="api-reference" class="flex-1"
+      data-url={`/specs/${service}-en.json`}
+      data-locale="en-US"
+      data-theme="bluePlanet"
+      data-layout="classic"
+      data-show-side-bar="true"
+      data-search-hotkey="k"
+      style="width:100%;min-height:0">
+    </div>
+  </div>
+  <script is:inline src="/scalar/api-reference.js"></script>
+</RefLayout>

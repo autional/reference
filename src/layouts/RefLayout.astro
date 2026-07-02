@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+
+const services = [
+  { name:'identity-service', title:'Identity Service' },
+  { name:'profile-service', title:'Profile Service' },
+  { name:'tenant-service', title:'Tenant Service' },
+  { name:'session-service', title:'Session Service' },
+  { name:'mfa-service', title:'MFA Service' },
+  { name:'oauth-service', title:'OAuth Service' },
+  { name:'wallet-service', title:'Wallet Service' },
+  { name:'point-service', title:'Point Service' },
+  { name:'audit-service', title:'Audit Service' },
+  { name:'notification-service', title:'Notification Service' },
+  { name:'communication-service', title:'Communication Service' },
+  { name:'storage-service', title:'Storage Service' },
+  { name:'billing-service', title:'Billing Service' },
+  { name:'compliance-service', title:'Compliance Service' },
+  { name:'status-service', title:'Status Service' },
+  { name:'secret-service', title:'Secret Service' },
+  { name:'saml-service', title:'SAML Service' },
+  { name:'pay-service', title:'Pay Service' },
+  { name:'thirdparty-service', title:'Thirdparty Service' },
+  { name:'verification-service', title:'Verification Service' },
+  { name:'rbac-service', title:'RBAC Service' },
+  { name:'gateway-service', title:'Gateway Service' },
+];
+
+const { title = 'Aucial API Reference' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const currentSvc = Astro.url.pathname.split('/')[1] || '';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>{title}</title>
+  <link rel="canonical" href={canonical.href}>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=7">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=7">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=7">
+  <link rel="manifest" href="/site.webmanifest?v=7">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen flex flex-col text-neutral-900">
+  <div class="flex h-screen overflow-hidden">
+    <!-- LEFT SIDEBAR -->
+    <aside class="w-60 shrink-0 border-r border-neutral-100 overflow-y-auto bg-neutral-50/50 flex flex-col">
+      <div class="px-4 py-3 border-b border-neutral-100">
+        <a href="/" class="flex items-center gap-2 text-decoration-none">
+          <img src="/logo-mark.svg" alt="Aucial" class="h-6 w-6">
+          <span class="text-sm font-extrabold text-[#1e3a5f]">API Reference</span>
+        </a>
+      </div>
+      <nav class="flex-1 overflow-y-auto py-2">
+        {services.map(s => (
+          <a href={`/${s.name}/`} class={`block mx-2 my-0.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
+            currentSvc === s.name
+              ? 'bg-primary-100 text-primary-800'
+              : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+          }`}>
+            {s.title}
+          </a>
+        ))}
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <slot />
+    </div>
+  </div>
+</body>
+</html>
