@@ -1,0 +1,112 @@
+{
+  "lang": {
+    "switchToEn": "切换至英文",
+    "switchToZh": "切换至中文"
+  },
+  "layout": {
+    "meta": {
+      "title": "API 参考 — Autional",
+      "siteName": "Autional API 参考",
+      "description": "覆盖全部 27 个 Autional 微服务的交互式 Swagger 2.0（OpenAPI 2.0）参考文档，基于 Scalar UI 浏览 1,500+ REST 端点。"
+    },
+    "jsonLd": {
+      "description": "Autional 全部微服务的交互式 Swagger 2.0（OpenAPI 2.0）参考文档。"
+    },
+    "brand": "API 参考",
+    "chrome": {
+      "wiki": "API 知识库",
+      "github": "GitHub"
+    },
+    "servicesTitle": "服务",
+    "aria": {
+      "openServices": "打开服务列表"
+    }
+  },
+  "index": {
+    "title": "Autional API 参考",
+    "leadA": "面向基于 Autional 身份平台构建集成与应用的开发者 —— 浏览全部 ",
+    "leadB": " 个微服务的 REST API 规范（Swagger 2.0），可搜索、可调试、可下载用于代码生成。全部调用经网关 ",
+    "leadBeforePath": " 的 ",
+    "leadPath": "/bff/<服务>/api/v1/",
+    "leadEnd": " 入口。",
+    "statServices": " 个服务",
+    "statEndpoints": " 个端点",
+    "statDomains": "6 大领域",
+    "statSpec": "Swagger 2.0",
+    "groups": {
+      "identity": "身份与访问",
+      "assets": "资产与商业",
+      "audit": "审计与通信",
+      "storage": "存储与合规",
+      "security": "安全能力",
+      "infrastructure": "基础设施"
+    },
+    "hintMobile": "或点右上角「服务」打开服务列表。",
+    "hintDesktop": "或在左侧列表中选择服务 →"
+  },
+  "service": {
+    "endpointSuffix": " 个端点",
+    "fallbackNote": "英文版规范尚在准备中——当前显示中文原版。",
+    "meta": {
+      "titleFallback": "{service} API 参考 — Autional",
+      "descriptionFallback": "{service} 的交互式 API 参考文档。",
+      "descriptionGeneric": "{service} 的交互式 API 参考文档，提供 Swagger 2.0 规范。",
+      "keywords": "Autional, API, {service}, 接口参考, OpenAPI, Swagger"
+    },
+    "accessLabel": {
+      "config-service": "内网直连 · 无公网入口",
+      "thirdparty-service": "仅内网通道 · 无公网入口",
+      "hash-service-standard": "gRPC-only · 无公网入口",
+      "hash-service-sm": "gRPC-only · 无公网入口",
+      "stream-service": "经网关中继接入",
+      "gateway-service": "网关自注册端点"
+    },
+    "accessNote": {
+      "config-service": "此服务为配置中心 / 内部调用通道，不经 API 网关，无公网 REST 入口；下方规范仅供内部集成参考，线上不可经 {apiHost} 直接调用。",
+      "thirdparty-service": "此服务仅经网关内网通道（/bff/thirdparty/api/v1/internal）供其他服务调用，不对公网开放；下方规范仅供内部集成参考。",
+      "hash-service-standard": "此服务为 gRPC-only（Argon2id，无公网 REST 面），经内网 gRPC 调用，不经 API 网关；下方规范为能力说明，线上不可经 HTTP 直接调用。",
+      "hash-service-sm": "此服务为 gRPC-only（PBKDF2-SM3 国密变体，无公网 REST 面），经内网 gRPC 调用，不经 API 网关；下方规范为能力说明，线上不可经 HTTP 直接调用。",
+      "stream-service": "此服务无独立 REST 路由；实时事件流经网关 BFF 中继接入：POST /bff/gateway/api/v1/stream/ticket（JWT 换票）+ GET /bff/gateway/api/v1/stream/events（SSE 建流）。下方规范为内部端点定义。",
+      "gateway-service": "网关自注册端点（/docs、/search、/developer、/sdk、/admin 等，多数需 JWT 或 admin 角色）在网关进程内注册，不经 /bff 前缀；下方规范为网关自身管理面端点。"
+    }
+  },
+  "notFound": {
+    "meta": {
+      "title": "页面不存在 — Autional API 参考",
+      "description": "请求的页面不存在。请从服务列表中选择一个服务，或返回 API 参考首页。"
+    },
+    "kicker": "404",
+    "title": "页面不存在",
+    "lead": "你访问的路径不存在或已移动。可以从服务列表选择一个服务的 API 参考。",
+    "back": "返回 API 参考首页"
+  },
+  "services": {
+    "identity-service": "身份服务",
+    "profile-service": "用户资料服务",
+    "tenant-service": "租户服务",
+    "session-service": "会话服务",
+    "mfa-service": "多因素认证服务",
+    "oauth-service": "OAuth 服务",
+    "wallet-service": "钱包服务",
+    "point-service": "积分服务",
+    "audit-service": "审计服务",
+    "notification-service": "通知服务",
+    "communication-service": "通信服务",
+    "storage-service": "存储服务",
+    "billing-service": "计费服务",
+    "compliance-service": "合规服务",
+    "status-service": "状态服务",
+    "secret-service": "密钥服务",
+    "saml-service": "SAML 服务",
+    "pay-service": "支付服务",
+    "thirdparty-service": "第三方服务",
+    "verification-service": "身份验证服务",
+    "rbac-service": "RBAC 服务",
+    "gateway-service": "网关服务",
+    "hash-service-standard": "密码哈希服务",
+    "hash-service-sm": "国密哈希服务",
+    "captcha3d-service": "3D 验证码服务",
+    "config-service": "配置中心服务",
+    "stream-service": "实时事件流服务"
+  }
+}

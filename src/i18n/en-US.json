@@ -1,0 +1,112 @@
+{
+  "lang": {
+    "switchToEn": "Switch to English",
+    "switchToZh": "Switch to Chinese"
+  },
+  "layout": {
+    "meta": {
+      "title": "API Reference — Autional",
+      "siteName": "Autional API Reference",
+      "description": "Interactive Swagger 2.0 (OpenAPI 2.0) reference for all 27 Autional microservices. Explore 1,400+ REST endpoints with Scalar UI."
+    },
+    "jsonLd": {
+      "description": "Interactive Swagger 2.0 (OpenAPI 2.0) documentation for all Autional microservices."
+    },
+    "brand": "API Reference",
+    "chrome": {
+      "wiki": "API Wiki",
+      "github": "GitHub"
+    },
+    "servicesTitle": "Services",
+    "aria": {
+      "openServices": "Open the service list"
+    }
+  },
+  "index": {
+    "title": "Autional API Reference",
+    "leadA": "For developers building integrations and applications on the Autional identity platform — browse the REST API specifications (Swagger 2.0) for all ",
+    "leadB": " microservices: searchable, debuggable, and downloadable for code generation. All calls are routed through the gateway at ",
+    "leadBeforePath": ", under the ",
+    "leadPath": "/bff/<service>/api/v1/",
+    "leadEnd": " entry point.",
+    "statServices": " services",
+    "statEndpoints": " endpoints",
+    "statDomains": "6 domains",
+    "statSpec": "Swagger 2.0",
+    "groups": {
+      "identity": "Identity & Access",
+      "assets": "Assets & Commerce",
+      "audit": "Audit & Communication",
+      "storage": "Storage & Compliance",
+      "security": "Security",
+      "infrastructure": "Infrastructure"
+    },
+    "hintMobile": "Or open the service list from the Services button in the top bar.",
+    "hintDesktop": "Or select a service from the sidebar →"
+  },
+  "service": {
+    "endpointSuffix": " endpoints",
+    "fallbackNote": "English spec pending — showing the Chinese original.",
+    "meta": {
+      "titleFallback": "{service} API Reference — Autional",
+      "descriptionFallback": "Interactive API reference for {service}.",
+      "descriptionGeneric": "Interactive API reference for {service}, with a Swagger 2.0 specification.",
+      "keywords": "Autional, API, {service}, reference, OpenAPI, Swagger"
+    },
+    "accessLabel": {
+      "config-service": "Internal only · no public entry",
+      "thirdparty-service": "Internal channel only · no public entry",
+      "hash-service-standard": "gRPC-only · no public entry",
+      "hash-service-sm": "gRPC-only · no public entry",
+      "stream-service": "Relayed via the gateway",
+      "gateway-service": "Gateway-registered endpoints"
+    },
+    "accessNote": {
+      "config-service": "This service is the configuration center / internal calling channel. It is not routed through the API gateway and has no public REST entry; the specification below is for internal integration reference only and cannot be called directly via {apiHost} in production.",
+      "thirdparty-service": "This service is called by other services only through the gateway's internal channel (/bff/thirdparty/api/v1/internal) and is not exposed publicly; the specification below is for internal integration reference only.",
+      "hash-service-standard": "This service is gRPC-only (Argon2id, no public REST surface). It is called over the internal network via gRPC and is not routed through the API gateway; the specification below documents its capabilities and cannot be called over HTTP in production.",
+      "hash-service-sm": "This service is gRPC-only (the PBKDF2-SM3 Chinese-cryptography variant, no public REST surface). It is called over the internal network via gRPC and is not routed through the API gateway; the specification below documents its capabilities and cannot be called over HTTP in production.",
+      "stream-service": "This service has no standalone REST routes; the real-time event stream is reached through the gateway BFF relay: POST /bff/gateway/api/v1/stream/ticket (exchange a JWT for a ticket) + GET /bff/gateway/api/v1/stream/events (open an SSE stream). The specification below defines the internal endpoints.",
+      "gateway-service": "The gateway's self-registered endpoints (/docs, /search, /developer, /sdk, /admin, etc.; most require a JWT or the admin role) are registered inside the gateway process and are not under the /bff prefix; the specification below documents the gateway's own management-plane endpoints."
+    }
+  },
+  "notFound": {
+    "meta": {
+      "title": "Page Not Found — Autional API Reference",
+      "description": "The page you requested does not exist. Pick a service from the service list, or return to the API Reference home page."
+    },
+    "kicker": "404",
+    "title": "Page Not Found",
+    "lead": "The path you visited does not exist or has moved. You can pick a service's API reference from the service list.",
+    "back": "Back to API Reference home"
+  },
+  "services": {
+    "identity-service": "Identity Service",
+    "profile-service": "Profile Service",
+    "tenant-service": "Tenant Service",
+    "session-service": "Session Service",
+    "mfa-service": "MFA Service",
+    "oauth-service": "OAuth Service",
+    "wallet-service": "Wallet Service",
+    "point-service": "Point Service",
+    "audit-service": "Audit Service",
+    "notification-service": "Notification Service",
+    "communication-service": "Communication Service",
+    "storage-service": "Storage Service",
+    "billing-service": "Billing Service",
+    "compliance-service": "Compliance Service",
+    "status-service": "Status Service",
+    "secret-service": "Secret Service",
+    "saml-service": "SAML Service",
+    "pay-service": "Pay Service",
+    "thirdparty-service": "Thirdparty Service",
+    "verification-service": "Verification Service",
+    "rbac-service": "RBAC Service",
+    "gateway-service": "Gateway Service",
+    "hash-service-standard": "Hash Service (Standard)",
+    "hash-service-sm": "Hash Service (SM3)",
+    "captcha3d-service": "Captcha3D Service",
+    "config-service": "Config Service",
+    "stream-service": "Stream Service"
+  }
+}
