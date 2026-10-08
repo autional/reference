@@ -28,7 +28,7 @@ REGION=com SITE_URL=https://reference.autional.com DEFAULT_LANG=en FALLBACK_LANG
 `public/specs/` 同时承载双语规范；页面按构建语言取规（`src/lib/specs.ts`）：zh 读 `<svc>.json`，en 读 `<svc>-en.json`。
 
 - **zh（27 个，`<svc>.json`）** — 由 `python scripts/sync-specs-zh.py` 从 AuthMS monorepo `D:\go\auth_ms_new\docker\specs\<service>\swagger.json` 同步 + 改牌（host/接入路径按网关路由真源 `shared/service-gateway/configs/service/gateway-service.yaml` 注入）。脚本只负责 zh 侧，**不再清理 `*-en.json`**。
-- **en（24 个，`<svc>-en.json`）** — monorepo 生成器的既有英文导出（`autional/scripts/translate_swagger.py` 翻译 + `autional/scripts/sync_specs.py` 同步），版本跟版随 monorepo 规范变更重跑上述两条命令后提交本仓。
+- **en（24 个，`<svc>-en.json`）** — monorepo 生成器的既有英文导出（`autional/scripts/translate_swagger.py` 翻译导出 + `autional/scripts/sync_specs.py` 同步到本仓 `public/specs/`；后者脚本内的门户路径为旧克隆口径 `D:\autional\...`，跟版时须先核对/更新）。版本跟版：monorepo 规范变更后重跑导出/同步并提交本仓；本仓存量 24 个为幂等基线。
 - **en 缺源三服务** — `captcha3d-service` / `config-service` / `stream-service` 无 en 导出；en 区构建期回退读 zh 原版并在页内显示 "English spec pending — showing the Chinese original." 标注（裁定见 B2 执行报告）。
 
 ## Deploy
