@@ -1,0 +1,443 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "第三方集成服务——提供 CAPTCHA 与外部供应商集成能力。",
+    "title": "第三方服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/api/v1",
+  "paths": {
+    "/internal/thirdparty/captcha/challenge": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据指定提供者类型生成CAPTCHA挑战数据，PoW类型返回随机挑战码和难度值，Turnstile类型返回Site Key，用于前端初始化验证组件并开始人机验证流程",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "第三方验证"
+        ],
+        "summary": "获取CAPTCHA挑战",
+        "parameters": [
+          {
+            "enum": [
+              "pow",
+              "turnstile"
+            ],
+            "type": "string",
+            "default": "pow",
+            "description": "验证提供者类型（pow / turnstile）",
+            "name": "provider",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "default",
+            "description": "应用范围标识，用于区分不同业务页面或场景的挑战",
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "PoW挑战难度值，数值越大计算难度越高（仅对pow类型有效）",
+            "name": "difficulty",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "挑战生成成功，返回挑战ID、类型、挑战数据和过期时间",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-captcha_Challenge"
+            }
+          },
+          "400": {
+            "description": "请求参数错误（不支持的验证提供者类型）",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "CAPTCHA挑战请求过于频繁，请稍后重试",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "挑战生成服务不可用",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/thirdparty/captcha/verify": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "接收用户提交的CAPTCHA令牌（PoW工作量证明计算结果或Turnstile验证Token），调用对应的验证提供者进行服务端校验，返回验证结果（是否通过、评分及错误码）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "第三方验证"
+        ],
+        "summary": "验证CAPTCHA令牌",
+        "parameters": [
+          {
+            "description": "CAPTCHA验证请求：提供者类型、令牌、挑战ID、操作类型和客户端IP",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dto.CaptchaVerifyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证完成，返回是否通过、评分及错误码",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-dto_CaptchaVerifyResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误（缺少必填字段或不支持的验证提供者）",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "CAPTCHA验证请求过于频繁，请稍后重试",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "验证服务不可用",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/thirdparty/export-user-data": {
+      "post": {
+        "description": "服务间内部调用，导出指定用户在第三方服务中关联的所有数据（CAPTCHA 验证记录、短信记录、支付记录），用于 GDPR 数据导出合规场景。当前 thirdparty-service 为无状态代理服务，无可持久化用户数据，所有日志为空。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "第三方验证"
+        ],
+        "summary": "GDPR 导出用户关联数据",
+        "parameters": [
+          {
+            "description": "导出用户数据请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dto.ExportUserDataRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户数据导出结果",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-dto_ExportUserDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误（缺少 user_id 等必填字段）",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/thirdparty/health": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "检查所有已注册CAPTCHA提供者（PoW、Turnstile等）的健康状态，依次调用各提供者的健康检查接口，返回每个提供者的运行状态信息",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "第三方验证"
+        ],
+        "summary": "第三方验证服务健康检查",
+        "responses": {
+          "200": {
+            "description": "各提供者健康状态：healthy 表示正常，unhealthy 后附具体错误信息",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-map_string_string"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "captcha.Challenge": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/captcha.ChallengeData"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "site_key": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "captcha.ChallengeData": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "string"
+        },
+        "difficulty": {
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.CaptchaVerifyRequest": {
+      "type": "object",
+      "required": [
+        "provider",
+        "token"
+      ],
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "challenge_id": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "remote_ip": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.CaptchaVerifyResponse": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "error_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provider": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "dto.DataResponse-captcha_Challenge": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/captcha.Challenge"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-dto_CaptchaVerifyResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/dto.CaptchaVerifyResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-dto_ExportUserDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/dto.ExportUserDataResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-map_string_string": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/map_string_string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.ExportUserDataRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.ExportUserDataResponse": {
+      "type": "object",
+      "properties": {
+        "captcha_logs": {
+          "type": "array",
+          "items": {}
+        },
+        "payment_logs": {
+          "type": "array",
+          "items": {}
+        },
+        "sms_logs": {
+          "type": "array",
+          "items": {}
+        }
+      }
+    },
+    "dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "map_string_string": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "第三方验证：CAPTCHA、人机验证",
+      "name": "第三方验证"
+    }
+  ]
+}

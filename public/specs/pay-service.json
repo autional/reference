@@ -1,0 +1,2522 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Autional 支付服务——处理支付、退款、支付渠道、Webhook 与对账。",
+    "title": "支付服务 API",
+    "contact": {},
+    "version": "1.0"
+  },
+  "basePath": "/bff/pay/api/v1",
+  "paths": {
+    "/admin/pay/integrity/{pay_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "逐条重算支付事件哈希链，验证账本完整性。发现篡改时返回断裂位置。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "验证支付事件账本完整性",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付ID",
+            "name": "pay_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证完成"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/payments": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /payments 同体、同租户范围；供控制台在 admin 平面读取。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询支付列表（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "应用ID",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "支付状态",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/payments/channels": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询当前租户的所有支付渠道配置列表。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询支付渠道列表",
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建支付渠道配置，支持微信支付、支付宝、Stripe等。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "创建支付渠道",
+        "parameters": [
+          {
+            "description": "创建渠道请求参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-pay_internal_handler_dto.CreateChannelRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/payments/channels/{channel_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据渠道ID查询支付渠道的详细配置信息。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询支付渠道详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道ID",
+            "name": "channel_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付渠道不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新支付渠道的配置信息、名称、状态或Webhook密钥。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "更新支付渠道",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道ID",
+            "name": "channel_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新渠道请求参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-pay_internal_handler_dto.UpdateChannelRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付渠道不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的支付渠道配置。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "删除支付渠道",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道ID",
+            "name": "channel_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付渠道不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/payments/reconciliation": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "对支付网关记录与内部记录进行对账，检测差异金额。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "执行对账",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付渠道编码",
+            "name": "channel",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "开始日期（YYYY-MM-DD）",
+            "name": "start_date",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束日期（YYYY-MM-DD）",
+            "name": "end_date",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "对账完成"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/payments/reconciliation/history": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询对账历史记录列表，支持按支付渠道和时间范围筛选。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询对账历史",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付渠道编码",
+            "name": "channel",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "开始日期（YYYY-MM-DD）",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束日期（YYYY-MM-DD）",
+            "name": "end",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/payments/reconciliation/{reconciliation_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的对账记录。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "删除对账记录",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "对账记录ID",
+            "name": "reconciliation_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "对账记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/payments/webhooks": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询支付网关Webhook回调记录列表。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询Webhook记录",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/payments/webhooks/{webhook_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的Webhook回调记录。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "删除Webhook记录",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Webhook记录ID",
+            "name": "webhook_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "Webhook记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/payments/{payment_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /payments/{payment_id} 同体、同租户范围；供控制台在 admin 平面读取。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询支付详情（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付ID",
+            "name": "payment_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付订单不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/payments/{payment_id}/receipt": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /payments/{payment_id}/receipt 同体、同租户范围；供控制台在 admin 平面读取。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "获取支付回执（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付ID",
+            "name": "payment_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付订单不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/refunds": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "租户级退款记录列表（pay_refund_records 单源），支持按退款状态筛选。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询退款列表（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "退款状态（pending/succeeded/failed）",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/pay/seed-channels": {
+      "post": {
+        "description": "创建测试用的微信支付、支付宝、Stripe支付渠道，仅限非生产环境使用。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务 - 内部接口"
+        ],
+        "summary": "种子数据：创建默认支付渠道（仅限开发环境）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/payments": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询支付订单列表，支持按应用ID和状态筛选。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询支付列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "应用ID",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "支付状态",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建支付订单，指定支付渠道和金额。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "创建支付订单",
+        "parameters": [
+          {
+            "description": "创建支付请求参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-pay_internal_handler_dto.CreatePaymentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付渠道不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "无效金额",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/payments/erase-user": {
+      "post": {
+        "description": "服务间内部调用：擦除指定用户在支付服务中的所有支付数据，取消未完成支付，保留已完成交易用于审计。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务 - 内部接口"
+        ],
+        "summary": "[内部] GDPR擦除用户支付数据",
+        "parameters": [
+          {
+            "description": "擦除请求参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-pay_internal_handler_dto.EraseUserPaymentDataRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "擦除成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/payments/export-user-data": {
+      "post": {
+        "description": "服务间内部调用：导出指定用户在支付服务中的所有支付数据，用于GDPR数据可携带性。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务 - 内部接口"
+        ],
+        "summary": "[内部] 导出用户支付数据",
+        "parameters": [
+          {
+            "description": "导出请求参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-pay_internal_handler_dto.ExportUserPaymentDataRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "导出成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/payments/refund": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为已支付的订单创建退款。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "创建退款",
+        "parameters": [
+          {
+            "description": "退款请求参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-pay_internal_handler_dto.RefundRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "退款成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付订单不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "退款冲突（重复退款或状态不满足）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "退款金额无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "501": {
+            "description": "支付渠道退款能力未实现（provider NOT IMPLEMENTED）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/payments/{payment_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据支付ID查询支付订单的详细信息。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询支付详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付ID",
+            "name": "payment_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付订单不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/runtime": {
+      "get": {
+        "description": "返回支付服务的运行时信息，包括版本号、启动时间、运行状态等。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务 - 内部接口"
+        ],
+        "summary": "获取服务运行时信息",
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/schedulers": {
+      "get": {
+        "description": "返回当前服务所有后台调度器的运行状态",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务 - 内部接口"
+        ],
+        "summary": "查询调度器状态列表",
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-any"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/payments": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询支付订单列表，支持按应用ID和状态筛选。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询支付列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "应用ID",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "支付状态",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建支付订单，指定支付渠道和金额。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "创建支付订单",
+        "parameters": [
+          {
+            "description": "创建支付请求参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-pay_internal_handler_dto.CreatePaymentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "创建成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付渠道不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "无效金额",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/payments/refund": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为已支付的订单创建退款。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "创建退款",
+        "parameters": [
+          {
+            "description": "退款请求参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-pay_internal_handler_dto.RefundRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "退款成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付订单不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "退款冲突（重复退款或状态不满足）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "退款金额无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "501": {
+            "description": "支付渠道退款能力未实现（provider NOT IMPLEMENTED）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/payments/return/{channel}": {
+      "get": {
+        "description": "接收支付网关的同步回调（用户完成支付后的浏览器重定向），查找支付订单并302重定向至前端结果页面。",
+        "produces": [
+          "text/html"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "支付网关返回回调",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付渠道编码（如 wechat、alipay、stripe）",
+            "name": "channel",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "支付订单ID",
+            "name": "order_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "支付状态（success/fail/pending）",
+            "name": "status",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "重定向至前端结果页"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/payments/{payment_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据支付ID查询支付订单的详细信息。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询支付详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付ID",
+            "name": "payment_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付订单不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "取消待支付的订单。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "取消支付",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付ID",
+            "name": "payment_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付订单不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/payments/{payment_id}/invoice": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为已支付订单生成发票记录。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "生成发票",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付ID",
+            "name": "payment_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "生成成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付订单不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "发票已存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/payments/{payment_id}/receipt": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取已完成支付订单的回执信息。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "获取支付回执",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付ID",
+            "name": "payment_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付订单不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/payments/{payment_id}/refund": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据退款ID查询退款详情，支持通过支付ID或退款ID查询。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询退款详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付ID或退款ID",
+            "name": "payment_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "退款记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/payments/{payment_id}/refunds": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询指定支付订单的所有退款记录。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询支付退款列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付ID",
+            "name": "payment_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "支付订单不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/refunds/{refund_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据退款ID查询退款详情，支持通过支付ID或退款ID查询。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "查询退款详情",
+        "responses": {
+          "200": {
+            "description": "查询成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "退款记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/webhooks/payment/{channel}": {
+      "post": {
+        "description": "接收并处理支付网关（微信支付、支付宝、Stripe等）的Webhook回调通知，验证签名后更新支付状态。参考：PCI DSS v4.0 Req 3.3 (Mask PAN)、PCI DSS v4.0 Req 4 (Encrypt Transmission)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "支付服务"
+        ],
+        "summary": "接收支付网关回调",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付渠道编码（如 wechat、alipay、stripe）",
+            "name": "channel",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Webhook签名（用于验证回调真实性）",
+            "name": "X-Signature",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "接收成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "dto.DataResponse-any": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {},
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.FieldViolation": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是错误代码（可选）\n用于程序识别错误类型，如 \"required\", \"format\", \"range\"",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description 是人类可读的错误描述\n应该说明违反了什么规则，如 \"必须是一个有效的邮箱地址\"",
+          "type": "string"
+        },
+        "field": {
+          "description": "Field 是错误字段的路径\n使用点号表示嵌套字段，如 \"user.email\" 或 \"addresses[0].city\"",
+          "type": "string"
+        },
+        "standard": {
+          "description": "Standard 是指向权威规范文档的 URI 引用\n用于告知 API 消费者具体违反哪个标准\n示例：\"https://www.rfc-editor.org/info/rfc5322\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是导致错误的值（可选，开发模式下使用）\n生产环境可能不返回此字段以避免泄露敏感信息"
+        }
+      }
+    },
+    "dto.Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是业务错误码\n用于程序处理特定错误场景\n示例：30101001",
+          "type": "integer"
+        },
+        "detail": {
+          "description": "Detail 是针对此具体错误实例的人类可读解释\n可以包含具体的错误细节，如\"Field 'email' is required\"",
+          "type": "string"
+        },
+        "errors": {
+          "description": "Errors 是字段级验证错误列表（扩展字段）\n遵循 Web API 标准实践，每个错误包含字段名和错误信息",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dto.FieldViolation"
+          }
+        },
+        "i18n_args": {
+          "description": "I18nArgs 是国际化参数\n用于动态填充翻译模板",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "i18n_key": {
+          "description": "I18nKey 是国际化键\n用于客户端本地化错误消息\n示例：\"error.user_not_found\"",
+          "type": "string"
+        },
+        "instance": {
+          "description": "Instance 是发生问题的具体URI引用\n通常是请求的URL，可能包含查询参数\n示例：\"/api/v1/users?limit=invalid\"",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "RequestID 是请求唯一标识\n用于日志关联和问题追踪\n示例：\"req_550e8400-e29b-41d4-a716-446655440000\"",
+          "type": "string"
+        },
+        "retry_after": {
+          "description": "RetryAfter 用于 429 Too Many Requests 响应\n指示客户端应在多少秒后重试请求（RFC 6585）",
+          "type": "integer"
+        },
+        "service": {
+          "description": "Service 是服务名\n用于微服务架构中定位错误来源\n示例：\"auth-service\"",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "SpanID 是当前 span 标识\n用于精确定位分布式链路中的当前节点",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status 是产生的HTTP状态码\n用于客户端区分问题类型，不随Accept-Language变化\n示例：400, 401, 403, 404, 500",
+          "type": "integer"
+        },
+        "timestamp": {
+          "description": "Timestamp 是错误发生时间\nISO 8601 格式\n示例：\"2026-04-03T12:00:00Z\"",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title 是简短、人类可读的问题类型摘要\n相同的 Type 应该始终有相同的 Title（不随实例变化）\n示例：\"Invalid Request Parameters\"",
+          "type": "string"
+        },
+        "trace_id": {
+          "description": "TraceID 是分布式追踪标识\n遵循 W3C Trace Context 标准\n示例：\"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type 是标识问题类型的URI引用\n当该URI被解引用时，应提供人类可读的文档\n示例：\"https://api.example.com/errors/invalid-request\"",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-pay_internal_handler_dto.CreateChannelRequest": {
+      "type": "object",
+      "required": [
+        "code",
+        "config",
+        "name"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "wechat"
+        },
+        "config": {
+          "type": "string",
+          "example": "{}"
+        },
+        "name": {
+          "type": "string",
+          "example": "微信支付"
+        },
+        "webhook_secret": {
+          "type": "string",
+          "example": "whsec_abc"
+        }
+      }
+    },
+    "gitee_com_autional_service-pay_internal_handler_dto.CreatePaymentRequest": {
+      "type": "object",
+      "required": [
+        "amount",
+        "channel_code"
+      ],
+      "properties": {
+        "amount": {
+          "type": "string",
+          "example": "100.00"
+        },
+        "channel_code": {
+          "type": "string",
+          "example": "wechat"
+        },
+        "currency": {
+          "type": "string",
+          "example": "CNY"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "example": "ik_abc123"
+        },
+        "item_description": {
+          "type": "string",
+          "example": "账户充值"
+        },
+        "target_id": {
+          "type": "string",
+          "example": "wallet_target_id"
+        },
+        "target_type": {
+          "type": "string",
+          "example": "wallet_recharge"
+        }
+      }
+    },
+    "gitee_com_autional_service-pay_internal_handler_dto.EraseUserPaymentDataRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-pay_internal_handler_dto.ExportUserPaymentDataRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-pay_internal_handler_dto.RefundRequest": {
+      "type": "object",
+      "required": [
+        "amount",
+        "payment_id"
+      ],
+      "properties": {
+        "amount": {
+          "type": "string",
+          "example": "50.00"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "example": "ref_ik_abc123"
+        },
+        "payment_id": {
+          "type": "string",
+          "example": "pay_abc123"
+        },
+        "reason": {
+          "type": "string",
+          "example": "用户退款申请"
+        }
+      }
+    },
+    "gitee_com_autional_service-pay_internal_handler_dto.UpdateChannelRequest": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "type": "string",
+          "example": "{}"
+        },
+        "name": {
+          "type": "string",
+          "example": "微信支付新"
+        },
+        "status": {
+          "type": "string",
+          "example": "active"
+        },
+        "webhook_secret": {
+          "type": "string",
+          "example": "whsec_xyz"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "Payment operations: create, query, capture, cancel",
+      "name": "payments"
+    },
+    {
+      "description": "Refund operations: create, query, status tracking",
+      "name": "refunds"
+    },
+    {
+      "description": "Webhook management: registration, delivery, retry",
+      "name": "webhooks"
+    },
+    {
+      "description": "Reconciliation: daily settlement, discrepancy detection",
+      "name": "reconciliation"
+    },
+    {
+      "description": "Payment channel configuration and management",
+      "name": "channels"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}

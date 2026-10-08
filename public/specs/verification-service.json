@@ -1,0 +1,3118 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "实名认证与活体检测服务，提供OCR识别、身份核验、活体检测、提供方配置管理等功能",
+    "title": "身份验证服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/bff/verification/api/v1",
+  "paths": {
+    "/admin/verifications": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员查询租户下所有实名认证记录，支持按认证状态、日期范围过滤和分页，返回脱敏后的认证信息列表",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "查询认证列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "认证状态过滤：verified/pending/rejected/expired",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "起始日期 (YYYY-MM-DD)",
+            "name": "date_from",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "截止日期 (YYYY-MM-DD)",
+            "name": "date_to",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码，默认1",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页数量，默认20",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "认证列表，包含脱敏后的认证信息",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-verification_internal_handler_dto_VerificationListItem"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/verifications/export": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "导出认证记录为CSV文件，包含ID、用户ID、状态、方法、提供方、年龄分组、活体分数、核验时间、拒绝原因、过期时间、重试次数、创建时间等字段。支持按状态和日期范围过滤，最多导出1000条",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "text/csv"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "导出认证记录",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "认证状态过滤：verified/pending/rejected/expired",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "起始日期 (YYYY-MM-DD)",
+            "name": "date_from",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "截止日期 (YYYY-MM-DD)",
+            "name": "date_to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV文件，Content-Type: text/csv; charset=utf-8",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/verifications/guardians": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员根据监护人ID或未成年用户ID查询监护关系列表，至少需提供一个查询参数",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "未成年人保护"
+        ],
+        "summary": "管理员查询监护关系",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "监护人用户ID",
+            "name": "guardian_user_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "未成年用户ID",
+            "name": "minor_user_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "监护关系列表",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-verification_internal_handler_dto_GuardianRelationshipResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "监护关系不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员手动解除指定的监护关系，解除后监护人不再有权管理该未成年人",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "未成年人保护"
+        ],
+        "summary": "管理员解除监护关系",
+        "parameters": [
+          {
+            "description": "解除监护关系请求：包含监护人ID和未成年人ID",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.RemoveGuardianRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "解除成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "监护关系不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/verifications/providers": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "分页查询提供方配置列表，支持按通道类型和启用状态过滤，按优先级排序",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "列出提供方配置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "通道类型过滤：ocr/verify/liveness",
+            "name": "channel",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "是否仅查询已启用的配置",
+            "name": "is_active",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码，默认1",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页数量，默认20",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "提供方配置列表",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-verification_internal_handler_dto_ProviderConfigResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定验证通道（OCR/核验/活体）创建身份验证提供方配置，包含优先级和JSON配置项。配置后可被服务用于选择验证服务提供商",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "创建提供方配置",
+        "parameters": [
+          {
+            "description": "提供方配置：包含通道类型、提供方名称、JSON配置和优先级",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.CreateProviderConfigRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "配置创建成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_ProviderConfigResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/verifications/providers/{provider_config_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据配置ID获取单个提供方配置的详细信息，包括JSON配置内容和启用状态",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "获取提供方配置详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "提供方配置ID",
+            "name": "provider_config_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "提供方配置详情",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_ProviderConfigResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新提供方配置的JSON配置内容、启用状态或优先级",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "更新提供方配置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "提供方配置ID",
+            "name": "provider_config_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新请求：包含配置内容、启用状态、优先级",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.UpdateProviderConfigRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的配置信息",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_ProviderConfigResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的提供方配置，删除后将不再用于验证服务提供商选择",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "删除提供方配置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "提供方配置ID",
+            "name": "provider_config_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/verifications/stats": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取租户下认证记录的统计汇总：总认证数、已验证、待处理、已拒绝、已过期、未认证、未成年用户数量",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "获取认证统计",
+        "responses": {
+          "200": {
+            "description": "认证统计数据汇总",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_StatsResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/verifications/{verification_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员查看指定认证记录的详细信息，包括脱敏姓名、身份证提示、活体分数、人工覆盖记录等",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "获取认证详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "认证ID",
+            "name": "verification_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "认证详情，包含脱敏信息和覆盖记录",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_AdminVerificationDetail"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "认证记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/verifications/{verification_id}/manual-review": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员将认证记录转入人工审核状态，需填写审核原因。此操作需要Step-up重新认证",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "转入人工审核",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "认证ID",
+            "name": "verification_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "人工审核请求：包含转入原因",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.ManualReviewRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "转入人工审核成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_AdminVerificationDetail"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "认证记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/verifications/{verification_id}/override": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员手动覆盖认证状态（如从未通过改为通过），需提供目标状态值和原因说明。此操作需要Step-up重新认证，操作记录会写入审计日志",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "人工覆盖认证状态",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "认证ID",
+            "name": "verification_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "覆盖请求：包含目标状态和覆盖原因",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.OverrideRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "覆盖后的认证详情",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_AdminVerificationDetail"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "认证记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/verifications/{verification_id}/reset": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员重置指定认证记录的重试次数为零，允许用户重新提交认证。此操作需要Step-up重新认证",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "重置重试计数",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "认证ID",
+            "name": "verification_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "重置后的认证状态",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_VerificationStatusResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "认证记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/verifications/{verification_id}/resolve-review": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员解决人工审核：批准(approved)或拒绝(rejected)。仅manual_review状态的记录可操作。此操作需要Step-up重新认证",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "解决人工审核",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "认证ID",
+            "name": "verification_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "审核解决请求：包含resolution(approved/rejected)和reason",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.ResolveReviewRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "审核解决成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_AdminVerificationDetail"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "认证记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/verification/check": {
+      "get": {
+        "description": "内部服务调用接口，根据用户ID查询认证状态和年龄分组，供其他服务判断实名认证和未成年人身份。需 Internal API Key 认证",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "内部检查认证状态",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "认证状态和年龄分组信息",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_VerificationStatusResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或API Key无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/verification/erase-user": {
+      "post": {
+        "description": "Clears PII fields (name, id_number), resets verification status, publishes erased event.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务 - 内部接口"
+        ],
+        "summary": "GDPR erasure - erase user verification data",
+        "parameters": [
+          {
+            "description": "Erasure request",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.EraseUserInternalRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user data erased",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "invalid request",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "internal error",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/verification/consent": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户授权实名认证数据收集和处理，需提供同意项列表（如数据收集、人脸信息处理等）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "授权同意",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "认证ID",
+            "name": "verification_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "description": "授权请求：包含同意项列表",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.GrantConsentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "授权成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/guardians": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为未成年用户创建监护关系。监护人必须是已认证的成年用户，创建后需监护人授权同意",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "未成年人保护"
+        ],
+        "summary": "创建监护关系",
+        "parameters": [
+          {
+            "description": "创建监护关系请求：包含监护人ID、未成年人ID和关系类型",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.CreateGuardianRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "监护关系创建成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_GuardianRelationshipResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的监护关系，解除后监护人不再有权管理该未成年人",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "未成年人保护"
+        ],
+        "summary": "解除监护关系",
+        "parameters": [
+          {
+            "description": "解除监护关系请求：包含监护人ID和未成年人ID",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.RemoveGuardianRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "解除成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/guardians/minors": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前用户作为监护人的所有被监护人列表，包含未成年用户的保护设置信息",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "未成年人保护"
+        ],
+        "summary": "获取我的被监护人列表",
+        "responses": {
+          "200": {
+            "description": "被监护人列表，包含保护设置信息",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-verification_internal_handler_dto_MinorProfileResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/guardians/{guardian_id}": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新监护关系类型或同意范围，仅监护人本人可操作",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "未成年人保护"
+        ],
+        "summary": "更新监护关系",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "监护关系ID",
+            "name": "guardian_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新监护关系请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.UpdateGuardianRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_GuardianRelationshipResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "监护关系不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/guardians/{guardian_id}/consent": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "已通过身份验证的监护人给予同意，授权未成年人进行实名认证。可选指定同意范围",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "未成年人保护"
+        ],
+        "summary": "监护人授权同意",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "监护关系ID",
+            "name": "guardian_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "同意请求：可选指定同意范围",
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.GuardianConsentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "监护人同意成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_GuardianRelationshipResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "监护关系不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/guardians/{guardian_id}/verify": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "监护人通过JWT确认身份，完成对指定监护关系的身份验证，验证后可为未成年人授权",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "未成年人保护"
+        ],
+        "summary": "监护人身份验证",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "监护关系ID",
+            "name": "guardian_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "监护人身份验证成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_GuardianRelationshipResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "监护关系不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/liveness/begin": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "发起活体检测会话，返回会话令牌和动作序列（如眨眼、张嘴、摇头等），需在会话过期前完成检测",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "开始活体检测",
+        "parameters": [
+          {
+            "description": "活体检测请求：包含认证ID",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.BeginLivenessRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "活体检测会话令牌与动作序列",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_BeginLivenessResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/liveness/verify": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "提交活体检测视频Base64数据，验证用户活体动作，返回活体检测分数和是否通过",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "完成活体检测",
+        "parameters": [
+          {
+            "description": "活体检测完成请求：包含会话令牌和视频Base64数据",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.CompleteLivenessRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "活体检测结果，包含分数和通过状态",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_LivenessResultResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/me": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前用户的最新实名认证状态，包括认证状态、核验方法、年龄分组、过期时间等。若尚未提交认证则返回未认证状态",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "获取我的认证状态",
+        "responses": {
+          "200": {
+            "description": "认证状态信息",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_VerificationStatusResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/me/detail": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前用户的完整认证详情，包括状态、方法、提供方、活体检测分数、拒绝原因等",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "获取我的认证详情",
+        "responses": {
+          "200": {
+            "description": "认证详情，包含活体分数和拒绝原因",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_VerificationDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/minors/guardians": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据未成年人用户ID查询其所有监护人列表，包含关系类型和授权状态",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "未成年人保护"
+        ],
+        "summary": "获取未成年用户的监护人列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "未成年人用户ID",
+            "name": "minor_user_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "监护人列表，包含关系类型和授权状态",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-verification_internal_handler_dto_GuardianRelationshipResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/minors/protection": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "监护人设置未成年人的保护限制：每日使用时长、夜间模式时段、功能限制列表。需先完成同意授权",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "未成年人保护"
+        ],
+        "summary": "设置未成年人保护配置",
+        "parameters": [
+          {
+            "description": "保护配置：包含每日限制分钟、夜间时段、限制列表",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.SetMinorProtectionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "保护配置设置成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_GuardianRelationshipResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "监护关系不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/ocr": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "上传身份证正反面Base64图片进行OCR识别，提取姓名和身份证号。参考：GB/T 35273-2020 (个人信息安全规范)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "提交OCR识别",
+        "parameters": [
+          {
+            "description": "OCR识别请求：包含身份证正反面Base64编码图片",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.SubmitOCRRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "识别成功，返回姓名、身份证号与认证状态",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_SubmitOCRResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verification/verify": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "提交身份核验请求，可指定核验方法（如自动、NFC、人工审核）和确认信息。核验通过后更新认证状态和年龄分组",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证服务"
+        ],
+        "summary": "提交身份核验",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "认证ID",
+            "name": "verification_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "description": "核验请求：包含核验方法和确认信息",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.SubmitVerificationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "核验结果，包含认证状态、方法、年龄分组和过期时间",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_VerificationStatusResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_AdminVerificationDetail": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.AdminVerificationDetail"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_BeginLivenessResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.BeginLivenessResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_GuardianRelationshipResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.GuardianRelationshipResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_LivenessResultResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.LivenessResultResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_ProviderConfigResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.ProviderConfigResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_StatsResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.StatsResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_SubmitOCRResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.SubmitOCRResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_VerificationDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.VerificationDetailResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-verification_internal_handler_dto_VerificationStatusResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.VerificationStatusResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.FieldViolation": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是错误代码（可选）\n用于程序识别错误类型，如 \"required\", \"format\", \"range\"",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description 是人类可读的错误描述\n应该说明违反了什么规则，如 \"必须是一个有效的邮箱地址\"",
+          "type": "string"
+        },
+        "field": {
+          "description": "Field 是错误字段的路径\n使用点号表示嵌套字段，如 \"user.email\" 或 \"addresses[0].city\"",
+          "type": "string"
+        },
+        "standard": {
+          "description": "Standard 是指向权威规范文档的 URI 引用\n用于告知 API 消费者具体违反哪个标准\n示例：\"https://www.rfc-editor.org/info/rfc5322\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是导致错误的值（可选，开发模式下使用）\n生产环境可能不返回此字段以避免泄露敏感信息"
+        }
+      }
+    },
+    "dto.ListResponse-gitee_com_autional_service-verification_internal_handler_dto_GuardianRelationshipResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.GuardianRelationshipResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.ListResponse-gitee_com_autional_service-verification_internal_handler_dto_MinorProfileResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.MinorProfileResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.ListResponse-gitee_com_autional_service-verification_internal_handler_dto_ProviderConfigResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.ProviderConfigResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.ListResponse-gitee_com_autional_service-verification_internal_handler_dto_VerificationListItem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-verification_internal_handler_dto.VerificationListItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.PageInfo": {
+      "type": "object",
+      "properties": {
+        "has_next": {
+          "description": "HasNext indicates whether there is a next page",
+          "type": "boolean"
+        },
+        "has_prev": {
+          "description": "HasPrev indicates whether there is a previous page",
+          "type": "boolean"
+        },
+        "page": {
+          "description": "Page is the current page number (1-based)",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "PageSize is the number of items per page",
+          "type": "integer"
+        },
+        "total": {
+          "description": "Total is the total number of items across all pages",
+          "type": "integer"
+        },
+        "total_pages": {
+          "description": "TotalPages is the total number of pages",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是业务错误码\n用于程序处理特定错误场景\n示例：30101001",
+          "type": "integer"
+        },
+        "detail": {
+          "description": "Detail 是针对此具体错误实例的人类可读解释\n可以包含具体的错误细节，如\"Field 'email' is required\"",
+          "type": "string"
+        },
+        "errors": {
+          "description": "Errors 是字段级验证错误列表（扩展字段）\n遵循 Web API 标准实践，每个错误包含字段名和错误信息",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dto.FieldViolation"
+          }
+        },
+        "i18n_args": {
+          "description": "I18nArgs 是国际化参数\n用于动态填充翻译模板",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "i18n_key": {
+          "description": "I18nKey 是国际化键\n用于客户端本地化错误消息\n示例：\"error.user_not_found\"",
+          "type": "string"
+        },
+        "instance": {
+          "description": "Instance 是发生问题的具体URI引用\n通常是请求的URL，可能包含查询参数\n示例：\"/api/v1/users?limit=invalid\"",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "RequestID 是请求唯一标识\n用于日志关联和问题追踪\n示例：\"req_550e8400-e29b-41d4-a716-446655440000\"",
+          "type": "string"
+        },
+        "retry_after": {
+          "description": "RetryAfter 用于 429 Too Many Requests 响应\n指示客户端应在多少秒后重试请求（RFC 6585）",
+          "type": "integer"
+        },
+        "service": {
+          "description": "Service 是服务名\n用于微服务架构中定位错误来源\n示例：\"auth-service\"",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "SpanID 是当前 span 标识\n用于精确定位分布式链路中的当前节点",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status 是产生的HTTP状态码\n用于客户端区分问题类型，不随Accept-Language变化\n示例：400, 401, 403, 404, 500",
+          "type": "integer"
+        },
+        "timestamp": {
+          "description": "Timestamp 是错误发生时间\nISO 8601 格式\n示例：\"2026-04-03T12:00:00Z\"",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title 是简短、人类可读的问题类型摘要\n相同的 Type 应该始终有相同的 Title（不随实例变化）\n示例：\"Invalid Request Parameters\"",
+          "type": "string"
+        },
+        "trace_id": {
+          "description": "TraceID 是分布式追踪标识\n遵循 W3C Trace Context 标准\n示例：\"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type 是标识问题类型的URI引用\n当该URI被解引用时，应提供人类可读的文档\n示例：\"https://api.example.com/errors/invalid-request\"",
+          "type": "string"
+        }
+      }
+    },
+    "dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.AdminVerificationDetail": {
+      "type": "object",
+      "properties": {
+        "age_group": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "date_of_birth": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "id_number_hint": {
+          "type": "string"
+        },
+        "liveness_score": {
+          "type": "string"
+        },
+        "masked_name": {
+          "type": "string"
+        },
+        "max_retries": {
+          "type": "integer"
+        },
+        "method": {
+          "type": "string"
+        },
+        "override_by": {
+          "type": "string"
+        },
+        "override_reason": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "provider_resp_id": {
+          "type": "string"
+        },
+        "rejected_at": {
+          "type": "string"
+        },
+        "rejected_reason": {
+          "type": "string"
+        },
+        "retry_count": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "verified_at": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.BeginLivenessRequest": {
+      "type": "object",
+      "required": [
+        "verification_id"
+      ],
+      "properties": {
+        "verification_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.BeginLivenessResponse": {
+      "type": "object",
+      "properties": {
+        "action_sequence": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "integer"
+        },
+        "session_token": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.CompleteLivenessRequest": {
+      "type": "object",
+      "required": [
+        "session_token"
+      ],
+      "properties": {
+        "session_token": {
+          "type": "string"
+        },
+        "video_data": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.CreateGuardianRequest": {
+      "type": "object",
+      "required": [
+        "guardian_user_id",
+        "minor_user_id",
+        "relation_type"
+      ],
+      "properties": {
+        "guardian_user_id": {
+          "type": "string"
+        },
+        "minor_user_id": {
+          "type": "string"
+        },
+        "relation_type": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.CreateProviderConfigRequest": {
+      "type": "object",
+      "required": [
+        "channel",
+        "config",
+        "provider"
+      ],
+      "properties": {
+        "channel": {
+          "type": "string",
+          "enum": [
+            "ocr",
+            "verification",
+            "liveness"
+          ]
+        },
+        "config": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "provider": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.EraseUserInternalRequest": {
+      "type": "object",
+      "required": [
+        "tenant_id",
+        "user_id"
+      ],
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.GrantConsentRequest": {
+      "type": "object",
+      "required": [
+        "consent_items"
+      ],
+      "properties": {
+        "consent_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.GuardianConsentRequest": {
+      "type": "object",
+      "properties": {
+        "consent_scope": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.GuardianRelationshipResponse": {
+      "type": "object",
+      "properties": {
+        "consent_at": {
+          "type": "string"
+        },
+        "consent_given": {
+          "type": "boolean"
+        },
+        "consent_scope": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "guardian_user_id": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "minor_user_id": {
+          "type": "string"
+        },
+        "relation_type": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "verified_at": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.LivenessResultResponse": {
+      "type": "object",
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "score": {
+          "type": "number"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.ManualReviewRequest": {
+      "type": "object",
+      "required": [
+        "reason"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.MinorProfileResponse": {
+      "type": "object",
+      "properties": {
+        "age_group": {
+          "type": "string"
+        },
+        "consent_granted": {
+          "type": "boolean"
+        },
+        "daily_limit_minutes": {
+          "type": "integer"
+        },
+        "guardian_user_id": {
+          "type": "string"
+        },
+        "is_minor": {
+          "type": "boolean"
+        },
+        "night_mode_end": {
+          "type": "string"
+        },
+        "night_mode_start": {
+          "type": "string"
+        },
+        "restrictions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.OverrideRequest": {
+      "type": "object",
+      "required": [
+        "reason",
+        "status"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.ProviderConfigResponse": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "channel": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.RemoveGuardianRequest": {
+      "type": "object",
+      "required": [
+        "guardian_user_id",
+        "minor_user_id"
+      ],
+      "properties": {
+        "guardian_user_id": {
+          "type": "string"
+        },
+        "minor_user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.ResolveReviewRequest": {
+      "type": "object",
+      "required": [
+        "reason",
+        "resolution"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string"
+        },
+        "resolution": {
+          "type": "string",
+          "enum": [
+            "approved",
+            "rejected"
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.SetMinorProtectionRequest": {
+      "type": "object",
+      "required": [
+        "minor_user_id"
+      ],
+      "properties": {
+        "daily_limit_minutes": {
+          "type": "integer"
+        },
+        "minor_user_id": {
+          "type": "string"
+        },
+        "night_mode_end": {
+          "type": "string"
+        },
+        "night_mode_start": {
+          "type": "string"
+        },
+        "restrictions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.StatsResponse": {
+      "type": "object",
+      "properties": {
+        "expired": {
+          "type": "integer"
+        },
+        "minor_count": {
+          "type": "integer"
+        },
+        "pending": {
+          "type": "integer"
+        },
+        "rejected": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        },
+        "unverified": {
+          "type": "integer"
+        },
+        "verified": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.SubmitOCRRequest": {
+      "type": "object",
+      "required": [
+        "back_image",
+        "front_image"
+      ],
+      "properties": {
+        "back_image": {
+          "type": "string"
+        },
+        "front_image": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.SubmitOCRResponse": {
+      "type": "object",
+      "properties": {
+        "ocr_confidence": {
+          "type": "number"
+        },
+        "ocr_id_number": {
+          "type": "string"
+        },
+        "ocr_name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "verification_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.SubmitVerificationRequest": {
+      "type": "object",
+      "required": [
+        "method"
+      ],
+      "properties": {
+        "confirmed_id_number": {
+          "type": "string"
+        },
+        "confirmed_name": {
+          "type": "string"
+        },
+        "method": {
+          "$ref": "#/definitions/verification.VerificationMethod"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.UpdateGuardianRequest": {
+      "type": "object",
+      "properties": {
+        "consent_scope": {
+          "type": "string"
+        },
+        "relation_type": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.UpdateProviderConfigRequest": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "priority": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.VerificationDetailResponse": {
+      "type": "object",
+      "properties": {
+        "age_group": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "liveness_score": {
+          "type": "string"
+        },
+        "max_retries": {
+          "type": "integer"
+        },
+        "method": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "provider_resp_id": {
+          "type": "string"
+        },
+        "rejected_reason": {
+          "type": "string"
+        },
+        "retry_count": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "verification_id": {
+          "type": "string"
+        },
+        "verified_at": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.VerificationListItem": {
+      "type": "object",
+      "properties": {
+        "age_group": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "liveness_score": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "rejected_reason": {
+          "type": "string"
+        },
+        "retry_count": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "verified_at": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-verification_internal_handler_dto.VerificationStatusResponse": {
+      "type": "object",
+      "properties": {
+        "age_group": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "max_retries": {
+          "type": "integer"
+        },
+        "method": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "retry_count": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "verification_id": {
+          "type": "string"
+        },
+        "verified_at": {
+          "type": "string"
+        }
+      }
+    },
+    "verification.VerificationMethod": {
+      "type": "string",
+      "enum": [
+        "ocr",
+        "two_element",
+        "three_element",
+        "four_element",
+        "manual"
+      ],
+      "x-enum-varnames": [
+        "MethodOCR",
+        "MethodTwoElement",
+        "MethodThreeElement",
+        "MethodFourElement",
+        "MethodManual"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "实名认证：OCR、活体检测、人工审核",
+      "name": "身份验证"
+    },
+    {
+      "description": "未成年人保护：年龄验证、家长控制",
+      "name": "未成年人保护"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}

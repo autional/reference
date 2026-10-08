@@ -1,0 +1,6557 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "多因素认证服务，提供TOTP、短信验证码、邮件验证、推送通知等多种MFA方式",
+    "title": "多因素认证服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/bff/mfa/api/v1",
+  "paths": {
+    "/admin/mfa/backup-codes": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员查看租户下所有已配置TOTP备用恢复码的用户列表。参考：OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "管理端列出所有备用码配置",
+        "responses": {
+          "200": {
+            "description": "备用码配置列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.AdminBackupCodesListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/backup-codes/{user_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员查看指定用户的备用恢复码数量。参考：OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "管理端获取用户备用码数量",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "备用码数量",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.BackupCodesCountDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/config-audit-logs": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询MFA配置变更的审计日志，支持按操作类型、目标类型、操作者、日期范围筛选。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "获取MFA配置审计日志",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "操作类型过滤",
+            "name": "action",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "目标类型过滤",
+            "name": "target_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "操作者ID过滤",
+            "name": "operator_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "开始日期（YYYY-MM-DD）",
+            "name": "start_date",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束日期（YYYY-MM-DD）",
+            "name": "end_date",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "审计日志查询结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAConfigAuditLogListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/ip-whitelist": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询租户配置的所有IP白名单规则。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "列出IP白名单",
+        "responses": {
+          "200": {
+            "description": "IP白名单列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.IPWhitelistListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为租户添加一个IP白名单规则（CIDR格式），用于自适应MFA风险评分的IP信任检查。参考：NIST SP 800-63B §5.2 (Risk-based Authentication)。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "创建IP白名单",
+        "parameters": [
+          {
+            "description": "创建IP白名单请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.CreateIPWhitelistRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.IPWhitelistDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/ip-whitelist/{ip_whitelist_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据ID查询指定的IP白名单规则。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "获取IP白名单",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "实体ID",
+            "name": "ip_whitelist_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "IP白名单详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.IPWhitelistDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新指定IP白名单规则的标签、CIDR或启用状态。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "更新IP白名单",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "实体ID",
+            "name": "ip_whitelist_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新IP白名单请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.UpdateIPWhitelistRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.IPWhitelistDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的IP白名单规则。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "删除IP白名单",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "实体ID",
+            "name": "ip_whitelist_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "删除成功"
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/push/challenges": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "分页查询推送MFA挑战列表，支持按状态和用户过滤。参考：NIST SP 800-63B §5.1.7、OWASP ASVS V2.8。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 角色",
+          "多因素认证"
+        ],
+        "summary": "管理端查看推送挑战列表",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "状态过滤（pending/approved/denied/expired）",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "用户ID过滤",
+            "name": "user_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "挑战列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.AdminPushChallengeListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/push/stats": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询指定租户的推送挑战按状态统计（pending/approved/denied/expired）。参考：NIST SP 800-63B §5.1.7、OWASP ASVS V2.8。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 角色",
+          "多因素认证"
+        ],
+        "summary": "获取Push MFA挑战统计",
+        "responses": {
+          "200": {
+            "description": "统计数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushStatsDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/reset/{user_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员强制重置指定用户的所有MFA配置（TOTP设备、MFA配置），用户下次登录需重新设置。需要管理员权限。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "管理员重置用户MFA",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "MFA重置成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/risk-policies": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取租户配置的所有风险等级策略列表。参考：NIST SP 800-63B §5.2 (Risk-based Authentication)。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "列出所有风险策略",
+        "responses": {
+          "200": {
+            "description": "风险策略列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyListResponseWrap"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/risk-policies/evaluate": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "传入用户上下文（user_id、IP、设备指纹），返回评估的风险等级和要求的MFA方法。参考：NIST SP 800-63B §5.2 (Risk-based Authentication)。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "评估风险策略",
+        "parameters": [
+          {
+            "description": "评估请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EvaluateRiskPolicyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "评估结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EvaluateRiskPolicyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/risk-policies/{level}": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新租户指定风险等级的MFA因子要求。参考：NIST SP 800-63B §5.2 (Risk-based Authentication)。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "更新指定等级的风险策略",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "风险等级（low/medium/high）",
+            "name": "level",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "策略更新请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.UpdateRiskPolicyByLevelRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的策略",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyItemDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除租户指定风险等级的自定义策略，恢复默认值。参考：NIST SP 800-63B §5.2 (Risk-based Authentication)。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "删除指定等级的风险策略",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "风险等级（low/medium/high）",
+            "name": "level",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "删除成功，恢复默认"
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/risk-policy": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询基于风险评分的自适应MFA策略配置，从数据库读取租户配置的策略。参考：NIST SP 800-63B §5.2 (Risk-based Authentication)。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "获取MFA风险策略",
+        "responses": {
+          "200": {
+            "description": "风险策略",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "全量更新租户的低/中/高风险等级的MFA因子要求。参考：NIST SP 800-63B §5.2 (Risk-based Authentication)。需要管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "更新MFA风险策略",
+        "parameters": [
+          {
+            "description": "风险策略更新请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.UpdateRiskPolicyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的风险策略",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/mfa/totp/{user_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员查看指定用户的TOTP设备列表。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "管理端获取用户TOTP状态",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "TOTP设备列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/mfa/email/send": {
+      "post": {
+        "description": "内部API。按 user_id + email 生成并投递 email MFA 验证码，供 identity 登录期调用。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证 - 内部接口"
+        ],
+        "summary": "内部：发送登录期 MFA 邮箱验证码",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "发送请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.InternalEmailSendRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "发送成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EmailSendDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未提供有效的X-API-Key",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/mfa/erase": {
+      "post": {
+        "description": "内部API：硬删除指定用户的所有MFA配置、TOTP设备和受信设备，用于GDPR删除Saga。需要InternalAPIKey认证。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "内部擦除用户MFA数据",
+        "parameters": [
+          {
+            "description": "内部擦除MFA请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.InternalEraseMFARequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "擦除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "缺少内部API认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/mfa/push/challenge/{credential_id}": {
+      "get": {
+        "description": "内部API：根据挑战ID和用户ID查询Push MFA挑战状态，供identity-service在MFA验证流程中调用。需要InternalAPIKey认证和X-Tenant-ID请求头。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证 - 内部接口",
+          "多因素认证"
+        ],
+        "summary": "内部获取Push挑战状态",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "挑战ID",
+            "name": "credential_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "挑战状态",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeStatusDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "缺少内部API认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "挑战未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/mfa/sms/send": {
+      "post": {
+        "description": "内部API。按 user_id 解析其已登记的 SMS MFA 设备并投递短信验证码，供 identity 登录期调用。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证 - 内部接口"
+        ],
+        "summary": "内部：发送登录期 MFA 短信验证码",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "发送请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.InternalSMSSendRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "发送成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSSendDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误 / 未登记短信 MFA",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未提供有效的X-API-Key",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/mfa/status/{user_id}": {
+      "get": {
+        "description": "内部获取用户MFA状态，无需JWT认证，供其他服务（identity-service）调用。需要X-Tenant-ID请求头。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "内部获取用户MFA状态",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "MFA状态",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.InternalMFAStatusDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误或缺少X-Tenant-ID",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "缺少内部API认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/mfa/totp/devices": {
+      "get": {
+        "description": "内部获取用户TOTP设备列表，无需JWT认证，供其他服务（identity-service）调用。需要X-Tenant-ID和InternalAPIKey认证。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "内部获取TOTP设备列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "TOTP设备列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "缺少内部API认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/mfa/totp/disable": {
+      "post": {
+        "description": "内部禁用用户的TOTP多因素认证，无需密码验证，供其他服务（identity-service）调用。需要X-Tenant-ID和InternalAPIKey认证。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "内部禁用TOTP",
+        "parameters": [
+          {
+            "description": "内部禁用TOTP请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.InternalTOTPDisableRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "禁用成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "缺少内部API认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/mfa/totp/validate": {
+      "post": {
+        "description": "内部验证用户TOTP码，无需JWT认证，供其他服务（identity-service）在登录时调用。需要InternalAPIKey认证。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "内部验证TOTP码",
+        "parameters": [
+          {
+            "description": "内部TOTP验证请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.InternalTOTPValidateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.ValidDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "缺少内部API认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/schedulers": {
+      "get": {
+        "description": "返回当前服务中所有注册的定时任务及其状态",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证 - 内部接口"
+        ],
+        "summary": "列出所有定时任务",
+        "responses": {
+          "200": {
+            "description": "调度器列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/backup-codes": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "解密并返回当前用户的全部备用恢复码，需step-up认证。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "查看备用码",
+        "responses": {
+          "200": {
+            "description": "备用码列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.GetBackupCodesDetailResponse"
+            }
+          },
+          "400": {
+            "description": "业务错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或step-up过期",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/backup-codes/count": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回当前用户备用恢复码的数量和是否为即将用尽的状态。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "查看备用码数量",
+        "responses": {
+          "200": {
+            "description": "备用码数量",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.BackupCodesCountDetailResponse"
+            }
+          },
+          "400": {
+            "description": "业务错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/backup-codes/generate": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为用户生成10个备用恢复码，用于TOTP不可用时进行身份验证。恢复码仅显示一次，请妥善保存。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "生成备用恢复码",
+        "parameters": [
+          {
+            "description": "生成备用码请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.GenerateBackupCodesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "备用码生成成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.BackupCodesDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/backup-codes/verify": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "验证备用恢复码，返回验证结果和剩余备用码数量，用于前端独立处理备用码登录流程。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "独立备用码验证",
+        "parameters": [
+          {
+            "description": "备用码验证请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.BackupCodeVerifyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.BackupCodeVerifyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误或备用码无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/challenge": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定用户创建一次性的MFA挑战码，支持短信、邮件、TOTP、推送等多种验证方式，用于登录或敏感操作前的二次认证。参考：NIST SP 800-63B §5.1.7 (Verifier Impersonation Resistance)、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "创建通用MFA挑战",
+        "parameters": [
+          {
+            "description": "MFA挑战请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAChallengeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "挑战码创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAChallengeDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "挑战未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/credentials/{credential_id}/primary": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "将指定的MFA凭证设为该用户的主认证方式，同时取消其他凭证的主认证状态。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "设置主认证方式",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "凭证ID",
+            "name": "credential_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "设置主认证方式请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SetPrimaryCredentialRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设置成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SetPrimaryCredentialDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "凭证未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/devices/sync": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "列出用户所有的设备同步记录，返回解密后的TOTP设备数据。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "列出同步设备",
+        "responses": {
+          "200": {
+            "description": "设备同步列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.DeviceSyncListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "上传设备TOTP配置数据，加密存储并返回同步令牌。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "同步设备数据",
+        "parameters": [
+          {
+            "description": "设备同步数据",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.DeviceSyncRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "设备同步成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.DeviceSyncDetailResponse"
+            }
+          },
+          "400": {
+            "description": "设备数量已达上限",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/devices/sync/{sync_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "移除指定设备同步记录，释放设备名额（软删；列表/计数自动排除）。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "解绑同步设备",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "同步设备ID",
+            "name": "sync_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "解绑成功"
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "同步设备未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/email/disable": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "验证邮箱验证码后禁用Email MFA认证。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "禁用邮箱 MFA",
+        "parameters": [
+          {
+            "description": "禁用邮箱MFA请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EmailDisableRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "禁用成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.DisabledDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/email/enroll": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为用户注册邮箱MFA认证方式。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "Email MFA注册",
+        "parameters": [
+          {
+            "description": "邮箱MFA注册请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EmailEnrollRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "注册成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EmailEnrollDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/email/send": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "向用户邮箱发送验证码，用于邮箱MFA认证。生产环境不返回验证码明文。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "发送邮箱验证码",
+        "parameters": [
+          {
+            "description": "发送邮箱验证码请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EmailSendRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "发送成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EmailSendDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/email/verify": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "验证用户提交的邮箱验证码，判断其有效性。使用限流保护。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "验证邮箱验证",
+        "parameters": [
+          {
+            "description": "邮箱验证请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EmailVerifyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EmailVerifyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/methods": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "列出用户所有已配置的MFA方法（TOTP/SMS/Email）。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "列出MFA方法",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "MFA方法列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAMethodListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/methods/{method_type}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定类型的MFA认证方式。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "删除MFA方法",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "MFA方法类型（totp/sms/email）",
+            "name": "method_type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAMethodDeleteDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/push/approve": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户通过设备批准Push MFA挑战，完成身份验证。支持 Number Matching 验证。参考：NIST SP 800-63B §5.1.7 (Verifier Impersonation Resistance)、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "批准Push MFA挑战",
+        "parameters": [
+          {
+            "description": "Push批准请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushApproveRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批准成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.ValidDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误或挑战已过期",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "挑战未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/push/challenge": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建Push MFA挑战，通过notification-service推送批准请求到用户设备，包含 Number Matching 防钓鱼保护。参考：NIST SP 800-63B §5.1.7 (Verifier Impersonation Resistance)、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "创建Push MFA挑战",
+        "parameters": [
+          {
+            "description": "Push挑战创建请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "挑战创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "设备未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/push/challenge/{credential_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据挑战ID查询单条Push MFA挑战的当前状态，用于登录页面轮询。参考：NIST SP 800-63B §5.1.7 (Verifier Impersonation Resistance)、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "获取Push挑战状态",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "挑战ID",
+            "name": "credential_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "挑战状态",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeStatusDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "挑战未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/push/deny": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户通过设备拒绝Push MFA挑战。参考：NIST SP 800-63B §5.1.7 (Verifier Impersonation Resistance)、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "拒绝Push MFA挑战",
+        "parameters": [
+          {
+            "description": "Push拒绝请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushDenyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "拒绝成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.ValidDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误或挑战已过期",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "挑战未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/push/history": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "分页查询用户的Push MFA挑战历史记录。参考：NIST SP 800-63B §5.1.7、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "获取Push MFA挑战历史",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "状态过滤（pending/approved/denied/expired）",
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "挑战历史列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushHistoryListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/sms/disable": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "验证短信验证码后禁用SMS MFA认证。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "禁用短信 MFA",
+        "parameters": [
+          {
+            "description": "禁用SMS请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSDisableRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "禁用成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.DisabledDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/sms/enroll": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为用户注册短信MFA认证方式。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "SMS MFA注册",
+        "parameters": [
+          {
+            "description": "SMS注册请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSEnrollRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "注册成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSEnrollDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/sms/send": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "向用户手机发送短信验证码，用于短信MFA认证。生产环境不返回验证码明文。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "发送短信验证码",
+        "parameters": [
+          {
+            "description": "发送短信验证码请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSSendRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "发送成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSSendDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/sms/verify": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "验证用户输入的短信验证码，完成短信MFA认证。使用限流保护。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "验证短信验证",
+        "parameters": [
+          {
+            "description": "短信验证请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSVerifyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSVerifyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/status/{user_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询用户已启用的MFA方式和状态。参考：OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "获取用户MFA状态",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "MFA状态",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAStatusDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/step-up": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "对已登录用户的敏感操作进行二次MFA认证验证，支持TOTP、短信、邮箱三种方式。使用限流保护。参考：NIST SP 800-63B §5.1.7、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "MFA步进认证",
+        "parameters": [
+          {
+            "description": "步进认证请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.StepUpRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "步进认证结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.StepUpDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/totp/devices": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "列出用户的所有TOTP设备，支持多设备管理。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "列出TOTP设备",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "TOTP设备列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为用户注册一个新的TOTP设备，生成独立的密钥和二维码，支持多设备管理。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "注册TOTP设备",
+        "parameters": [
+          {
+            "description": "TOTP设备注册请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceRegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "设备注册成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceRegisterDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "设备数量已达上限",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/totp/devices/{device_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据ID获取指定TOTP设备的详细信息。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "获取TOTP设备详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "设备ID",
+            "name": "device_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设备详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceItem"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "设备未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "撤销指定的TOTP设备，需要提供当前TOTP验证码进行验证。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "撤销TOTP设备",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "设备ID",
+            "name": "device_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "撤销设备请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceRevokeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设备已撤销",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.DisabledDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "设备未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/totp/devices/{device_id}/disable": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "禁用指定的TOTP设备，切换Enabled状态为false。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "禁用TOTP设备",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "设备ID",
+            "name": "device_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设备已禁用",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceItem"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "设备未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/totp/devices/{device_id}/enable": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "启用指定的TOTP设备，切换Enabled状态为true，无需重新注册。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "启用TOTP设备",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "设备ID",
+            "name": "device_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设备已启用",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceItem"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "设备未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/totp/disable": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "禁用用户的TOTP多因素认证，需要提供当前TOTP码或备用码进行验证。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "禁用TOTP",
+        "parameters": [
+          {
+            "description": "禁用TOTP请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDisableRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "禁用成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.DisabledDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/totp/enable": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为用户启用基于时间的一次性密码(TOTP)认证，生成密钥和二维码，返回备用恢复码。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "启用TOTP多因素认证",
+        "parameters": [
+          {
+            "description": "TOTP启用请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPEnableRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "TOTP配置信息，包含密钥URL和二维码",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPEnableDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误或TOTP已启用",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/totp/setup": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为用户启用基于时间的一次性密码(TOTP)认证，生成密钥和二维码，返回备用恢复码。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "启用TOTP多因素认证",
+        "parameters": [
+          {
+            "description": "TOTP启用请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPEnableRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "TOTP配置信息，包含密钥URL和二维码",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPEnableDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误或TOTP已启用",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/totp/validate": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户登录时验证TOTP动态码，支持备用恢复码。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "验证TOTP码（登录时）",
+        "parameters": [
+          {
+            "description": "TOTP验证请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPValidateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.ValidDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/totp/verify": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "验证用户提交的TOTP验证码，验证通过后启用TOTP多因素认证。使用限流保护（checkRateLimit）。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "验证并启用TOTP",
+        "parameters": [
+          {
+            "description": "TOTP验证请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPVerifyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.ValidDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误或验证码无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/trusted-devices": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "列出用户所有受信设备。参考：NIST SP 800-63B §5.1、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "列出受信设备",
+        "responses": {
+          "200": {
+            "description": "受信设备列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceListResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "将当前设备标记为受信设备，30天内免MFA验证。参考：NIST SP 800-63B §5.1 (Verifier Impersonation Resistance)、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "记住受信设备",
+        "parameters": [
+          {
+            "description": "记住设备请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TrustDeviceRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "受信设备",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceDataResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "设备已注册",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "撤销用户所有受信设备，所有设备后续需重新MFA验证。参考：NIST SP 800-63B §5.1、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "撤销所有受信设备",
+        "responses": {
+          "200": {
+            "description": "已撤销数量",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceCountDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/trusted-devices/check": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "通过设备指纹检查设备是否在受信列表中。参考：NIST SP 800-63B §5.1、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "检查设备是否受信",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "设备指纹",
+            "name": "fingerprint",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "是否受信",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.ValidDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/trusted-devices/cleanup": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "清理所有已过期的受信设备记录。参考：NIST SP 800-63B §5.1、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "清理过期受信设备",
+        "responses": {
+          "200": {
+            "description": "清理完成",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/mfa/trusted-devices/{trusted_device_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据ID获取指定受信设备的详细信息。参考：NIST SP 800-63B §5.1、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "获取受信设备详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "受信设备ID",
+            "name": "trusted_device_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "受信设备",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceItem"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "设备未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "撤销指定受信设备，该设备后续需重新MFA验证。参考：NIST SP 800-63B §5.1、OWASP ASVS V2.8。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "撤销受信设备",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "设备ID",
+            "name": "trusted_device_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "撤销成功"
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "设备未找到",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "dto.FieldViolation": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是错误代码（可选）\n用于程序识别错误类型，如 \"required\", \"format\", \"range\"",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description 是人类可读的错误描述\n应该说明违反了什么规则，如 \"必须是一个有效的邮箱地址\"",
+          "type": "string"
+        },
+        "field": {
+          "description": "Field 是错误字段的路径\n使用点号表示嵌套字段，如 \"user.email\" 或 \"addresses[0].city\"",
+          "type": "string"
+        },
+        "standard": {
+          "description": "Standard 是指向权威规范文档的 URI 引用\n用于告知 API 消费者具体违反哪个标准\n示例：\"https://www.rfc-editor.org/info/rfc5322\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是导致错误的值（可选，开发模式下使用）\n生产环境可能不返回此字段以避免泄露敏感信息"
+        }
+      }
+    },
+    "dto.Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是业务错误码\n用于程序处理特定错误场景\n示例：30101001",
+          "type": "integer"
+        },
+        "detail": {
+          "description": "Detail 是针对此具体错误实例的人类可读解释\n可以包含具体的错误细节，如\"Field 'email' is required\"",
+          "type": "string"
+        },
+        "errors": {
+          "description": "Errors 是字段级验证错误列表（扩展字段）\n遵循 Web API 标准实践，每个错误包含字段名和错误信息",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dto.FieldViolation"
+          }
+        },
+        "i18n_args": {
+          "description": "I18nArgs 是国际化参数\n用于动态填充翻译模板",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "i18n_key": {
+          "description": "I18nKey 是国际化键\n用于客户端本地化错误消息\n示例：\"error.user_not_found\"",
+          "type": "string"
+        },
+        "instance": {
+          "description": "Instance 是发生问题的具体URI引用\n通常是请求的URL，可能包含查询参数\n示例：\"/api/v1/users?limit=invalid\"",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "RequestID 是请求唯一标识\n用于日志关联和问题追踪\n示例：\"req_550e8400-e29b-41d4-a716-446655440000\"",
+          "type": "string"
+        },
+        "retry_after": {
+          "description": "RetryAfter 用于 429 Too Many Requests 响应\n指示客户端应在多少秒后重试请求（RFC 6585）",
+          "type": "integer"
+        },
+        "service": {
+          "description": "Service 是服务名\n用于微服务架构中定位错误来源\n示例：\"auth-service\"",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "SpanID 是当前 span 标识\n用于精确定位分布式链路中的当前节点",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status 是产生的HTTP状态码\n用于客户端区分问题类型，不随Accept-Language变化\n示例：400, 401, 403, 404, 500",
+          "type": "integer"
+        },
+        "timestamp": {
+          "description": "Timestamp 是错误发生时间\nISO 8601 格式\n示例：\"2026-04-03T12:00:00Z\"",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title 是简短、人类可读的问题类型摘要\n相同的 Type 应该始终有相同的 Title（不随实例变化）\n示例：\"Invalid Request Parameters\"",
+          "type": "string"
+        },
+        "trace_id": {
+          "description": "TraceID 是分布式追踪标识\n遵循 W3C Trace Context 标准\n示例：\"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type 是标识问题类型的URI引用\n当该URI被解引用时，应提供人类可读的文档\n示例：\"https://api.example.com/errors/invalid-request\"",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.PageInfo": {
+      "type": "object",
+      "properties": {
+        "has_next": {
+          "description": "HasNext indicates whether there is a next page",
+          "type": "boolean"
+        },
+        "has_prev": {
+          "description": "HasPrev indicates whether there is a previous page",
+          "type": "boolean"
+        },
+        "page": {
+          "description": "Page is the current page number (1-based)",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "PageSize is the number of items per page",
+          "type": "integer"
+        },
+        "total": {
+          "description": "Total is the total number of items across all pages",
+          "type": "integer"
+        },
+        "total_pages": {
+          "description": "TotalPages is the total number of pages",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.AdminBackupCodesListItem": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "example": 8
+        },
+        "user_id": {
+          "type": "string",
+          "example": "user-abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.AdminBackupCodesListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.AdminBackupCodesListItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.AdminPushChallengeItem": {
+      "type": "object",
+      "properties": {
+        "challenge_id": {
+          "type": "string",
+          "example": "chal-abc123"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-25T08:00:00Z"
+        },
+        "login_context": {
+          "type": "string",
+          "example": "login from Beijing"
+        },
+        "number_matching": {
+          "type": "string",
+          "example": "42"
+        },
+        "resolved_at": {
+          "type": "string",
+          "example": "2026-05-25T08:05:00Z"
+        },
+        "status": {
+          "type": "string",
+          "example": "pending"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "user-001"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.AdminPushChallengeListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.AdminPushChallengeItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.BackupCodeVerifyDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.BackupCodeVerifyResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.BackupCodeVerifyRequest": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "12345678"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.BackupCodeVerifyResponse": {
+      "type": "object",
+      "properties": {
+        "remaining_codes": {
+          "type": "integer",
+          "example": 9
+        },
+        "valid": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.BackupCodesCountDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.BackupCodesCountResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.BackupCodesCountResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "example": 8
+        },
+        "max_codes": {
+          "type": "integer",
+          "example": 10
+        },
+        "message": {
+          "type": "string"
+        },
+        "should_regenerate": {
+          "type": "boolean",
+          "example": false
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.BackupCodesDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.BackupCodesResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.BackupCodesResponse": {
+      "type": "object",
+      "properties": {
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"12345678\"",
+            "\"23456789\"]"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "example": "Store these backup codes securely"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.CreateIPWhitelistRequest": {
+      "type": "object",
+      "required": [
+        "cidr",
+        "label"
+      ],
+      "properties": {
+        "cidr": {
+          "type": "string",
+          "example": "192.168.1.0/24"
+        },
+        "label": {
+          "type": "string",
+          "example": "office network"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.DeviceSyncDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.DeviceSyncResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.DeviceSyncListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.DeviceSyncResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.DeviceSyncRequest": {
+      "type": "object",
+      "required": [
+        "device_name",
+        "totp_devices"
+      ],
+      "properties": {
+        "device_fingerprint": {
+          "type": "string",
+          "example": "fp-abc123"
+        },
+        "device_name": {
+          "type": "string",
+          "example": "iPhone 15"
+        },
+        "totp_devices": {
+          "type": "string",
+          "example": "[{\"secret\":\"JBSWY3DPEHPK3PXP\"}]"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.DeviceSyncResponse": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-21T12:00:00Z"
+        },
+        "device_fingerprint": {
+          "type": "string",
+          "example": "fp-abc123"
+        },
+        "device_name": {
+          "type": "string",
+          "example": "iPhone 15"
+        },
+        "id": {
+          "type": "string",
+          "example": "devsync_abc123"
+        },
+        "last_sync_at": {
+          "type": "string",
+          "example": "2026-05-21T12:00:00Z"
+        },
+        "totp_devices": {
+          "type": "string",
+          "example": "[{\"secret\":\"JBSWY3DPEHPK3PXP\"}]"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.DisabledDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.DisabledResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.DisabledResponse": {
+      "type": "object",
+      "properties": {
+        "disabled": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EmailDisableRequest": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EmailEnrollDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EmailEnrollResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EmailEnrollRequest": {
+      "type": "object",
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "user@example.com"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EmailEnrollResponse": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "user@example.com"
+        },
+        "enabled": {
+          "type": "boolean",
+          "example": false
+        },
+        "method_type": {
+          "type": "string",
+          "example": "email"
+        },
+        "status": {
+          "type": "string",
+          "example": "pending_verification"
+        },
+        "verified": {
+          "type": "boolean",
+          "example": false
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EmailSendData": {
+      "type": "object",
+      "properties": {
+        "expires": {
+          "type": "string"
+        },
+        "sent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EmailSendDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EmailSendData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EmailSendRequest": {
+      "type": "object",
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EmailVerifyDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.ValidResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EmailVerifyRequest": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "email": {
+          "description": "邮箱地址，用于创建 MFAConfig 记录",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EvaluateRiskPolicyDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.EvaluateRiskPolicyResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EvaluateRiskPolicyRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "device_fingerprint": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.EvaluateRiskPolicyResponse": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enabled 该等级是否存在启用策略；false = 管理员已禁用（或回退内置默认），不再额外要求 MFA（A17）",
+          "type": "boolean",
+          "example": true
+        },
+        "is_new_device": {
+          "type": "boolean",
+          "example": false
+        },
+        "level": {
+          "type": "string",
+          "example": "medium"
+        },
+        "required_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"totp\"",
+            "\"sms\"]"
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.GenerateBackupCodesRequest": {
+      "type": "object"
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.GetBackupCodesDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.GetBackupCodesResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.GetBackupCodesResponse": {
+      "type": "object",
+      "properties": {
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"12345678\"",
+            "\"23456789\"]"
+          ]
+        },
+        "count": {
+          "type": "integer",
+          "example": 8
+        },
+        "message": {
+          "type": "string",
+          "example": "Store these codes securely"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.IPWhitelistDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.IPWhitelistResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.IPWhitelistListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.IPWhitelistResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.IPWhitelistResponse": {
+      "type": "object",
+      "properties": {
+        "cidr": {
+          "type": "string",
+          "example": "192.168.1.0/24"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-15T08:00:00Z"
+        },
+        "enabled": {
+          "type": "boolean",
+          "example": true
+        },
+        "id": {
+          "type": "string",
+          "example": "wl_abc123"
+        },
+        "label": {
+          "type": "string",
+          "example": "office network"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_001"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.InternalEmailSendRequest": {
+      "type": "object",
+      "required": [
+        "email",
+        "user_id"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.InternalEraseMFARequest": {
+      "type": "object",
+      "required": [
+        "tenant_id",
+        "user_id"
+      ],
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.InternalMFAStatusDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.InternalMFAStatusResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.InternalMFAStatusResponse": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAMethodStatus"
+        },
+        "sms": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAMethodStatus"
+        },
+        "totp": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAMethodStatus"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.InternalSMSSendRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "purpose": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.InternalTOTPDisableRequest": {
+      "type": "object",
+      "required": [
+        "tenant_id",
+        "user_id"
+      ],
+      "properties": {
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.InternalTOTPValidateRequest": {
+      "type": "object",
+      "required": [
+        "code",
+        "user_id"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAChallengeDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAChallengeResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAChallengeRequest": {
+      "type": "object",
+      "required": [
+        "method"
+      ],
+      "properties": {
+        "method": {
+          "type": "string",
+          "example": "sms"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAChallengeResponse": {
+      "type": "object",
+      "properties": {
+        "challenge_id": {
+          "type": "string",
+          "example": "challenge-1234567890"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-14T12:00:00Z"
+        },
+        "expires_in": {
+          "type": "integer",
+          "example": 300
+        },
+        "method": {
+          "type": "string",
+          "example": "sms"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tenant-001"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "user-001"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAConfigAuditLogItem": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "example": "mfa_totp.enabled"
+        },
+        "id": {
+          "type": "string",
+          "example": "log_abc123"
+        },
+        "message": {
+          "type": "string",
+          "example": "TOTP enabled successfully"
+        },
+        "module": {
+          "type": "string",
+          "example": "data"
+        },
+        "operator_id": {
+          "type": "string",
+          "example": "usr_admin"
+        },
+        "target_id": {
+          "type": "string",
+          "example": "mfa_abc123"
+        },
+        "target_type": {
+          "type": "string",
+          "example": "mfa_totp"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_001"
+        },
+        "timestamp": {
+          "type": "string",
+          "example": "2026-05-15T10:00:00Z"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAConfigAuditLogListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAConfigAuditLogItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFADeletedResponse": {
+      "type": "object",
+      "properties": {
+        "deleted": {
+          "type": "boolean",
+          "example": true
+        },
+        "type": {
+          "type": "string",
+          "example": "sms"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAMethodDeleteDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFADeletedResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAMethodItem": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-14T08:00:00Z"
+        },
+        "detail": {
+          "type": "string",
+          "example": "+8613800****000"
+        },
+        "enabled": {
+          "type": "boolean",
+          "example": true
+        },
+        "method_type": {
+          "type": "string",
+          "example": "totp"
+        },
+        "primary": {
+          "type": "boolean",
+          "example": true
+        },
+        "verified": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAMethodListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAMethodItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAMethodStatus": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "user@example.com"
+        },
+        "enabled": {
+          "type": "boolean",
+          "example": true
+        },
+        "phone": {
+          "type": "string",
+          "example": "+8613800****000"
+        },
+        "verified": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAStatusDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.MFAStatusResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.MFAStatusResponse": {
+      "type": "object",
+      "properties": {
+        "email_address": {
+          "type": "string",
+          "example": "user@example.com"
+        },
+        "email_enabled": {
+          "type": "boolean",
+          "example": true
+        },
+        "sms_enabled": {
+          "type": "boolean",
+          "example": false
+        },
+        "sms_phone": {
+          "type": "string",
+          "example": "+8613800****000"
+        },
+        "totp_enabled": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushApproveRequest": {
+      "type": "object",
+      "required": [
+        "challenge_id",
+        "number_matching"
+      ],
+      "properties": {
+        "challenge_id": {
+          "type": "string",
+          "example": "chal-abc123"
+        },
+        "device_key": {
+          "type": "string",
+          "example": "hmac-sig"
+        },
+        "number_matching": {
+          "type": "string",
+          "example": "42"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeRequest": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "example": "dev-001"
+        },
+        "login_context": {
+          "type": "string",
+          "example": "login from Beijing"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeResponse": {
+      "type": "object",
+      "properties": {
+        "challenge_id": {
+          "type": "string",
+          "example": "chal-abc123"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-12T12:00:00Z"
+        },
+        "expires_in": {
+          "type": "integer",
+          "example": 120
+        },
+        "login_context": {
+          "type": "string",
+          "example": "login from Beijing"
+        },
+        "number_matching": {
+          "type": "string",
+          "example": "42"
+        },
+        "status": {
+          "type": "string",
+          "example": "pending"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "user-001"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeStatusDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeStatusResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushChallengeStatusResponse": {
+      "type": "object",
+      "properties": {
+        "challenge_id": {
+          "type": "string",
+          "example": "chal-abc123"
+        },
+        "login_context": {
+          "type": "string",
+          "example": "login from Beijing"
+        },
+        "number_matching": {
+          "type": "string",
+          "example": "42"
+        },
+        "resolved_at": {
+          "type": "string",
+          "example": "2026-05-25T12:05:00Z"
+        },
+        "status": {
+          "type": "string",
+          "example": "approved"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushDenyRequest": {
+      "type": "object",
+      "required": [
+        "challenge_id",
+        "number_matching"
+      ],
+      "properties": {
+        "challenge_id": {
+          "type": "string",
+          "example": "chal-abc123"
+        },
+        "device_key": {
+          "type": "string",
+          "example": "hmac-sig"
+        },
+        "number_matching": {
+          "type": "string",
+          "example": "42"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushHistoryItem": {
+      "type": "object",
+      "properties": {
+        "challenge_id": {
+          "type": "string",
+          "example": "chal-abc123"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-25T08:00:00Z"
+        },
+        "login_context": {
+          "type": "string",
+          "example": "login from Beijing"
+        },
+        "resolved_at": {
+          "type": "string",
+          "example": "2026-05-25T08:05:00Z"
+        },
+        "status": {
+          "type": "string",
+          "example": "approved"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushHistoryListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushHistoryItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushStatsDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.PushStatsResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.PushStatsResponse": {
+      "type": "object",
+      "properties": {
+        "approved": {
+          "type": "integer",
+          "example": 89
+        },
+        "denied": {
+          "type": "integer",
+          "example": 12
+        },
+        "expired": {
+          "type": "integer",
+          "example": 34
+        },
+        "pending": {
+          "type": "integer",
+          "example": 125
+        },
+        "total": {
+          "type": "integer",
+          "example": 260
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyItem": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-25T08:00:00Z"
+        },
+        "description": {
+          "type": "string",
+          "example": "High-risk policy for new devices"
+        },
+        "enabled": {
+          "type": "boolean",
+          "example": true
+        },
+        "id": {
+          "type": "string",
+          "example": "rp_abc123"
+        },
+        "level": {
+          "type": "string",
+          "example": "high"
+        },
+        "required_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"totp\"",
+            "\"sms\"]"
+          ]
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2026-05-25T08:00:00Z"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyItemDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyItem"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyLevel": {
+      "type": "object",
+      "properties": {
+        "required_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"totp\"",
+            "\"sms\"]"
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyListResponseWrap": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyResponse": {
+      "type": "object",
+      "properties": {
+        "high_risk": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyLevel"
+        },
+        "low_risk": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyLevel"
+        },
+        "medium_risk": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.RiskPolicyLevel"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SMSDisableRequest": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SMSEnrollDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSEnrollResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SMSEnrollRequest": {
+      "type": "object",
+      "required": [
+        "phone"
+      ],
+      "properties": {
+        "phone": {
+          "type": "string",
+          "example": "+8613800138000"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SMSEnrollResponse": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "example": false
+        },
+        "method_type": {
+          "type": "string",
+          "example": "sms"
+        },
+        "phone": {
+          "type": "string",
+          "example": "+8613800****000"
+        },
+        "status": {
+          "type": "string",
+          "example": "pending_verification"
+        },
+        "verified": {
+          "type": "boolean",
+          "example": false
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SMSSendDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSSendResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SMSSendRequest": {
+      "type": "object",
+      "required": [
+        "phone"
+      ],
+      "properties": {
+        "phone": {
+          "type": "string"
+        },
+        "purpose": {
+          "description": "login, bind, reset",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SMSSendResponse": {
+      "type": "object",
+      "properties": {
+        "expires": {
+          "type": "string",
+          "example": "2026-05-25T12:05:00Z"
+        },
+        "sent": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SMSVerifyDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SMSVerifyResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SMSVerifyRequest": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "phone": {
+          "description": "手机号，用于创建 MFAConfig 记录",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SMSVerifyResponse": {
+      "type": "object",
+      "properties": {
+        "valid": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SetPrimaryCredentialDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.SetPrimaryCredentialResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SetPrimaryCredentialRequest": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.SetPrimaryCredentialResponse": {
+      "type": "object",
+      "properties": {
+        "credential_id": {
+          "type": "string",
+          "example": "cred_abc123def456"
+        },
+        "primary": {
+          "type": "boolean",
+          "example": true
+        },
+        "type": {
+          "type": "string",
+          "example": "totp"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.StepUpDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.StepUpResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.StepUpRequest": {
+      "type": "object",
+      "required": [
+        "code",
+        "method",
+        "user_id"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "123456"
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "totp",
+            "sms",
+            "email"
+          ],
+          "example": "totp"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.StepUpResponse": {
+      "type": "object",
+      "properties": {
+        "expires_in": {
+          "type": "integer",
+          "example": 300
+        },
+        "message": {
+          "type": "string",
+          "example": "step-up authentication successful"
+        },
+        "step_up_token": {
+          "type": "string",
+          "example": "eyJ..."
+        },
+        "valid": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceItem": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-12T12:00:00Z"
+        },
+        "device_id": {
+          "type": "string",
+          "example": "dev-abc123"
+        },
+        "device_name": {
+          "type": "string",
+          "example": "iPhone 15"
+        },
+        "enabled": {
+          "type": "boolean",
+          "example": true
+        },
+        "last_used_at": {
+          "type": "string",
+          "example": "2026-05-12T12:00:00Z"
+        },
+        "verified": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceRegisterDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceRegisterResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceRegisterRequest": {
+      "type": "object",
+      "required": [
+        "device_name"
+      ],
+      "properties": {
+        "account": {
+          "type": "string",
+          "example": "user@example.com"
+        },
+        "device_fingerprint": {
+          "type": "string",
+          "example": "fp-abc123"
+        },
+        "device_name": {
+          "type": "string",
+          "example": "iPhone 15"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceRegisterResponse": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "example": "dev-abc123"
+        },
+        "device_name": {
+          "type": "string",
+          "example": "iPhone 15"
+        },
+        "qr_code": {
+          "type": "string",
+          "example": "data:image/png;base64,..."
+        },
+        "qr_code_url": {
+          "type": "string",
+          "example": "otpauth://totp/..."
+        },
+        "secret": {
+          "type": "string",
+          "example": "JBSWY3DPEHPK3PXP"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPDeviceRevokeRequest": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "123456"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPDisableRequest": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPEnableDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TOTPEnableResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPEnableRequest": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "device_name": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPEnableResponse": {
+      "type": "object",
+      "properties": {
+        "backup_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"12345678\"",
+            "\"23456789\"]"
+          ]
+        },
+        "qr_code": {
+          "type": "string",
+          "example": "data:image/png;base64,iVBORw0KGgo..."
+        },
+        "qr_code_url": {
+          "type": "string",
+          "example": "otpauth://totp/Autional:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=Autional"
+        },
+        "secret": {
+          "type": "string",
+          "example": "JBSWY3DPEHPK3PXP"
+        },
+        "setup_url": {
+          "type": "string",
+          "example": "https://auth.example.com/mfa/totp/setup"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPValidateRequest": {
+      "type": "object",
+      "required": [
+        "code",
+        "user_id"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TOTPVerifyRequest": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TrustDeviceRequest": {
+      "type": "object",
+      "required": [
+        "device_fingerprint",
+        "device_name"
+      ],
+      "properties": {
+        "device_fingerprint": {
+          "type": "string"
+        },
+        "device_name": {
+          "type": "string"
+        },
+        "user_agent": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceCountDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceCountResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceCountResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "example": 3
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceItem"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceItem": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-25T08:00:00Z"
+        },
+        "device_name": {
+          "type": "string",
+          "example": "iPhone 15"
+        },
+        "id": {
+          "type": "string",
+          "example": "td_abc123"
+        },
+        "ip_address": {
+          "type": "string",
+          "example": "192.168.1.100"
+        },
+        "trusted_until": {
+          "type": "string",
+          "example": "2026-06-25T08:00:00Z"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.TrustedDeviceItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.UpdateIPWhitelistRequest": {
+      "type": "object",
+      "properties": {
+        "cidr": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.UpdateRiskPolicyByLevelRequest": {
+      "type": "object",
+      "required": [
+        "required_methods"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "required_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.UpdateRiskPolicyRequest": {
+      "type": "object",
+      "required": [
+        "high_risk",
+        "low_risk",
+        "medium_risk"
+      ],
+      "properties": {
+        "high_risk": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "low_risk": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "medium_risk": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.ValidDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-mfa_internal_handler_dto.ValidResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-mfa_internal_handler_dto.ValidResponse": {
+      "type": "object",
+      "properties": {
+        "valid": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "多因素认证：TOTP、短信、邮件、生物识别、Push",
+      "name": "MFA"
+    },
+    {
+      "description": "管理员接口：用户管理、系统配置、安全策略",
+      "name": "Admin"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}

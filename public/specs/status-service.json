@@ -1,0 +1,2613 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "状态服务，提供系统事件管理、维护日历、状态订阅和指标查询功能",
+    "title": "状态服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/bff/status/api/v1",
+  "paths": {
+    "/internal/schedulers": {
+      "get": {
+        "description": "返回当前服务所有后台调度器的运行状态",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页 - 内部接口"
+        ],
+        "summary": "查询调度器状态列表",
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-any"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/status/subscriptions/digest": {
+      "post": {
+        "description": "内部API，受InternalAPIKeyMulti保护。按 digest_frequency（immediate|daily|weekly）选出已验证订阅者，返回可投递批次（收件人 + 摘要正文 + unsubscribe_url）。本端点只产出数据，不发送邮件、不发布事件。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页 - 内部接口"
+        ],
+        "summary": "触发状态摘要批次",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "摘要频率（immediate|daily|weekly）",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.DigestRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "摘要批次（只产数据，未发送）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.DigestDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效（frequency 非法或缺失）",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未提供有效的X-API-Key",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/status/subscriptions/erase": {
+      "post": {
+        "description": "内部API，受InternalAPIKeyMulti保护。根据邮箱查找订阅者并匿名化PII数据（替换邮箱哈希、清空令牌和偏好）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页 - 内部接口"
+        ],
+        "summary": "GDPR擦除订阅者数据",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "请求体（包含 email）",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "擦除成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未提供有效的X-API-Key",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/status/badge/{service}": {
+      "get": {
+        "description": "返回指定服务的SVG状态徽章，可用于README、仪表盘等场景嵌入展示",
+        "produces": [
+          "image/svg+xml"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "SVG服务状态徽章",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务ID",
+            "name": "service",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SVG徽章图片",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/incidents": {
+      "get": {
+        "description": "查询系统事件/事故列表，支持按严重级别、状态、影响服务过滤",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "查询事件列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "严重级别: critical/major/minor/maintenance",
+            "name": "severity",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "事件状态: investigating/identified/monitoring/resolved",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "影响的服务ID",
+            "name": "service",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "事件列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.IncidentListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建新的系统事件（管理接口，需要管理员权限）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "创建事件",
+        "parameters": [
+          {
+            "description": "创建事件信息",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.CreateIncidentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "事件创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.IncidentDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权，请先登录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/incidents/{incident_id}": {
+      "get": {
+        "description": "根据事件ID查询单个事件的完整详情（含进展更新）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "查询事件详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "事件ID",
+            "name": "incident_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "事件详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.IncidentDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新事件信息（管理接口，需要管理员权限）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "更新事件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "事件ID",
+            "name": "incident_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新的事件信息",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.UpdateIncidentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "事件更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.IncidentDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权，请先登录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "事件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定事件（管理接口，需要管理员权限）",
+        "tags": [
+          "状态页"
+        ],
+        "summary": "删除事件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "事件ID",
+            "name": "incident_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "事件删除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MessageResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权，请先登录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "事件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/incidents/{incident_id}/updates": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定事件添加进展更新记录（管理接口，需要管理员权限）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "添加事件进展更新",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "事件ID",
+            "name": "incident_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "进展更新内容",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.AddIncidentUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "进展更新添加成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.IncidentUpdateDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权，请先登录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "事件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/json": {
+      "get": {
+        "description": "返回所有注册服务的健康状态JSON（基于服务注册表），供外部监控和服务发现使用",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "机器可读系统状态",
+        "responses": {
+          "200": {
+            "description": "系统状态数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.JSONStatusDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/maintenances": {
+      "get": {
+        "description": "查询计划维护日历列表，支持按状态过滤",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "查询计划维护列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "维护状态: scheduled/in_progress/completed/cancelled",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "维护列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MaintenanceListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建新的计划维护预告（管理接口，需要管理员权限）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "创建维护预告",
+        "parameters": [
+          {
+            "description": "维护预告信息",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.CreateMaintenanceRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "维护创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MaintenanceDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权，请先登录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/maintenances/{maintenance_id}": {
+      "get": {
+        "description": "根据维护ID查询单个计划维护的完整信息",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "查询维护详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "维护ID",
+            "name": "maintenance_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "维护详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MaintenanceDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新维护预告信息或状态（管理接口，需要管理员权限）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "更新维护预告",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "维护ID",
+            "name": "maintenance_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新的维护信息",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.UpdateMaintenanceRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "维护更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MaintenanceDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权，请先登录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "维护不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的计划维护预告（管理接口，需要管理员权限）",
+        "tags": [
+          "状态页"
+        ],
+        "summary": "删除维护预告",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "维护ID",
+            "name": "maintenance_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "维护删除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MessageResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权，请先登录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "维护不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/metrics/latency": {
+      "get": {
+        "description": "查询指定服务的历史延迟趋势（P95延迟，数据来源 Prometheus）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "查询服务延迟趋势",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务ID",
+            "name": "service",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "24h",
+            "description": "时间范围: 1h/24h/7d/30d",
+            "name": "range",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "延迟趋势数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.LatencyDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/metrics/uptime": {
+      "get": {
+        "description": "查询指定服务的历史可用率趋势（来自 Prometheus up 指标）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "查询服务可用率趋势",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务ID",
+            "name": "service",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "24h",
+            "description": "时间范围: 1h/24h/7d/30d",
+            "name": "range",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "可用率趋势数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.UptimeDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/overview": {
+      "get": {
+        "description": "获取系统整体状态概览，包含服务健康数、活跃事件数等汇总信息",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "系统状态概览",
+        "responses": {
+          "200": {
+            "description": "系统概览数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.OverviewDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/rss": {
+      "get": {
+        "description": "生成最近事件和即将到来的维护预告的 RSS 2.0 订阅源，供 RSS 阅读器订阅",
+        "produces": [
+          "text/xml"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "RSS事件与维护订阅源",
+        "responses": {
+          "200": {
+            "description": "RSS 2.0 XML",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/services": {
+      "get": {
+        "description": "返回所有已注册服务及其元数据信息，按业务分组展示",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "获取服务目录",
+        "responses": {
+          "200": {
+            "description": "服务目录数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.ServiceCatalogDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/subscriptions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询所有订阅者信息（管理接口，需要管理员权限）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "查询订阅者列表",
+        "parameters": [
+          {
+            "type": "boolean",
+            "description": "是否已验证",
+            "name": "verified",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "订阅者列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.SubscriptionListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权，请先登录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "通过邮箱订阅系统状态变更通知，提交后需验证邮箱完成激活",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "订阅状态通知",
+        "parameters": [
+          {
+            "description": "订阅信息（邮箱必填）",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.SubscribeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "订阅成功，请查收验证邮件",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.SubscribeDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "通过取消订阅令牌退订状态通知",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "取消订阅",
+        "parameters": [
+          {
+            "description": "取消订阅令牌",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.UnsubscribeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消订阅成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MessageResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/subscriptions/preferences": {
+      "get": {
+        "description": "按订阅管理令牌（确认邮件/摘要邮件内的 manage 链接所携带的 token）查询订阅者的通知偏好设置",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "查询订阅通知偏好",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "订阅管理令牌（邮件内 manage 链接携带）",
+            "name": "token",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "订阅偏好数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.SubscriptionPreferencesDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "按订阅管理令牌更新订阅者的通知偏好设置（通知类型、摘要频率、关注分类等）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "更新订阅通知偏好",
+        "parameters": [
+          {
+            "description": "偏好设置（token 为邮件内 manage 链接携带的令牌）",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.SubscriptionPreferencesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "偏好更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.SubscriptionPreferencesDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/status/subscriptions/verify": {
+      "post": {
+        "description": "通过邮件中的验证令牌激活订阅",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "状态页"
+        ],
+        "summary": "验证订阅邮箱",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "邮件中的验证令牌",
+            "name": "token",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "邮箱验证成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MessageResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "domain.IncidentSeverity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "major",
+        "minor",
+        "maintenance"
+      ],
+      "x-enum-varnames": [
+        "IncidentSeverityCritical",
+        "IncidentSeverityMajor",
+        "IncidentSeverityMinor",
+        "IncidentSeverityMaintenance"
+      ]
+    },
+    "domain.IncidentStatus": {
+      "type": "string",
+      "enum": [
+        "investigating",
+        "identified",
+        "monitoring",
+        "resolved",
+        "draft"
+      ],
+      "x-enum-varnames": [
+        "IncidentStatusInvestigating",
+        "IncidentStatusIdentified",
+        "IncidentStatusMonitoring",
+        "IncidentStatusResolved",
+        "IncidentStatusDraft"
+      ]
+    },
+    "domain.MaintenanceStatus": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "in_progress",
+        "completed",
+        "cancelled"
+      ],
+      "x-enum-varnames": [
+        "MaintenanceStatusScheduled",
+        "MaintenanceStatusInProgress",
+        "MaintenanceStatusCompleted",
+        "MaintenanceStatusCancelled"
+      ]
+    },
+    "dto.DataResponse-any": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {},
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.FieldViolation": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是错误代码（可选）\n用于程序识别错误类型，如 \"required\", \"format\", \"range\"",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description 是人类可读的错误描述\n应该说明违反了什么规则，如 \"必须是一个有效的邮箱地址\"",
+          "type": "string"
+        },
+        "field": {
+          "description": "Field 是错误字段的路径\n使用点号表示嵌套字段，如 \"user.email\" 或 \"addresses[0].city\"",
+          "type": "string"
+        },
+        "standard": {
+          "description": "Standard 是指向权威规范文档的 URI 引用\n用于告知 API 消费者具体违反哪个标准\n示例：\"https://www.rfc-editor.org/info/rfc5322\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是导致错误的值（可选，开发模式下使用）\n生产环境可能不返回此字段以避免泄露敏感信息"
+        }
+      }
+    },
+    "dto.PageInfo": {
+      "type": "object",
+      "properties": {
+        "has_next": {
+          "description": "HasNext indicates whether there is a next page",
+          "type": "boolean"
+        },
+        "has_prev": {
+          "description": "HasPrev indicates whether there is a previous page",
+          "type": "boolean"
+        },
+        "page": {
+          "description": "Page is the current page number (1-based)",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "PageSize is the number of items per page",
+          "type": "integer"
+        },
+        "total": {
+          "description": "Total is the total number of items across all pages",
+          "type": "integer"
+        },
+        "total_pages": {
+          "description": "TotalPages is the total number of pages",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是业务错误码\n用于程序处理特定错误场景\n示例：30101001",
+          "type": "integer"
+        },
+        "detail": {
+          "description": "Detail 是针对此具体错误实例的人类可读解释\n可以包含具体的错误细节，如\"Field 'email' is required\"",
+          "type": "string"
+        },
+        "errors": {
+          "description": "Errors 是字段级验证错误列表（扩展字段）\n遵循 Web API 标准实践，每个错误包含字段名和错误信息",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dto.FieldViolation"
+          }
+        },
+        "i18n_args": {
+          "description": "I18nArgs 是国际化参数\n用于动态填充翻译模板",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "i18n_key": {
+          "description": "I18nKey 是国际化键\n用于客户端本地化错误消息\n示例：\"error.user_not_found\"",
+          "type": "string"
+        },
+        "instance": {
+          "description": "Instance 是发生问题的具体URI引用\n通常是请求的URL，可能包含查询参数\n示例：\"/api/v1/users?limit=invalid\"",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "RequestID 是请求唯一标识\n用于日志关联和问题追踪\n示例：\"req_550e8400-e29b-41d4-a716-446655440000\"",
+          "type": "string"
+        },
+        "retry_after": {
+          "description": "RetryAfter 用于 429 Too Many Requests 响应\n指示客户端应在多少秒后重试请求（RFC 6585）",
+          "type": "integer"
+        },
+        "service": {
+          "description": "Service 是服务名\n用于微服务架构中定位错误来源\n示例：\"auth-service\"",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "SpanID 是当前 span 标识\n用于精确定位分布式链路中的当前节点",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status 是产生的HTTP状态码\n用于客户端区分问题类型，不随Accept-Language变化\n示例：400, 401, 403, 404, 500",
+          "type": "integer"
+        },
+        "timestamp": {
+          "description": "Timestamp 是错误发生时间\nISO 8601 格式\n示例：\"2026-04-03T12:00:00Z\"",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title 是简短、人类可读的问题类型摘要\n相同的 Type 应该始终有相同的 Title（不随实例变化）\n示例：\"Invalid Request Parameters\"",
+          "type": "string"
+        },
+        "trace_id": {
+          "description": "TraceID 是分布式追踪标识\n遵循 W3C Trace Context 标准\n示例：\"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type 是标识问题类型的URI引用\n当该URI被解引用时，应提供人类可读的文档\n示例：\"https://api.example.com/errors/invalid-request\"",
+          "type": "string"
+        }
+      }
+    },
+    "dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.AddIncidentUpdateRequest": {
+      "type": "object",
+      "required": [
+        "message",
+        "status"
+      ],
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "已确认问题原因为数据库连接池耗尽"
+        },
+        "status": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/domain.IncidentStatus"
+            }
+          ],
+          "example": "identified"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.CreateIncidentRequest": {
+      "type": "object",
+      "required": [
+        "severity",
+        "status",
+        "title"
+      ],
+      "properties": {
+        "affected_services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"identity-service\"",
+            "\"session-service\"]"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "example": "部分用户报告登录接口响应缓慢"
+        },
+        "severity": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/domain.IncidentSeverity"
+            }
+          ],
+          "example": "major"
+        },
+        "status": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/domain.IncidentStatus"
+            }
+          ],
+          "example": "investigating"
+        },
+        "title": {
+          "type": "string",
+          "example": "身份认证服务响应延迟增加"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.CreateMaintenanceRequest": {
+      "type": "object",
+      "required": [
+        "scheduled_end_at",
+        "scheduled_start_at",
+        "title"
+      ],
+      "properties": {
+        "affected_services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"audit-service\"]"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "example": "审计服务将进行数据库索引优化升级"
+        },
+        "scheduled_end_at": {
+          "type": "string",
+          "example": "2026-05-20T04:00:00Z"
+        },
+        "scheduled_start_at": {
+          "type": "string",
+          "example": "2026-05-20T02:00:00Z"
+        },
+        "title": {
+          "type": "string",
+          "example": "审计服务数据库升级"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.DigestDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.DigestResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.DigestItemResponse": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "unsubscribe_url": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.DigestRequest": {
+      "type": "object",
+      "required": [
+        "frequency"
+      ],
+      "properties": {
+        "frequency": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.DigestResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "frequency": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.DigestItemResponse"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.IncidentDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.IncidentResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.IncidentListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.IncidentResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.IncidentResponse": {
+      "type": "object",
+      "properties": {
+        "affected_services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"identity-service\"]"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-20T10:00:00Z"
+        },
+        "description": {
+          "type": "string",
+          "example": "Users experiencing slow login responses"
+        },
+        "id": {
+          "type": "string",
+          "example": "01HX5J8K9M2N"
+        },
+        "resolved_at": {
+          "type": "string"
+        },
+        "severity": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/domain.IncidentSeverity"
+            }
+          ],
+          "example": "major"
+        },
+        "status": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/domain.IncidentStatus"
+            }
+          ],
+          "example": "investigating"
+        },
+        "title": {
+          "type": "string",
+          "example": "Login Service Latency Increased"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2026-05-20T10:30:00Z"
+        },
+        "updates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.IncidentUpdateResponse"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.IncidentUpdateDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.IncidentUpdateResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.IncidentUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-20T10:15:00Z"
+        },
+        "id": {
+          "type": "string",
+          "example": "01HX5J9K0A3B"
+        },
+        "message": {
+          "type": "string",
+          "example": "Identified database connection pool exhaustion as root cause"
+        },
+        "status": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/domain.IncidentStatus"
+            }
+          ],
+          "example": "identified"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.JSONStatusDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.JSONStatusResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.JSONStatusResponse": {
+      "type": "object",
+      "properties": {
+        "active_incidents": {
+          "type": "integer"
+        },
+        "last_updated": {
+          "type": "string"
+        },
+        "overall_status": {
+          "type": "string"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.ServiceStatusItem"
+          }
+        },
+        "uptime": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.LatencyDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.LatencyMetricsResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.LatencyMetricsResponse": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "description": "Available 标记 Prometheus 数据源是否可用（查询失败或未部署时为 false）",
+          "type": "boolean"
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MetricsDataPoint"
+          }
+        },
+        "range": {
+          "type": "string",
+          "example": "24h"
+        },
+        "service": {
+          "type": "string",
+          "example": "identity-service"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.MaintenanceDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MaintenanceResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.MaintenanceListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MaintenanceResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.MaintenanceResponse": {
+      "type": "object",
+      "properties": {
+        "affected_services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"audit-service\"]"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-20T10:00:00Z"
+        },
+        "description": {
+          "type": "string",
+          "example": "Scheduled database index optimization for audit-service"
+        },
+        "id": {
+          "type": "string",
+          "example": "01HX5KA1B2C3"
+        },
+        "scheduled_end_at": {
+          "type": "string",
+          "example": "2026-05-22T04:00:00Z"
+        },
+        "scheduled_start_at": {
+          "type": "string",
+          "example": "2026-05-22T02:00:00Z"
+        },
+        "status": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/domain.MaintenanceStatus"
+            }
+          ],
+          "example": "scheduled"
+        },
+        "title": {
+          "type": "string",
+          "example": "Database Index Optimization"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2026-05-20T10:00:00Z"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.MessageResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.MetricsDataPoint": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "example": "2026-05-20T10:00:00Z"
+        },
+        "value": {
+          "type": "number",
+          "example": 99.95
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.OverviewDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.OverviewResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.OverviewResponse": {
+      "type": "object",
+      "properties": {
+        "active_incidents": {
+          "type": "integer",
+          "example": 0
+        },
+        "last_updated": {
+          "type": "string",
+          "example": "2026-05-09T10:00:00Z"
+        },
+        "overall_status": {
+          "type": "string",
+          "example": "operational"
+        },
+        "services_healthy": {
+          "type": "integer",
+          "example": 26
+        },
+        "services_total": {
+          "type": "integer",
+          "example": 26
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.ServiceCatalogDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.ServiceCatalogResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.ServiceCatalogItem": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.ServiceCatalogResponse": {
+      "type": "object",
+      "properties": {
+        "all_services": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.ServiceCatalogItem"
+          }
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.ServiceGroupItem"
+          }
+        },
+        "last_updated": {
+          "type": "string"
+        },
+        "total_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.ServiceGroupItem": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.ServiceCatalogItem"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.ServiceStatusItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "latency": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "uptime_7d": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.SubscribeDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.SubscribeResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.SubscribeRequest": {
+      "type": "object",
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "company": {
+          "type": "string",
+          "example": "Acme Corp"
+        },
+        "email": {
+          "type": "string",
+          "example": "user@example.com"
+        },
+        "message": {
+          "type": "string",
+          "example": "我想了解贵公司的安全认证方案"
+        },
+        "name": {
+          "type": "string",
+          "example": "张三"
+        },
+        "phone": {
+          "type": "string",
+          "example": "+86 13800138000"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.SubscribeResponse": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "user@example.com"
+        },
+        "id": {
+          "type": "string",
+          "example": "01HX5KB3C4D5"
+        },
+        "message": {
+          "type": "string",
+          "example": "Successfully subscribed to status notifications"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.SubscriptionListItem": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "digest_frequency": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_verified": {
+          "type": "boolean"
+        },
+        "notify_incidents": {
+          "type": "boolean"
+        },
+        "notify_maintenance": {
+          "type": "boolean"
+        },
+        "notify_recovery": {
+          "type": "boolean"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.SubscriptionListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.SubscriptionListItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.SubscriptionPreferencesDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.SubscriptionPreferencesResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.SubscriptionPreferencesRequest": {
+      "type": "object",
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "digest_frequency": {
+          "description": "immediate, daily, weekly",
+          "type": "string"
+        },
+        "notify_incidents": {
+          "type": "boolean"
+        },
+        "notify_maintenance": {
+          "type": "boolean"
+        },
+        "notify_recovery": {
+          "type": "boolean"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.SubscriptionPreferencesResponse": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "digest_frequency": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "notify_incidents": {
+          "type": "boolean"
+        },
+        "notify_maintenance": {
+          "type": "boolean"
+        },
+        "notify_recovery": {
+          "type": "boolean"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.UnsubscribeRequest": {
+      "type": "object",
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.UpdateIncidentRequest": {
+      "type": "object",
+      "properties": {
+        "affected_services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "resolved_at": {
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/definitions/domain.IncidentSeverity"
+        },
+        "status": {
+          "$ref": "#/definitions/domain.IncidentStatus"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.UpdateMaintenanceRequest": {
+      "type": "object",
+      "properties": {
+        "affected_services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "scheduled_end_at": {
+          "type": "string"
+        },
+        "scheduled_start_at": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/domain.MaintenanceStatus"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.UptimeDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.UptimeMetricsResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-status_internal_handler_dto.UptimeMetricsResponse": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "description": "Available 标记 Prometheus 数据源是否可用（查询失败或未部署时为 false）",
+          "type": "boolean"
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-status_internal_handler_dto.MetricsDataPoint"
+          }
+        },
+        "range": {
+          "type": "string",
+          "example": "24h"
+        },
+        "service": {
+          "type": "string",
+          "example": "identity-service"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "服务状态事件管理",
+      "name": "状态页-事件"
+    },
+    {
+      "description": "计划维护管理",
+      "name": "状态页-维护"
+    },
+    {
+      "description": "服务状态总览",
+      "name": "状态页-概览"
+    },
+    {
+      "description": "状态订阅管理：邮件、Webhook、RSS",
+      "name": "状态页-订阅"
+    },
+    {
+      "description": "状态页 JSON API：实时状态数据",
+      "name": "状态页-JSON"
+    },
+    {
+      "description": "状态徽章生成：嵌入到第三方页面",
+      "name": "状态页-徽章"
+    },
+    {
+      "description": "服务指标查询：可用性、延迟、事件统计",
+      "name": "状态页-指标"
+    },
+    {
+      "description": "状态页 RSS Feed",
+      "name": "状态页-RSS"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}

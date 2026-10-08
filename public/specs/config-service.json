@@ -1,0 +1,1393 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Autional 配置中心服务：集中托管业务服务的非敏感配置，提供条目化读取、聚合读取、版本历史/回滚、upsert/delete/import 运维写面。读面共享读 key，写面仅运维专用写 key（X-API-Key）。",
+    "title": "配置中心服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/api/v1",
+  "paths": {
+    "/config": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "按 (namespace, service_name, data_id) 读取单条配置项。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "获取单条配置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "环境命名空间",
+            "name": "namespace",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "服务名（空=全局默认）",
+            "name": "service_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置项 key",
+            "name": "data_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "配置项",
+            "schema": {
+              "$ref": "#/definitions/store.Item"
+            }
+          },
+          "400": {
+            "description": "namespace 非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "key 的 namespace 与请求不符",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "配置项不存在",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/aggregated": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "返回 (namespace,service_name) 全部条目（服务专属 + service_name=” 全局默认）合成的完整 YAML，供一次拉取。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/x-yaml"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "聚合读取配置（整份 YAML）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "环境命名空间",
+            "name": "namespace",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "服务名（空=全局默认）",
+            "name": "service_name",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "合成的完整 YAML 文本",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "namespace 非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "key 的 namespace 与请求不符",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/batch": {
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "一次读取多个 key；遵循 GetConfigsBatch 语义：任一 key 缺失则整批 404 失败。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "批量读取配置",
+        "parameters": [
+          {
+            "description": "批量读取请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "namespace": {
+                  "type": "string"
+                },
+                "service_name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "配置项列表",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/store.Item"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "body 非法或 namespace 非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "key 的 namespace 与请求不符",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "存在缺失的配置项（整批失败）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/delete": {
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "软删除单条配置项；写面只认运维专用写 key。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "删除配置（运维写面）",
+        "parameters": [
+          {
+            "description": "删除请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data_id": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "service_name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除结果",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deleted": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "body 非法或 namespace 非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非写 key 或 key 的 namespace 与请求不符",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "配置项不存在",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/history": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "分页查询指定配置项的版本历史（append-only）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "查询配置历史",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "环境命名空间",
+            "name": "namespace",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "服务名（空=全局默认）",
+            "name": "service_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置项 key",
+            "name": "data_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "页码（默认 1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页数量（默认 20，上限 500；P1-2 服务端归一）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "版本历史",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/store.Version"
+                  }
+                },
+                "total": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "namespace 非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "key 的 namespace 与请求不符",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "配置项不存在",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/import": {
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "批量原子导入配置条目：先全量门禁校验，任一条不过则整体不写。写面只认运维专用写 key。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "批量导入配置（运维写面）",
+        "parameters": [
+          {
+            "description": "批量导入请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "content_type": {
+                        "type": "string"
+                      },
+                      "data_id": {
+                        "type": "string"
+                      },
+                      "service_name": {
+                        "type": "string"
+                      },
+                      "yaml_body": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "namespace": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "replace_existing": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "逐条导入结果（门禁失败/导入冲突亦为 200：整体不写，results[].ok=false + error_code/message）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/service.ImportOutcome"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "body 非法、namespace 非法或入参校验失败（entries 空/reason 缺失）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非写 key 或 key 的 namespace 与请求不符",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/revision": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "按 revision 读取指定配置项的某个历史版本快照。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "查询指定修订版本",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "环境命名空间",
+            "name": "namespace",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "服务名（空=全局默认）",
+            "name": "service_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置项 key",
+            "name": "data_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "修订版本号（必填正整数；缺省/非正 → 400）",
+            "name": "revision",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "版本快照",
+            "schema": {
+              "$ref": "#/definitions/store.Version"
+            }
+          },
+          "400": {
+            "description": "namespace 非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "key 的 namespace 与请求不符",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "版本或配置项不存在",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/rollback": {
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "在单个 store 事务内把指定键回滚到目标 revision 的值，并作为新 revision 追加发布（不覆盖历史）。写面只认运维专用写 key。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "原子回滚配置（运维写面）",
+        "parameters": [
+          {
+            "description": "回滚请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "app_id": {
+                  "type": "string"
+                },
+                "environment": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "revision": {
+                  "type": "integer"
+                },
+                "service_name": {
+                  "type": "string"
+                },
+                "tenant_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "回滚后的配置项（新 revision，值为目标 revision 的值）",
+            "schema": {
+              "$ref": "#/definitions/store.Item"
+            }
+          },
+          "400": {
+            "description": "body 非法、namespace 非法或 revision 非正整数",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非写 key 或 key 的 namespace 与请求不符",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "配置项不存在或目标 revision 不存在",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/upsert": {
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "写入单条配置项并生成新 revision；写面只认运维专用写 key。明文密钥门禁在 service 层强制执行。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "新增或更新配置（运维写面）",
+        "parameters": [
+          {
+            "description": "写入请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "type": "string"
+                },
+                "data_id": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "service_name": {
+                  "type": "string"
+                },
+                "yaml_body": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "写入后的配置项",
+            "schema": {
+              "$ref": "#/definitions/store.Item"
+            }
+          },
+          "400": {
+            "description": "body 非法、namespace 非法或门禁校验失败",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "非写 key 或 key 的 namespace 与请求不符",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/configs": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "按 namespace（可选 service_name 过滤）列出当前配置条目，支持分页。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "列出配置项",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "环境命名空间",
+            "name": "namespace",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "服务名过滤（空=仅全局默认条目）",
+            "name": "service_name",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码（默认 1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页数量（默认 100，上限 500）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "配置条目列表",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/store.Item"
+                  }
+                },
+                "total": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "namespace 非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "key 的 namespace 与请求不符",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "service.ImportOutcome": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "ok": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        }
+      }
+    },
+    "store.Item": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "deleted_at": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "md5": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "updated_by": {
+          "type": "string"
+        },
+        "validation": {
+          "description": "写口校验规则（如正则/枚举白名单），读面只存不执行",
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "value_type": {
+          "type": "string"
+        }
+      }
+    },
+    "store.Version": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "item_id": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "value_type": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "X-API-Key",
+      "in": "header"
+    }
+  }
+}

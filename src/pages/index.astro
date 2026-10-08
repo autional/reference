@@ -1,12 +1,65 @@
 ---
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import RefLayout from '../layouts/RefLayout.astro';
+
+const groups = [
+  { name: '身份与访问', svcs: [['identity-service','身份服务'],['profile-service','用户资料服务'],['tenant-service','租户服务'],['session-service','会话服务'],['mfa-service','多因素认证服务'],['oauth-service','OAuth 服务']] },
+  { name: '资产与商业', svcs: [['wallet-service','钱包服务'],['point-service','积分服务'],['pay-service','支付服务'],['billing-service','计费服务']] },
+  { name: '审计与通信', svcs: [['audit-service','审计服务'],['notification-service','通知服务'],['communication-service','通信服务']] },
+  { name: '存储与合规', svcs: [['storage-service','存储服务'],['compliance-service','合规服务'],['status-service','状态服务']] },
+  { name: '安全能力', svcs: [['secret-service','密钥服务'],['saml-service','SAML 服务'],['thirdparty-service','第三方服务'],['verification-service','身份验证服务'],['rbac-service','RBAC 服务'],['captcha3d-service','3D 验证码服务']] },
+  { name: '基础设施', svcs: [['gateway-service','网关服务'],['hash-service-standard','密码哈希服务'],['hash-service-sm','国密哈希服务'],['config-service','配置中心服务'],['stream-service','实时事件流服务']] },
+];
+
+let serviceCount = 0;
+let totalEndpoints = 0;
+try {
+  const specsDir = join(process.cwd(), 'public/specs');
+  for (const fn of readdirSync(specsDir)) {
+    if (!fn.endsWith('.json')) continue;
+    const spec = JSON.parse(readFileSync(join(specsDir, fn), 'utf-8'));
+    for (const methods of Object.values(spec.paths || {})) {
+      if (typeof methods === 'object' && methods !== null) {
+        totalEndpoints += Object.keys(methods).filter(k => k !== 'parameters').length;
+      }
+    }
+    serviceCount += 1;
+  }
+} catch {
+  // 统计失败时退化为静态文案
+}
 ---
 
-<RefLayout title="API Reference — Autional" description="Interactive OpenAPI 3.0 reference for all 22 Autional microservices. Explore 1,400+ REST endpoints with Scalar UI.">
-  <div class="flex-1 flex items-center justify-center p-8">
-    <div class="text-center max-w-sm">
-      <h2 class="text-lg font-semibold text-neutral-400">Select a service</h2>
-      <p class="mt-2 text-sm text-neutral-300">from the sidebar →</p>
+<RefLayout>
+  <div class="flex-1 overflow-y-auto p-8">
+    <div class="mx-auto max-w-2xl">
+      <h1 class="text-2xl font-extrabold tracking-tight text-neutral-900">Autional API 参考</h1>
+      <p class="mt-3 text-sm leading-6 text-neutral-600">
+        面向基于 Autional 身份平台构建集成与应用的开发者 —— 浏览全部 {serviceCount} 个微服务的 REST API 规范（Swagger 2.0），
+        可搜索、可调试、可下载用于代码生成。全部调用经网关 <span class="font-mono text-[13px]">api.autional.cn</span> 的 <span class="font-mono text-[13px]">/bff/&lt;服务&gt;/api/v1/</span> 入口。
+      </p>
+      <p class="mt-3 text-xs text-neutral-600">
+        <span class="font-semibold text-neutral-800">{serviceCount}</span> 个服务 ·
+        <span class="font-semibold text-neutral-800">{totalEndpoints.toLocaleString('zh-CN')}</span> 个端点 ·
+        6 大领域 · Swagger 2.0
+      </p>
+
+      <div class="mt-8 grid grid-cols-1 gap-x-10 gap-y-6 sm:grid-cols-2">
+        {groups.map(g => (
+          <div>
+            <div class="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary-500">{g.name}</div>
+            <div class="mt-2.5 flex flex-wrap gap-2">
+              {g.svcs.map(([name, title]) => (
+                <a href={`/${name}/`} class="inline-block rounded-lg border border-neutral-200 px-2.5 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700">{title}</a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p class="mt-8 text-xs text-neutral-500 lg:hidden">或点右上角「服务」打开服务列表。</p>
+      <p class="mt-8 hidden text-xs text-neutral-500 lg:block">或在左侧列表中选择服务 →</p>
     </div>
   </div>
 </RefLayout>

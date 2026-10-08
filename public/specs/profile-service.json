@@ -1,0 +1,5218 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "用户资料管理服务，提供资料创建、更新、隐私设置、资料完成度等功能",
+    "title": "用户资料服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/bff/profile/api/v1",
+  "paths": {
+    "/admin/profiles": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据搜索词、国家、城市等条件分页搜索用户资料。管理员权限，仅能查看本租户下的用户资料。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "搜索用户资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "搜索关键词（匹配姓名、邮箱等）",
+            "name": "keyword",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "国家筛选",
+            "name": "country",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "城市筛选",
+            "name": "city",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户资料分页列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "未找到匹配的用户",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/approval-requests": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询当前租户所有待审批的请求，管理员读权限。返回审批请求列表及其当前状态。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "审批管理"
+        ],
+        "summary": "查询待审批列表",
+        "responses": {
+          "200": {
+            "description": "待审批请求列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ApprovalListDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无审批管理权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "审批状态冲突",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "审批状态无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定用户创建资料变更审批请求，支持 archive（归档）、export（导出）、delete（删除）、correct（更正）操作类型。管理员权限。参考：GDPR Art 16 (更正权)、GDPR Art 17 (被遗忘权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "审批管理"
+        ],
+        "summary": "创建审批请求",
+        "parameters": [
+          {
+            "description": "审批请求（含操作类型和目标用户列表）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ApprovalRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "审批请求创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ApprovalDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无审批管理权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "目标用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "审批请求冲突，已有相同待审批请求",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "审批操作类型无效或不可执行",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/approval-requests/{request_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的待审批请求，仅限 pending 状态的请求可以删除。管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "审批管理"
+        ],
+        "summary": "删除审批请求",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "审批ID",
+            "name": "request_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "审批请求删除成功"
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无审批管理权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "审批请求不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "审批状态冲突，请求非 pending 状态",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "审批状态无效，不可删除",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/approval-requests/{request_id}/approve": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批准指定的审批请求，执行审批对应的操作（归档/导出/删除/更正）。发布审批应用事件。管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "审批管理"
+        ],
+        "summary": "批准审批请求",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "审批ID",
+            "name": "request_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "审批请求已批准，操作已执行",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ApprovalDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无审批管理权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "审批请求不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "审批状态冲突，请求已被处理",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "审批状态无效，当前状态不允许批准",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/approval-requests/{request_id}/reject": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "拒绝指定的审批请求，需要提供拒绝原因，已拒绝的请求不可再操作。管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "审批管理"
+        ],
+        "summary": "拒绝审批请求",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "审批ID",
+            "name": "request_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "拒绝原因",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.RejectApprovalBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "审批请求已拒绝",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ApprovalDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或缺少拒绝原因",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无审批管理权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "审批请求不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "审批状态冲突，请求已被处理",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "审批状态无效，当前状态不允许拒绝",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/batch-archive": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批量归档指定用户的资料，单次最多 100 个用户。管理员写权限。参考：GDPR Art 5 (数据最小化原则)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "批量归档用户资料",
+        "parameters": [
+          {
+            "description": "批量归档请求（含用户ID列表和归档原因）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.BatchRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量归档结果（含每个用户的操作状态）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.BatchResultResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或超过批量限制",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/batch-delete": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批量软删除指定用户的资料，单次最多 100 个用户。管理员写权限。参考：GDPR Art 17 (被遗忘权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "批量删除用户资料",
+        "parameters": [
+          {
+            "description": "批量删除请求（含用户ID列表）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.BatchRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量删除成功，返回每个用户的操作状态"
+          },
+          "400": {
+            "description": "请求参数无效或超过批量限制",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/batch-export": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批量导出指定用户的资料数据，单次最多 100 个用户。管理员写权限。参考：GDPR Art 20 (数据可携带权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "批量导出用户资料",
+        "parameters": [
+          {
+            "description": "批量导出请求（含用户ID列表）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.BatchRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量导出成功，返回每个用户的导出数据"
+          },
+          "400": {
+            "description": "请求参数无效或超过批量限制",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/field-schemas": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前租户的所有自定义字段模板，包括系统预设字段和租户自定义字段。管理员读权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "列出字段模板",
+        "responses": {
+          "200": {
+            "description": "字段模板列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaListDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为租户创建新的自定义字段模板，定义字段的类型、验证规则和是否需同意等属性。发布字段模板创建事件。管理员写权限。参考：GDPR Art 5 (数据最小化原则)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "创建字段模板",
+        "parameters": [
+          {
+            "description": "字段模板创建请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "字段模板创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或字段键已存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/field-schemas/{field_key}": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新指定字段模板的配置，发布字段模板更新事件。管理员写权限。参考：GDPR Art 5 (数据最小化原则)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "更新字段模板",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "字段标识",
+            "name": "field_key",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "字段模板更新请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "字段模板更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "字段模板不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定字段模板（系统字段不可删除），发布字段模板删除事件。管理员写权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "删除字段模板",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "字段标识",
+            "name": "field_key",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "字段模板删除成功"
+          },
+          "400": {
+            "description": "请求参数无效或系统字段不可删除",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "字段模板不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/policy": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前租户的资料管理策略配置，包括字段必填规则、隐私默认值等。管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取租户资料策略",
+        "responses": {
+          "200": {
+            "description": "租户资料策略详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfilePolicyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "策略配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "部分更新租户的资料管理策略配置，发布策略更新事件。管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "更新租户资料策略",
+        "parameters": [
+          {
+            "description": "策略配置更新请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfilePolicyDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "策略更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfilePolicyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "策略配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建租户资料管理策略配置，发布策略创建事件。管理员写权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "创建租户资料策略",
+        "parameters": [
+          {
+            "description": "策略配置创建请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfilePolicyDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "策略创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfilePolicyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "策略已存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除租户策略配置，恢复为系统默认值。发布策略重置事件。管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "删除租户资料策略",
+        "responses": {
+          "200": {
+            "description": "已恢复为系统默认策略",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfilePolicyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "策略配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/stats": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取租户的资料统计数据，包括总用户数、资料完整度分布、字段填充率等。管理员读权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取资料统计",
+        "responses": {
+          "200": {
+            "description": "资料统计信息",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileStatsDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/versions/{version_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的用户资料历史版本快照，用于版本清理。管理员权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "审批管理"
+        ],
+        "summary": "删除资料版本记录",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "版本ID",
+            "name": "version_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "版本记录删除成功"
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无审批管理权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "版本记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "版本状态冲突",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "版本数据无效或不可删除",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/webhook": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前租户的资料变更 Webhook 回调配置，包括回调 URL、密钥、订阅事件列表和启用状态。管理员读权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取 Webhook 配置",
+        "responses": {
+          "200": {
+            "description": "Webhook 配置详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.WebhookConfigDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "Webhook 配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新当前租户的 Webhook 回调配置，包含回调 URL、密钥、事件列表和启用状态。发布 Webhook 配置更新事件。管理员写权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "更新 Webhook 配置",
+        "parameters": [
+          {
+            "description": "Webhook 配置更新请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.WebhookConfigDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook 配置更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.WebhookConfigDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "Webhook 配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建租户资料变更 Webhook 回调配置，发布 Webhook 配置创建事件。管理员写权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "创建 Webhook 配置",
+        "parameters": [
+          {
+            "description": "Webhook 配置创建请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.WebhookConfigDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook 配置创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.WebhookConfigDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "Webhook 配置已存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除当前租户的 Webhook 回调配置。发布 Webhook 配置删除事件。管理员写权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "删除 Webhook 配置",
+        "responses": {
+          "200": {
+            "description": "Webhook 配置删除成功"
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "Webhook 配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/{user_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /profiles/{user_id} 同体、同租户范围；供控制台在 admin 平面读取。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取用户资料（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户资料详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/{user_id}/archive": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "将指定用户的资料进行归档处理，管理员权限。参考：GDPR Art 5 (数据最小化原则)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "归档用户资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "归档请求（可选归档原因）",
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ArchiveProfileRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "资料归档成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ArchiveProfileDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/{user_id}/export": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "按指定格式导出用户资料数据，管理员权限。触发资料导出事件用于审计。参考：GDPR Art 20 (数据可携带权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "导出用户资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "json",
+            "description": "导出格式（json/csv）",
+            "name": "format",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户资料导出数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ExportProfileResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或不支持的导出格式",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/profiles/{user_id}/versions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定用户资料的所有历史版本快照，用于审计追踪和变更回溯。管理员读权限。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "审批管理"
+        ],
+        "summary": "获取资料版本历史",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "资料版本历史列表（按时间倒序）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.VersionListDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无审批管理权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "版本状态冲突",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "版本数据无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/profile/batch": {
+      "get": {
+        "description": "供其他微服务批量查询用户资料，支持一次查询多个用户。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料 - 内部接口"
+        ],
+        "summary": "批量内部查询用户资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID列表，逗号分隔",
+            "name": "user_ids",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户资料列表（按请求顺序返回）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.InternalProfilesResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或缺少user_ids",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未提供有效的 Internal API Key",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/profile/export-user-data": {
+      "post": {
+        "description": "供 identity-service 等内部服务调用，返回该用户在 profile-service 中的所有个人数据（用于 GDPR 数据可携带权）。参考：GDPR Art 20 (数据可携带权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料 - 内部接口"
+        ],
+        "summary": "内部导出用户数据",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "导出请求（含用户ID）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ExportProfileInternalRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户全量资料导出数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ExportProfileResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或缺少user_id",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未提供有效的 Internal API Key",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/profile/{user_id}": {
+      "get": {
+        "description": "供其他微服务通过内部路由查询用户完整资料。优先从 X-Tenant-ID header 获取租户，若为空则拒绝请求。参考：GDPR Art 5 (数据最小化原则)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料 - 内部接口"
+        ],
+        "summary": "内部查询用户资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户资料详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或缺少租户ID",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未提供有效的 Internal API Key",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "供其他微服务（如 identity-service SCIM handler）内部调用，创建或更新用户姓名和昵称。根据是否存在已有资料自动判断创建或更新。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料 - 内部接口"
+        ],
+        "summary": "内部创建或更新用户资料名称",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "名称字段更新请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.UpsertProfileNamesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "资料创建或更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未提供有效的 Internal API Key",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "供其他微服务（如 compliance-service 擦除流程）内部调用，删除指定用户的资料。删除前生成完整数据快照用于审计。参考：GDPR Art 17 (被遗忘权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料 - 内部接口"
+        ],
+        "summary": "内部删除用户资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "资料删除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.DeletedResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或缺少租户ID",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未提供有效的 Internal API Key",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profile/avatar": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据当前认证用户身份获取头像URL，无需指定user_id参数。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "快捷获取当前用户头像",
+        "responses": {
+          "200": {
+            "description": "当前用户头像URL",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.MyAvatarDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "分页查询当前租户下的用户资料列表（简化版），支持关键词搜索",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "用户资料列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "搜索关键词",
+            "name": "keyword",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户资料列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据用户ID获取完整的用户资料信息。参考：GDPR Art 5 (数据最小化原则)、GDPR Art 16 (更正权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取用户资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户资料详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权查看该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据用户ID创建新资料或更新现有资料信息。参考：GDPR Art 5 (数据最小化原则)、GDPR Art 16 (更正权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "创建或更新用户资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "资料更新请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.UpdateProfileRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "资料更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权操作该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "软删除指定用户的资料，删除前生成数据快照用于审计。参考：GDPR Art 17 (被遗忘权)、GDPR Art 5 (数据最小化原则)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "删除用户资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "资料删除成功"
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权删除该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/avatar": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新指定用户的头像URL地址。参考：GDPR Art 5 (数据最小化原则)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "更新用户头像",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "头像URL请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.UpdateAvatarRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "头像更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或头像URL格式错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权操作该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/avatar/upload": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "接收头像文件上传，转发至 storage-service 存储，并将返回的 URL 更新到用户资料中。支持 JPEG、PNG、GIF、WebP 格式，大小限制 10MB。",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "上传用户头像",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "头像文件",
+            "name": "file",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "头像上传成功（含头像URL）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.UploadAvatarResponse"
+            }
+          },
+          "400": {
+            "description": "文件格式不支持或文件过大",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权操作该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "存储服务不可用或服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/completeness": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "计算用户资料的完成百分比和缺失字段列表，帮助用户了解资料完整性。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取资料完成度",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "资料完成度信息（含百分比和缺失字段）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.CompletenessResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权查看该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/consents": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回当前用户所有字段的同意状态，含字段 Schema 的 RequiresConsent 标记。参考：GDPR Art 7 (同意条件)、ePrivacy Directive 2002/58/EC Art 5(3)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "查询用户同意记录",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "同意字段列表（含同意状态和Schema信息）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ConsentListDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权查看该用户的同意记录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户主动同意特定字段的数据收集与处理。发布同意授予事件用于审计。参考：GDPR Art 7 (同意条件)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "授予数据收集同意",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "同意字段键列表",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.GrantConsentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的同意字段列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ConsentListDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权操作该用户的同意记录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/consents/{field_key}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户撤销特定字段的数据收集同意。参考：GDPR Art 7(3) (撤回同意权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "撤销数据收集同意",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "字段键",
+            "name": "field_key",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "同意撤销成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.RevokeConsentDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权操作该用户的同意记录",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料或字段不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/export": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户自助导出个人资料数据，实现GDPR数据可携带权。触发资料导出事件用于审计。参考：GDPR Art 20 (数据可携带权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "自助导出用户资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "json",
+            "description": "导出格式（json/csv）",
+            "name": "format",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户资料导出数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ExportProfileResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或不支持的导出格式",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权导出该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/fields": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取用户资料的所有自定义字段键值对。参考：GDPR Art 5 (数据最小化原则)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取自定义字段",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "自定义字段键值对列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldsResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权查看该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新用户资料的自定义字段键值对。参考：GDPR Art 5 (数据最小化原则)、GDPR Art 16 (更正权)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "更新自定义字段",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "自定义字段更新请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileFieldsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "自定义字段更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldsResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权操作该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/preferences": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前用户的偏好设置，包括主题、语言、时区和通知偏好。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取用户偏好设置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户偏好设置详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.PreferencesDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权查看该用户偏好设置",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新当前用户的偏好设置，包括主题、语言、时区和通知偏好。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "更新用户偏好设置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "偏好设置更新请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.UpdatePreferencesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "偏好设置更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.PreferencesDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权操作该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/privacy": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取用户资料的隐私控制设置，包括资料可见性、邮箱展示、手机号展示、位置展示等。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取隐私设置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户隐私设置详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.PrivacyResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权查看该用户隐私设置",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新用户资料的隐私控制设置，发布隐私更新事件。参考：GDPR Art 5 (数据最小化原则)、ePrivacy Directive 2002/58/EC Art 5(3)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "更新隐私设置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "隐私设置请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.PrivacySettingsDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "隐私设置更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.PrivacyResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权操作该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/privacy-impact": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "基于用户资料数据动态计算隐私影响评分，评估数据收集的隐私风险等级。参考：GDPR Art 35 (数据保护影响评估)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取隐私影响评估",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "隐私影响评估报告（含评分和风险等级）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.PrivacyImpactDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权查看该用户评估",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/public": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据用户隐私设置获取公开可见的资料信息，隐藏设置了非公开的字段。参考：GDPR Art 5 (数据最小化原则)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "获取公开资料",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户公开资料",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权查看该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/tags": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定用户设置标签列表，覆盖已有标签。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "设置用户标签",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "标签列表请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.SetTagsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "标签设置成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权操作该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定用户的所有标签。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "删除用户标签",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "标签删除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权操作该用户资料",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{user_id}/versions": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定用户手动创建资料版本快照，保存当前资料状态到版本历史",
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "创建资料版本快照",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "版本快照创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.VersionDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未授权",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "domain.ProfileField": {
+      "type": "object",
+      "required": [
+        "key",
+        "value"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.FieldViolation": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是错误代码（可选）\n用于程序识别错误类型，如 \"required\", \"format\", \"range\"",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description 是人类可读的错误描述\n应该说明违反了什么规则，如 \"必须是一个有效的邮箱地址\"",
+          "type": "string"
+        },
+        "field": {
+          "description": "Field 是错误字段的路径\n使用点号表示嵌套字段，如 \"user.email\" 或 \"addresses[0].city\"",
+          "type": "string"
+        },
+        "standard": {
+          "description": "Standard 是指向权威规范文档的 URI 引用\n用于告知 API 消费者具体违反哪个标准\n示例：\"https://www.rfc-editor.org/info/rfc5322\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是导致错误的值（可选，开发模式下使用）\n生产环境可能不返回此字段以避免泄露敏感信息"
+        }
+      }
+    },
+    "dto.Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是业务错误码\n用于程序处理特定错误场景\n示例：30101001",
+          "type": "integer"
+        },
+        "detail": {
+          "description": "Detail 是针对此具体错误实例的人类可读解释\n可以包含具体的错误细节，如\"Field 'email' is required\"",
+          "type": "string"
+        },
+        "errors": {
+          "description": "Errors 是字段级验证错误列表（扩展字段）\n遵循 Web API 标准实践，每个错误包含字段名和错误信息",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dto.FieldViolation"
+          }
+        },
+        "i18n_args": {
+          "description": "I18nArgs 是国际化参数\n用于动态填充翻译模板",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "i18n_key": {
+          "description": "I18nKey 是国际化键\n用于客户端本地化错误消息\n示例：\"error.user_not_found\"",
+          "type": "string"
+        },
+        "instance": {
+          "description": "Instance 是发生问题的具体URI引用\n通常是请求的URL，可能包含查询参数\n示例：\"/api/v1/users?limit=invalid\"",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "RequestID 是请求唯一标识\n用于日志关联和问题追踪\n示例：\"req_550e8400-e29b-41d4-a716-446655440000\"",
+          "type": "string"
+        },
+        "retry_after": {
+          "description": "RetryAfter 用于 429 Too Many Requests 响应\n指示客户端应在多少秒后重试请求（RFC 6585）",
+          "type": "integer"
+        },
+        "service": {
+          "description": "Service 是服务名\n用于微服务架构中定位错误来源\n示例：\"auth-service\"",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "SpanID 是当前 span 标识\n用于精确定位分布式链路中的当前节点",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status 是产生的HTTP状态码\n用于客户端区分问题类型，不随Accept-Language变化\n示例：400, 401, 403, 404, 500",
+          "type": "integer"
+        },
+        "timestamp": {
+          "description": "Timestamp 是错误发生时间\nISO 8601 格式\n示例：\"2026-04-03T12:00:00Z\"",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title 是简短、人类可读的问题类型摘要\n相同的 Type 应该始终有相同的 Title（不随实例变化）\n示例：\"Invalid Request Parameters\"",
+          "type": "string"
+        },
+        "trace_id": {
+          "description": "TraceID 是分布式追踪标识\n遵循 W3C Trace Context 标准\n示例：\"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type 是标识问题类型的URI引用\n当该URI被解引用时，应提供人类可读的文档\n示例：\"https://api.example.com/errors/invalid-request\"",
+          "type": "string"
+        }
+      }
+    },
+    "dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ApprovalDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ApprovalResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ApprovalListDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ApprovalListResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ApprovalListResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ApprovalResponse"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ApprovalRequest": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "field_changes": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "reason": {
+          "type": "string"
+        },
+        "user_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ApprovalResponse": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "approved_at": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ArchiveProfileDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ArchiveProfileResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ArchiveProfileRequest": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "type": "string",
+          "example": "用户主动申请归档"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ArchiveProfileResponse": {
+      "type": "object",
+      "properties": {
+        "archived": {
+          "type": "boolean",
+          "example": true
+        },
+        "archived_at": {
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "reason": {
+          "type": "string",
+          "example": "用户主动申请归档"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.BatchItemError": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.BatchRequest": {
+      "type": "object",
+      "required": [
+        "user_ids"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string"
+        },
+        "user_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.BatchResult": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.BatchItemError"
+          }
+        },
+        "failed": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.BatchResultResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.BatchResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.CompletenessData": {
+      "type": "object",
+      "properties": {
+        "completeness": {}
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.CompletenessResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.CompletenessData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ConsentField": {
+      "type": "object",
+      "properties": {
+        "consented": {
+          "type": "boolean",
+          "example": true
+        },
+        "data_classification": {
+          "type": "string",
+          "example": "sensitive"
+        },
+        "display_name": {
+          "type": "string",
+          "example": "Health Data"
+        },
+        "field_key": {
+          "type": "string",
+          "example": "health_data"
+        },
+        "requires_consent": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ConsentListDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ConsentListResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ConsentListResponse": {
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ConsentField"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.DeletedData": {
+      "type": "object",
+      "properties": {
+        "deleted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.DeletedResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.DeletedData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ExportProfileData": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "avatar_url": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "birth_date": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "preferences": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "social_links": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ExportProfileInternalRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ExportProfileResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ExportProfileData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaDTO": {
+      "type": "object",
+      "properties": {
+        "data_classification": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "field_key": {
+          "type": "string"
+        },
+        "field_type": {
+          "type": "string"
+        },
+        "help_text": {
+          "type": "string"
+        },
+        "is_required": {
+          "type": "boolean"
+        },
+        "is_system": {
+          "type": "boolean"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "requires_consent": {
+          "type": "boolean"
+        },
+        "sort_order": {
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": -2147483648
+        },
+        "validation_regex": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaDTO"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaListDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaListResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaListResponse": {
+      "type": "object",
+      "properties": {
+        "schemas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldSchemaDTO"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.FieldsData": {
+      "type": "object",
+      "properties": {
+        "fields": {}
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.FieldsResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.FieldsData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.GrantConsentRequest": {
+      "type": "object",
+      "required": [
+        "field_keys"
+      ],
+      "properties": {
+        "field_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"health_data\"",
+            "\"biometric_data\"]"
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.InternalProfilesData": {
+      "type": "object",
+      "properties": {
+        "profiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.UserProfileResponse"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.InternalProfilesResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.InternalProfilesData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.MyAvatarDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.MyAvatarResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.MyAvatarResponse": {
+      "type": "object",
+      "properties": {
+        "avatar_url": {
+          "type": "string",
+          "example": "https://cdn.example.com/avatars/default.png"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2026-04-19T12:00:00Z"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "user-001"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.PreferencesDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.PreferencesResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.PreferencesResponse": {
+      "type": "object",
+      "properties": {
+        "preferences": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.PrivacyData": {
+      "type": "object",
+      "properties": {
+        "privacy": {}
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.PrivacyImpactDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.PrivacyImpactResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.PrivacyImpactResponse": {
+      "type": "object",
+      "properties": {
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "risk_factors": {
+          "type": "integer",
+          "example": 3
+        },
+        "risk_level": {
+          "type": "string",
+          "example": "medium"
+        },
+        "risk_score": {
+          "type": "integer",
+          "example": 45
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.PrivacyResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.PrivacyData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.PrivacySettingsDTO": {
+      "type": "object",
+      "properties": {
+        "profile_visibility": {
+          "type": "string",
+          "example": "public"
+        },
+        "show_department": {
+          "type": "boolean",
+          "example": false
+        },
+        "show_email": {
+          "type": "boolean",
+          "example": false
+        },
+        "show_location": {
+          "type": "boolean",
+          "example": false
+        },
+        "show_phone": {
+          "type": "boolean",
+          "example": false
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ProfileData": {
+      "type": "object",
+      "properties": {
+        "profile": {}
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ProfileDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.UserProfileResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ProfileFieldsRequest": {
+      "type": "object",
+      "required": [
+        "fields"
+      ],
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/domain.ProfileField"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ProfileListResponse": {
+      "type": "object"
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ProfilePolicyDTO": {
+      "type": "object",
+      "properties": {
+        "allowed_avatar_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "auto_archive_after_days": {
+          "type": "integer",
+          "maximum": 36500,
+          "minimum": 0
+        },
+        "avatar_upload_enabled": {
+          "type": "boolean"
+        },
+        "cache_ttl_seconds": {
+          "type": "integer",
+          "maximum": 86400,
+          "minimum": 0
+        },
+        "completeness_enabled": {
+          "type": "boolean"
+        },
+        "completeness_weights": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "custom_fields_enabled": {
+          "type": "boolean"
+        },
+        "default_profile_visibility": {
+          "type": "string"
+        },
+        "default_show_email": {
+          "type": "boolean"
+        },
+        "default_show_location": {
+          "type": "boolean"
+        },
+        "default_show_phone": {
+          "type": "boolean"
+        },
+        "max_avatar_size_bytes": {
+          "type": "integer"
+        },
+        "max_custom_fields": {
+          "type": "integer",
+          "maximum": 100,
+          "minimum": 0
+        },
+        "max_social_links": {
+          "type": "integer",
+          "maximum": 50,
+          "minimum": 0
+        },
+        "max_tags_per_user": {
+          "type": "integer",
+          "maximum": 1000,
+          "minimum": 0
+        },
+        "privacy_impact_enabled": {
+          "type": "boolean"
+        },
+        "public_profile_enabled": {
+          "type": "boolean"
+        },
+        "required_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "retention_days_after_delete": {
+          "type": "integer",
+          "maximum": 36500,
+          "minimum": 0
+        },
+        "social_links_enabled": {
+          "type": "boolean"
+        },
+        "tags_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ProfilePolicyDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfilePolicyResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ProfilePolicyResponse": {
+      "type": "object",
+      "properties": {
+        "allowed_avatar_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "auto_archive_after_days": {
+          "type": "integer",
+          "maximum": 36500,
+          "minimum": 0
+        },
+        "avatar_upload_enabled": {
+          "type": "boolean"
+        },
+        "cache_ttl_seconds": {
+          "type": "integer",
+          "maximum": 86400,
+          "minimum": 0
+        },
+        "completeness_enabled": {
+          "type": "boolean"
+        },
+        "completeness_weights": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "custom_fields_enabled": {
+          "type": "boolean"
+        },
+        "default_profile_visibility": {
+          "type": "string"
+        },
+        "default_show_email": {
+          "type": "boolean"
+        },
+        "default_show_location": {
+          "type": "boolean"
+        },
+        "default_show_phone": {
+          "type": "boolean"
+        },
+        "max_avatar_size_bytes": {
+          "type": "integer"
+        },
+        "max_custom_fields": {
+          "type": "integer",
+          "maximum": 100,
+          "minimum": 0
+        },
+        "max_social_links": {
+          "type": "integer",
+          "maximum": 50,
+          "minimum": 0
+        },
+        "max_tags_per_user": {
+          "type": "integer",
+          "maximum": 1000,
+          "minimum": 0
+        },
+        "privacy_impact_enabled": {
+          "type": "boolean"
+        },
+        "public_profile_enabled": {
+          "type": "boolean"
+        },
+        "required_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "retention_days_after_delete": {
+          "type": "integer",
+          "maximum": 36500,
+          "minimum": 0
+        },
+        "social_links_enabled": {
+          "type": "boolean"
+        },
+        "tags_enabled": {
+          "type": "boolean"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ProfileResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ProfileStatsDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileStatsResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.ProfileStatsResponse": {
+      "type": "object",
+      "properties": {
+        "active_profiles": {
+          "type": "integer"
+        },
+        "archived_profiles": {
+          "type": "integer"
+        },
+        "avg_completeness": {
+          "description": "P3: implement avg profile completeness",
+          "type": "number"
+        },
+        "completeness_distribution": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "deleted_profiles": {
+          "type": "integer"
+        },
+        "recent_activity_24h": {
+          "type": "integer"
+        },
+        "total_profiles": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.RejectApprovalBody": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.RevokeConsentDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.RevokeConsentResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.RevokeConsentResponse": {
+      "type": "object",
+      "properties": {
+        "field_key": {
+          "type": "string",
+          "example": "health_data"
+        },
+        "revoked": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.SetTagsRequest": {
+      "type": "object",
+      "required": [
+        "tags"
+      ],
+      "properties": {
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.SuccessData": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.SuccessResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.SuccessData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.UpdateAvatarRequest": {
+      "type": "object",
+      "required": [
+        "avatar_url"
+      ],
+      "properties": {
+        "avatar_url": {
+          "type": "string",
+          "example": "https://example.com/avatar.jpg"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.UpdatePreferencesRequest": {
+      "type": "object",
+      "properties": {
+        "language": {
+          "type": "string",
+          "example": "zh-CN"
+        },
+        "notifications": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "theme": {
+          "type": "string",
+          "example": "dark"
+        },
+        "timezone": {
+          "type": "string",
+          "example": "Asia/Shanghai"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.UpdateProfileRequest": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "example": "123 Main St"
+        },
+        "avatar_url": {
+          "type": "string",
+          "example": "https://example.com/avatar.jpg"
+        },
+        "bio": {
+          "type": "string",
+          "example": "Software Engineer"
+        },
+        "birthdate": {
+          "type": "string",
+          "example": "1990-01-15"
+        },
+        "city": {
+          "type": "string",
+          "example": "San Francisco"
+        },
+        "country": {
+          "type": "string",
+          "example": "US"
+        },
+        "custom_fields": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "first_name": {
+          "type": "string",
+          "example": "John"
+        },
+        "gender": {
+          "type": "string",
+          "example": "male"
+        },
+        "language": {
+          "type": "string",
+          "example": "en-US"
+        },
+        "last_name": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "nickname": {
+          "type": "string",
+          "example": "Johnny"
+        },
+        "social_links": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "timezone": {
+          "type": "string",
+          "example": "America/Los_Angeles"
+        },
+        "website": {
+          "type": "string",
+          "example": "https://johndoe.com"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.UploadAvatarData": {
+      "type": "object",
+      "properties": {
+        "avatar_url": {
+          "type": "string"
+        },
+        "profile": {}
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.UploadAvatarResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.UploadAvatarData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.UpsertProfileNamesRequest": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "example": "John"
+        },
+        "last_name": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "nickname": {
+          "type": "string",
+          "example": "Johnny"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.UserProfileResponse": {
+      "type": "object"
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.VersionDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.VersionResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.VersionListDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.VersionListResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.VersionListResponse": {
+      "type": "object",
+      "properties": {
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.VersionResponse"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.VersionResponse": {
+      "type": "object",
+      "properties": {
+        "change_type": {
+          "type": "string"
+        },
+        "changed_at": {
+          "type": "string"
+        },
+        "changed_by": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "snapshot": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.WebhookConfigDTO": {
+      "type": "object",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "is_enabled": {
+          "type": "boolean"
+        },
+        "secret": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.WebhookConfigDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.WebhookConfigResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-profile_internal_handler_dto.WebhookConfigResponse": {
+      "type": "object",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "is_enabled": {
+          "type": "boolean"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "用户个人资料管理：CRUD、头像、隐私设置",
+      "name": "用户资料"
+    },
+    {
+      "description": "资料审批管理：字段变更审批流程",
+      "name": "审批管理"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}

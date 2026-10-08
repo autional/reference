@@ -14,9 +14,12 @@ importers:
       '@astrojs/tailwind':
         specifier: ^6.0.2
         version: 6.0.2(astro@5.18.2(@types/node@24.13.2)(jiti@1.21.7)(rollup@4.62.2)(typescript@5.9.3)(yaml@2.9.0))(tailwindcss@3.4.19(yaml@2.9.0))
-      '@fontsource/inter':
-        specifier: ^5.2.8
-        version: 5.2.8
+      '@autional/tailwind-preset':
+        specifier: 0.1.0-rc.10
+        version: 0.1.0-rc.10(tailwindcss@3.4.19(yaml@2.9.0))
+      '@autional/tokens':
+        specifier: 0.1.0-rc.16
+        version: 0.1.0-rc.16
       astro:
         specifier: ^5.0.0
         version: 5.18.2(@types/node@24.13.2)(jiti@1.21.7)(rollup@4.62.2)(typescript@5.9.3)(yaml@2.9.0)
@@ -83,6 +86,14 @@ packages:
 
   '@astrojs/yaml2ts@0.2.4':
     resolution: {integrity: sha512-8oddpOae35pJsXPQXhTkM0ypfKPskVsh2bCxRtbf7e+/Epw2nReakFYpLKjZMEr75CsoF203PMnCocpfz0s69A==}
+
+  '@autional/tailwind-preset@0.1.0-rc.10':
+    resolution: {integrity: sha512-pZEZcIXOlvmHR441Ag1nVSt4JA7I0sqUa0FPELY1VNtfVA7TIGtbD5e9QxJcsq11Mjx45LYEpZW7rO7d0q2HEQ==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0'
+
+  '@autional/tokens@0.1.0-rc.16':
+    resolution: {integrity: sha512-P72sxNVfCfdrcxAHlP4NDvYokIN4WECKpBHvgVWJ1JuWIkh57jEV+ze+Os4wUU+jAQh+HZ9/mG4RexwXH25nwg==}
 
   '@babel/helper-string-parser@7.29.7':
     resolution: {integrity: sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==}
@@ -440,9 +451,6 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
-
-  '@fontsource/inter@5.2.8':
-    resolution: {integrity: sha512-P6r5WnJoKiNVV+zvW2xM13gNdFhAEpQ9dQJHt3naLvfg+LkF2ldgSLiF4T41lf1SQCM9QmkqPTn4TH568IRagg==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -2411,6 +2419,13 @@ snapshots:
     dependencies:
       yaml: 2.9.0
 
+  '@autional/tailwind-preset@0.1.0-rc.10(tailwindcss@3.4.19(yaml@2.9.0))':
+    dependencies:
+      '@autional/tokens': 0.1.0-rc.16
+      tailwindcss: 3.4.19(yaml@2.9.0)
+
+  '@autional/tokens@0.1.0-rc.16': {}
+
   '@babel/helper-string-parser@7.29.7': {}
 
   '@babel/helper-validator-identifier@7.29.7': {}
@@ -2611,8 +2626,6 @@ snapshots:
 
   '@esbuild/win32-x64@0.27.7':
     optional: true
-
-  '@fontsource/inter@5.2.8': {}
 
   '@img/colour@1.1.0':
     optional: true

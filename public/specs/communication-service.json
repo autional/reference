@@ -1,0 +1,5382 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "通信服务，提供短信、邮件、推送等多种通信渠道的集成和管理功能",
+    "title": "通信服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/bff/communication/api/v1",
+  "paths": {
+    "/admin/communication/dashboard": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /communication/dashboard 同体、同租户范围；供控制台在 admin 平面读取。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取通信仪表盘（管理端）",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "统计天数范围（默认30天）",
+            "name": "days",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回租户通信投递仪表盘数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationDashboardDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/health/{channel}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /communication/health/{channel} 同体；供控制台在 admin 平面读取。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "渠道连通性检查（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "通信渠道：sms/email/push",
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "检查成功，返回渠道健康状态（healthy/unhealthy/not_configured）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ChannelHealthDataResponse"
+            }
+          },
+          "400": {
+            "description": "渠道参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "健康检查内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/logs": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员可按用户ID查询任意用户的通信日志，支持分页和渠道、状态筛选。与普通用户GetLogs接口不同，此接口不受用户隔离限制。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "管理员查询任意用户的通信日志",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "目标用户ID（不传返回全部用户的日志）",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "发送渠道筛选：sms/email/push",
+            "name": "channel",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "发送状态筛选：pending/sent/failed/delivered",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码，从1开始（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回完整通信日志列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationLogListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源（仅管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/platform-stats": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回跨所有租户的通信服务汇总统计，包括总发送量、投递成功率、按渠道和状态的分布。仅限超级管理员访问。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取平台级通信仪表盘（跨租户）",
+        "responses": {
+          "200": {
+            "description": "查询成功，返回平台级汇总仪表盘数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationDashboardDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源（仅超级管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/providers": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /communication/providers 同体、同租户范围；供控制台在 admin 平面读取。凭据已脱敏。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取服务商配置列表（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道筛选：sms/email/push",
+            "name": "channel",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "激活状态筛选：true/false",
+            "name": "is_active",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码，从1开始（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回配置列表（凭据已脱敏）",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-communication_internal_handler_dto_ProviderConfigResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为当前租户创建短信/邮件/推送服务商的连接配置。支持阿里云、腾讯云、AWS SNS/SES、SendGrid、FCM等主流服务商。配置内容（API密钥等）以加密方式存储，响应中自动脱敏。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "创建服务商配置",
+        "parameters": [
+          {
+            "description": "创建服务商配置请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CreateProviderConfigRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "创建成功，返回配置详情（凭据已脱敏）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ProviderConfigDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "同渠道同服务商的配置已存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/providers/{provider_id}": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新指定服务商配置的凭据、激活状态和优先级。支持部分更新（仅传需要修改的字段）。配置凭据以加密方式存储。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "更新服务商配置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务商配置ID",
+            "name": "provider_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新服务商配置请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.UpdateProviderConfigRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新成功，返回更新后的配置详情（凭据已脱敏）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ProviderConfigDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的服务商配置记录。删除后该渠道将回退使用默认服务商或提示未配置。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "删除服务商配置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务商配置ID",
+            "name": "provider_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "配置删除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.OKResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/rate-limits": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回当前系统中各渠道（sms/email/push）的速率限制配置，包括每分钟/每小时最大发送量和当前服务商。管理员可查看系统默认值和租户级别覆盖。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "管理员查看限流配置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道筛选：sms/email/push（不传返回全部）",
+            "name": "channel",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回各渠道速率限制配置",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.RateLimitsDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源（仅管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/resend/{message_id}": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "将处于failed或cancelled状态的消息通过对应服务商重新投递。仅支持sms和email渠道（推送不支持重发）。重发会创建新的发送记录承载本次投递结果并返回真实投递结果（失败返回错误）。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "重发失败消息",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "消息ID",
+            "name": "message_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "重发成功，消息已重新投递",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.OKResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源（仅管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "消息不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "消息状态不允许重发（仅failed/cancelled可重发）",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/template-stats": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /communication/template-stats 同体、同租户范围；供控制台在 admin 平面读取。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取模板使用统计（近30天，管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道筛选：sms/email/push",
+            "name": "channel",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回各模板统计数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.TemplateStatsListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/templates": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /communication/templates 同体、同租户范围；供控制台在 admin 平面读取。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取模板列表（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道筛选：sms/email/push",
+            "name": "channel",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "是否激活筛选：true/false",
+            "name": "is_active",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "关键词搜索（匹配模板名称或编码）",
+            "name": "keyword",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码，从1开始（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回模板列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.TemplateListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为当前租户创建消息发送模板。支持短信、邮件、推送三种渠道，模板内容可使用 {{变量}} 或 Go template 语法定义变量占位符（如 {{code}}），后续发送时由传入的变量值替换。模板支持多语言（locale）。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "创建消息模板",
+        "parameters": [
+          {
+            "description": "创建模板请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CreateTemplateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "模板创建成功，返回模板详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CreateTemplateResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/templates/{template_id}": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新指定模板的名称、内容、变量列表等字段。更新后自动递增模板版本号，旧版本保留在版本历史中。支持修改模板的激活状态。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "更新消息模板",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "模板ID",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新模板请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.UpdateTemplateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新成功，返回更新后的模板详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.MessageTemplateDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "模板不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "软删除消息模板（将is_active设置为false）。如存在待发送消息（pending状态）引用该模板，则拒绝删除以保证投递可追踪。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "删除（停用）模板",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "模板ID",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "模板停用成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.OKResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "模板不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "存在待发送消息引用该模板，无法删除",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/templates/{template_id}/clone-to-locale": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "将源模板的所有字段（名称、内容、变量等）复制一份到目标语言区域（locale），保持相同的模板编码（code）。用于快速创建多语言模板。如果目标locale已存在同名模板，返回409冲突。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "将模板复制到其他语言环境",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "源模板ID",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "复制目标语言环境请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CloneTemplateToLocaleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "复制成功，返回新模板详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.MessageTemplateDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "源模板不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "目标语言环境已存在同名模板",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/templates/{template_id}/preview": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "使用提供的变量值渲染指定模板，返回渲染后的主题、内容和纯文本版本，用于发送前预览确认。支持 simple 和 go-template 两种模板格式。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "预览模板渲染效果",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "模板ID",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "渲染变量键值对，如 {\\",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "渲染成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-communication_internal_handler_dto_PreviewTemplateResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "模板不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/communication/templates/{template_id}/versions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据模板ID获取该模板的所有历史版本记录。每次更新模板会递增版本号并保存快照，用于变更追溯和版本回退参考。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "查询模板版本历史",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "模板ID",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回版本历史列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.TemplateVersionListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "模板不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/bulk": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "向多个接收方批量发送短信或邮件。支持模板变量替换，逐条记录发送状态，适用于营销通知、系统公告等批量通信场景。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "批量发送消息",
+        "parameters": [
+          {
+            "description": "批量发送请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.BulkSendRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量发送成功，返回各条日志列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationLogListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/callback/{provider}": {
+      "post": {
+        "description": "接收并处理各短信、邮件、推送服务商（阿里云、腾讯云、AWS SNS/SES、SendGrid、Mailgun、FCM、APNs、JPush等）的投递状态回调通知，自动更新对应消息的发送状态。回调为公开端点，必须携带 HMAC-SHA256 签名（X-Callback-Signature，hex；密钥见 callback.secret），签名缺失/不符一律 401。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "处理短信/邮件/推送服务商回调",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务商名称：aliyun/tencentcloud/aws/sendgrid/ses/mailgun/fcm/apns/jpush",
+            "name": "provider",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "回调体 HMAC-SHA256 签名（hex，密钥 = callback.secret）",
+            "name": "X-Callback-Signature",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "回调数据（各服务商格式不同，支持JSON和Form表单）",
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "回调已接收确认",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CallbackResultDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求数据格式错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "回调签名缺失或无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "回调指向的消息不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "回调处理内部错误/验签密钥未配置",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/dashboard": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前租户的通信服务各渠道投递统计数据，包括总发送量、成功投递数、失败数、投递成功率，以及按渠道和状态的分布统计。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取通信投递仪表盘",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "统计天数范围（默认30天）",
+            "name": "days",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回租户通信投递仪表盘数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationDashboardDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/email": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "向指定邮箱地址发送邮件。支持模板（需预定义模板）或直接发送HTML/纯文本内容，支持CC抄送和BCC密送，自动记录到发送日志。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "发送邮件",
+        "parameters": [
+          {
+            "description": "邮件发送请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.EmailRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "发送成功，返回发送日志详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationLogDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/health/{channel}": {
+      "get": {
+        "description": "检查指定通信渠道（sms/email/push）的服务商配置和连通性状态。用于运维监控，验证服务商API端点是否可达、配置是否有效。公开端点，无需认证。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "渠道连通性检查",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "通信渠道：sms/email/push",
+            "name": "channel",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "检查成功，返回渠道健康状态（healthy/unhealthy/not_configured）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ChannelHealthDataResponse"
+            }
+          },
+          "400": {
+            "description": "渠道参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "健康检查内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/logs": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "分页查询当前租户的消息发送记录。按当前登录用户隔离数据（仅返回本人的发送记录），支持按渠道（sms/email/push）和发送状态（pending/sent/failed/delivered）筛选。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "分页查询发送日志",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID（按当前登录用户自动过滤）",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "发送渠道筛选：sms/email/push",
+            "name": "channel",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "发送状态筛选：pending/sent/failed/delivered",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码，从1开始（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20，最大100）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "分页查询成功，返回发送日志摘要列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationLogListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/providers": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "分页查询当前租户的服务商配置列表。支持按渠道（sms/email/push）和激活状态筛选。配置凭据在响应中自动脱敏（显示为***REDACTED***）。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "查询服务商配置列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道筛选：sms/email/push",
+            "name": "channel",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "激活状态筛选：true/false",
+            "name": "is_active",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码，从1开始（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回配置列表（凭据已脱敏）",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-communication_internal_handler_dto_ProviderConfigResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/providers/{provider_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据配置ID获取单个服务商配置的详细信息。配置凭据在响应中自动脱敏。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取服务商配置详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务商配置ID",
+            "name": "provider_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回配置详情（凭据已脱敏）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ProviderConfigDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "配置不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/push": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "向指定用户的所有激活设备发送推送通知。支持按平台（iOS/Android/Web/Desktop）筛选目标设备，自动记录每个Token的发送成功/失败情况。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "发送推送通知",
+        "parameters": [
+          {
+            "description": "推送通知发送请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "发送完成，返回成功和失败的Token数量",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushResultDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "用户或设备不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/push-tokens": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "分页查询当前租户下当前登录用户的设备推送令牌。支持按平台类型（ios/android/web/desktop）筛选，返回令牌ID、平台、设备ID、激活状态和创建时间。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "查询推送令牌列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID（自动从JWT获取当前用户）",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "平台筛选：ios/android/web/desktop",
+            "name": "platform",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码，从1开始（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回令牌列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushTokenListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为当前租户下的指定用户注册设备推送令牌（iOS APNs / Android FCM / Web Push / Desktop），用于后续推送通知发送。相同Token重复注册会自动停用旧记录，确保每个Token在库中唯一且最新。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "注册设备推送令牌",
+        "parameters": [
+          {
+            "description": "注册推送令牌请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CreatePushTokenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "注册成功，返回令牌详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushTokenDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/push-tokens/{push_token_id}": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新指定推送令牌的激活状态（is_active）。停用后该令牌不再接收推送，重新激活后恢复。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "更新推送令牌激活状态",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "推送令牌ID",
+            "name": "push_token_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新推送令牌请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.UpdatePushTokenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.OKResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "令牌不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "停用指定的设备推送令牌（将is_active设置为false）。注销后该令牌不再接收推送通知，用户下次打开应用需重新注册。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "注销推送令牌",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "推送令牌ID",
+            "name": "push_token_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "令牌注销成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.OKResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "令牌不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/rate-limits": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "基于当前配置的服务商返回短信、邮件、推送等渠道的速率限制配置（每分钟/每小时最大发送量），用于客户端发送前的流量控制参考。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "查询各渠道速率限制",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道筛选：sms/email/push（不传返回全部）",
+            "name": "channel",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回各渠道速率限制配置",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.RateLimitsDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/scheduled/{message_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "取消指定ID且处于scheduled状态的消息定时发送任务。已发送或已失败的消息无法取消。取消后消息状态变更为cancelled。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "取消定时发送消息",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "消息ID",
+            "name": "message_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.OKResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "消息不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "消息非scheduled状态，无法取消",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/sms": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "向指定手机号码发送短信。支持模板发送（需预定义模板）或直接发送内容，自动记录到发送日志。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "发送短信",
+        "parameters": [
+          {
+            "description": "短信发送请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.SMSRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "发送成功，返回发送日志详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationLogDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/template-stats": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回当前租户各模板在最近30天内的发送量、成功投递数和失败数统计，用于模板效果分析。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取模板使用统计（近30天）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道筛选：sms/email/push",
+            "name": "channel",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回各模板统计数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.TemplateStatsListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/templates": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "分页查询当前租户的消息模板列表。支持按发送渠道（sms/email/push）、激活状态、关键词（模板名称/编码）进行筛选。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取模板列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "渠道筛选：sms/email/push",
+            "name": "channel",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "是否激活筛选：true/false",
+            "name": "is_active",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "关键词搜索（匹配模板名称或编码）",
+            "name": "keyword",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码，从1开始（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回模板列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.TemplateListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/templates/available": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回平台默认模板和租户自定义模板的聚合列表，每个模板标注来源（platform/tenant）和是否被租户自定义覆盖。用于前端模板选择器展示。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取可用模板列表（含平台默认模板）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "语言区域：zh-CN/en-US（默认zh-CN）",
+            "name": "locale",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回可用模板列表（含来源标注）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.AvailableTemplateListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/communication/templates/{template_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据模板ID获取消息模板的完整信息，包含渲染示例（使用示例变量值展示模板渲染后的实际效果）。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "获取模板详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "模板ID",
+            "name": "template_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回模板详情（含渲染示例）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.TemplateDetailDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权访问该资源",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "模板不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/communication/erase-user-data": {
+      "post": {
+        "description": "根据用户ID和租户ID擦除用户的通信数据：软删除通信日志（保留审计追踪），硬删除推送令牌（数据最小化）。用于GDPR第17条（被遗忘权）的合规执行。内部接口，使用InternalAPIKeyAuth认证。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "擦除用户通信数据（GDPR合规）",
+        "parameters": [
+          {
+            "description": "擦除用户数据请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.EraseUserDataRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "擦除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.OKResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/communication/export-user-data": {
+      "post": {
+        "description": "根据用户ID和租户ID导出该用户的所有通信日志和推送令牌数据。用于GDPR第15条（数据主体访问权）和第20条（数据可携权）的合规响应。内部接口，使用InternalAPIKeyAuth认证。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "导出用户通信数据（GDPR合规）",
+        "parameters": [
+          {
+            "description": "导出用户数据请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ExportUserDataRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "导出成功，返回通信日志和推送令牌数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ExportUserDataDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/communication/push/send": {
+      "post": {
+        "description": "向指定用户的 Web Push 订阅扇出 VAPID 签名的通知（subscription-only，语义同通知服务原内部端点）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务 - 内部接口"
+        ],
+        "summary": "内部推送通知发送",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "内部推送发送请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.InternalPushSendRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "发送完成",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushSendDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/communication/push/subscriptions": {
+      "get": {
+        "description": "按显式 user_id 分页查询 Web Push 订阅",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务 - 内部接口"
+        ],
+        "summary": "内部查询推送订阅列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "应用ID",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushSubscriptionListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "为显式指定的 user_id 注册 Web Push 订阅（每用户上限 10 条）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务 - 内部接口"
+        ],
+        "summary": "内部注册推送订阅",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "订阅注册请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.InternalRegisterPushSubscriptionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "注册成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushSubscriptionDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务 - 内部接口"
+        ],
+        "summary": "内部删除推送订阅",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "应用ID",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "订阅端点URL",
+            "name": "endpoint",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "删除成功"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "订阅不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/communication/push/subscriptions/{subscription_id}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务 - 内部接口"
+        ],
+        "summary": "内部查询推送订阅详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "订阅ID",
+            "name": "subscription_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "用户ID（归属校验）",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushSubscriptionDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "订阅不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/communication/push/vapid-public-key": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务 - 内部接口"
+        ],
+        "summary": "内部获取 VAPID 公钥",
+        "responses": {
+          "200": {
+            "description": "VAPID 公钥",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.VapidPublicKeyDetailResponse"
+            }
+          },
+          "500": {
+            "description": "VAPID 未配置",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/communication/send": {
+      "post": {
+        "description": "提供给内部微服务调用的统一消息发送接口。支持短信、邮件、推送三种渠道，支持模板发送和内容直发两种模式。创建真实发送记录到数据库并异步尝试发送。使用 InternalAPIKeyAuth 认证。参考：ePrivacy Directive 2002/58/EC、CAN-SPAM Act。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务"
+        ],
+        "summary": "内部服务统一发送消息",
+        "parameters": [
+          {
+            "description": "内部发送请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.InternalSendRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "消息已入队/发送，返回消息ID和状态",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.InternalSendDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/email/suppressions": {
+      "get": {
+        "description": "分页列出本租户被抑制的收件人（只返回掩码地址，不含 hash 与明文）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务 - 内部接口"
+        ],
+        "summary": "内部查询邮件抑制列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.EmailSuppressionListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "按邮箱地址解除抑制（服务端归一化+哈希后删除）。幂等：未命中同样返回成功。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务 - 内部接口"
+        ],
+        "summary": "内部解除邮件抑制",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "待解除的邮箱地址",
+            "name": "email",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "解除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ReleaseEmailSuppressionDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/schedulers": {
+      "get": {
+        "description": "返回当前服务所有后台调度器的运行状态",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通信服务 - 内部接口"
+        ],
+        "summary": "查询调度器状态列表",
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-any"
+            }
+          },
+          "401": {
+            "description": "未授权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "domain.ChannelRateLimitData": {
+      "type": "object",
+      "properties": {
+        "max_per_hour": {
+          "type": "integer"
+        },
+        "max_per_min": {
+          "type": "integer"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-any": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {},
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-communication_internal_handler_dto_PreviewTemplateResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PreviewTemplateResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.FieldViolation": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是错误代码（可选）\n用于程序识别错误类型，如 \"required\", \"format\", \"range\"",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description 是人类可读的错误描述\n应该说明违反了什么规则，如 \"必须是一个有效的邮箱地址\"",
+          "type": "string"
+        },
+        "field": {
+          "description": "Field 是错误字段的路径\n使用点号表示嵌套字段，如 \"user.email\" 或 \"addresses[0].city\"",
+          "type": "string"
+        },
+        "standard": {
+          "description": "Standard 是指向权威规范文档的 URI 引用\n用于告知 API 消费者具体违反哪个标准\n示例：\"https://www.rfc-editor.org/info/rfc5322\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是导致错误的值（可选，开发模式下使用）\n生产环境可能不返回此字段以避免泄露敏感信息"
+        }
+      }
+    },
+    "dto.ListResponse-gitee_com_autional_service-communication_internal_handler_dto_ProviderConfigResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ProviderConfigResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.PageInfo": {
+      "type": "object",
+      "properties": {
+        "has_next": {
+          "description": "HasNext indicates whether there is a next page",
+          "type": "boolean"
+        },
+        "has_prev": {
+          "description": "HasPrev indicates whether there is a previous page",
+          "type": "boolean"
+        },
+        "page": {
+          "description": "Page is the current page number (1-based)",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "PageSize is the number of items per page",
+          "type": "integer"
+        },
+        "total": {
+          "description": "Total is the total number of items across all pages",
+          "type": "integer"
+        },
+        "total_pages": {
+          "description": "TotalPages is the total number of pages",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是业务错误码\n用于程序处理特定错误场景\n示例：30101001",
+          "type": "integer"
+        },
+        "detail": {
+          "description": "Detail 是针对此具体错误实例的人类可读解释\n可以包含具体的错误细节，如\"Field 'email' is required\"",
+          "type": "string"
+        },
+        "errors": {
+          "description": "Errors 是字段级验证错误列表（扩展字段）\n遵循 Web API 标准实践，每个错误包含字段名和错误信息",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dto.FieldViolation"
+          }
+        },
+        "i18n_args": {
+          "description": "I18nArgs 是国际化参数\n用于动态填充翻译模板",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "i18n_key": {
+          "description": "I18nKey 是国际化键\n用于客户端本地化错误消息\n示例：\"error.user_not_found\"",
+          "type": "string"
+        },
+        "instance": {
+          "description": "Instance 是发生问题的具体URI引用\n通常是请求的URL，可能包含查询参数\n示例：\"/api/v1/users?limit=invalid\"",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "RequestID 是请求唯一标识\n用于日志关联和问题追踪\n示例：\"req_550e8400-e29b-41d4-a716-446655440000\"",
+          "type": "string"
+        },
+        "retry_after": {
+          "description": "RetryAfter 用于 429 Too Many Requests 响应\n指示客户端应在多少秒后重试请求（RFC 6585）",
+          "type": "integer"
+        },
+        "service": {
+          "description": "Service 是服务名\n用于微服务架构中定位错误来源\n示例：\"auth-service\"",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "SpanID 是当前 span 标识\n用于精确定位分布式链路中的当前节点",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status 是产生的HTTP状态码\n用于客户端区分问题类型，不随Accept-Language变化\n示例：400, 401, 403, 404, 500",
+          "type": "integer"
+        },
+        "timestamp": {
+          "description": "Timestamp 是错误发生时间\nISO 8601 格式\n示例：\"2026-04-03T12:00:00Z\"",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title 是简短、人类可读的问题类型摘要\n相同的 Type 应该始终有相同的 Title（不随实例变化）\n示例：\"Invalid Request Parameters\"",
+          "type": "string"
+        },
+        "trace_id": {
+          "description": "TraceID 是分布式追踪标识\n遵循 W3C Trace Context 标准\n示例：\"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type 是标识问题类型的URI引用\n当该URI被解引用时，应提供人类可读的文档\n示例：\"https://api.example.com/errors/invalid-request\"",
+          "type": "string"
+        }
+      }
+    },
+    "dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.AvailableTemplateListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.AvailableTemplateResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.AvailableTemplateResponse": {
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "example": "email"
+        },
+        "code": {
+          "type": "string",
+          "example": "welcome"
+        },
+        "is_active": {
+          "type": "boolean",
+          "example": true
+        },
+        "is_customized": {
+          "type": "boolean",
+          "example": false
+        },
+        "locale": {
+          "type": "string",
+          "example": "zh-CN"
+        },
+        "name": {
+          "type": "string",
+          "example": "欢迎邮件"
+        },
+        "source": {
+          "description": "platform | tenant",
+          "type": "string",
+          "example": "platform"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.BulkSendRequest": {
+      "description": "批量发送消息的请求参数",
+      "type": "object",
+      "required": [
+        "channel",
+        "content",
+        "recipients"
+      ],
+      "properties": {
+        "channel": {
+          "type": "string",
+          "enum": [
+            "sms",
+            "email"
+          ],
+          "example": "sms"
+        },
+        "content": {
+          "type": "string",
+          "example": "您的验证码是123456"
+        },
+        "purpose": {
+          "type": "string",
+          "example": "sms_verification"
+        },
+        "recipients": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"13800138000\"",
+            "\"13900139000\"]"
+          ]
+        },
+        "subject": {
+          "type": "string",
+          "example": "通知"
+        },
+        "template": {
+          "type": "string",
+          "example": "verify_code"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "variables": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CallbackResultDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CallbackResultResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CallbackResultResponse": {
+      "description": "提供商回调结果",
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "example": "aliyun"
+        },
+        "received": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.ChannelHealthDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ChannelHealthResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.ChannelHealthResponse": {
+      "description": "渠道连通性检查结果",
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "example": "sms"
+        },
+        "message": {
+          "type": "string",
+          "example": "SMS provider is reachable"
+        },
+        "provider": {
+          "type": "string",
+          "example": "aliyun"
+        },
+        "status": {
+          "type": "string",
+          "example": "healthy"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CloneTemplateToLocaleRequest": {
+      "type": "object",
+      "required": [
+        "target_locale"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "target_locale": {
+          "type": "string",
+          "example": "en-US"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CommunicationDashboardDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationDashboardResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CommunicationDashboardResponse": {
+      "description": "通信服务各渠道投递统计数据",
+      "type": "object",
+      "properties": {
+        "by_channel": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "by_status": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "delivered": {
+          "type": "integer",
+          "example": 980
+        },
+        "delivery_rate": {
+          "type": "number",
+          "example": 0.98
+        },
+        "failed": {
+          "type": "integer",
+          "example": 20
+        },
+        "total_sent": {
+          "type": "integer",
+          "example": 1000
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CommunicationLogDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationLogResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CommunicationLogListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.CommunicationLogResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CommunicationLogResponse": {
+      "description": "消息发送日志记录",
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "example": "sms"
+        },
+        "content": {
+          "type": "string",
+          "example": "您的验证码是123456"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "error": {
+          "type": "string",
+          "example": "发送超时"
+        },
+        "id": {
+          "type": "string",
+          "example": "log_abc123"
+        },
+        "provider": {
+          "type": "string",
+          "example": "aliyun"
+        },
+        "recipient": {
+          "type": "string",
+          "example": "138****8000"
+        },
+        "response": {
+          "type": "string"
+        },
+        "sent_at": {
+          "type": "string",
+          "example": "2026-04-15T10:01:00Z"
+        },
+        "status": {
+          "type": "string",
+          "example": "delivered"
+        },
+        "template_id": {
+          "type": "string",
+          "example": "tpl_abc123"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CreateProviderConfigRequest": {
+      "type": "object",
+      "required": [
+        "channel",
+        "config",
+        "provider"
+      ],
+      "properties": {
+        "channel": {
+          "type": "string",
+          "enum": [
+            "sms",
+            "email",
+            "push"
+          ],
+          "example": "sms"
+        },
+        "config": {
+          "type": "string",
+          "example": "{\"access_key\":\"...\"}"
+        },
+        "priority": {
+          "type": "integer",
+          "maximum": 100,
+          "minimum": 0,
+          "example": 10
+        },
+        "provider": {
+          "type": "string",
+          "example": "aliyun"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CreatePushTokenRequest": {
+      "description": "注册设备推送令牌的请求参数",
+      "type": "object",
+      "required": [
+        "platform",
+        "token",
+        "user_id"
+      ],
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "example": "iPhone15-001"
+        },
+        "platform": {
+          "type": "string",
+          "enum": [
+            "ios",
+            "android",
+            "web",
+            "desktop"
+          ],
+          "example": "ios"
+        },
+        "token": {
+          "type": "string",
+          "example": "device_token_xxx"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CreateTemplateRequest": {
+      "description": "创建消息模板的请求参数",
+      "type": "object",
+      "required": [
+        "channel",
+        "code",
+        "content",
+        "name"
+      ],
+      "properties": {
+        "channel": {
+          "type": "string",
+          "enum": [
+            "sms",
+            "email",
+            "push"
+          ],
+          "example": "sms"
+        },
+        "code": {
+          "type": "string",
+          "example": "verify_code"
+        },
+        "content": {
+          "type": "string",
+          "example": "您的验证码是{code}，5分钟内有效"
+        },
+        "content_type": {
+          "type": "string",
+          "example": "text"
+        },
+        "description": {
+          "type": "string",
+          "example": "用于发送登录验证码"
+        },
+        "format": {
+          "type": "string",
+          "example": "simple"
+        },
+        "name": {
+          "type": "string",
+          "example": "验证码模板"
+        },
+        "subject": {
+          "type": "string",
+          "example": "验证码通知"
+        },
+        "text_content": {
+          "type": "string",
+          "example": "Your code is {code}"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"code\"]"
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.CreateTemplateResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 0
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.MessageTemplateResponse"
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.EmailRequest": {
+      "description": "发送邮件请求参数",
+      "type": "object",
+      "required": [
+        "subject",
+        "to"
+      ],
+      "properties": {
+        "bcc": {
+          "description": "密送",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "manager@example.com"
+          ]
+        },
+        "cc": {
+          "description": "抄送",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "admin@example.com"
+          ]
+        },
+        "content": {
+          "description": "内容",
+          "type": "string",
+          "example": "<h1>欢迎！</h1>"
+        },
+        "is_html": {
+          "description": "HTML格式",
+          "type": "boolean",
+          "example": false
+        },
+        "list_unsubscribe": {
+          "description": "ListUnsubscribe 退订头开关（WS-D D5）。缺省(nil) = 按 email.subscription_template_codes 配置判定；\ntrue = 显式加 List-Unsubscribe；false = 显式不加。头值来自 email.list_unsubscribe 配置。",
+          "type": "boolean",
+          "example": true
+        },
+        "send_at": {
+          "type": "string",
+          "example": "2026-06-07T10:00:00Z"
+        },
+        "subject": {
+          "description": "主题",
+          "type": "string",
+          "example": "账户激活邮件"
+        },
+        "template": {
+          "description": "模板",
+          "type": "string",
+          "example": "welcome_email"
+        },
+        "to": {
+          "description": "收件人",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "user@example.com"
+          ]
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "variables": {
+          "description": "变量",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.EmailSuppressionListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.EmailSuppressionResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.EmailSuppressionResponse": {
+      "type": "object",
+      "properties": {
+        "bounce_count": {
+          "type": "integer",
+          "example": 3
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-09-17T10:00:00Z"
+        },
+        "email_masked": {
+          "type": "string",
+          "example": "u***@example.com"
+        },
+        "expires_at": {
+          "description": "ExpiresAt 保留期到期时间（U3）。空 = 不过期（保留期配置为 0，或本列引入前的历史行）。\n运维需要它来回答「这条抑制为什么会被自动解除」与「历史行何时被回收」。",
+          "type": "string",
+          "example": "2027-03-16T10:00:00Z"
+        },
+        "is_active": {
+          "type": "boolean",
+          "example": true
+        },
+        "last_bounced_at": {
+          "type": "string",
+          "example": "2026-09-17T10:00:00Z"
+        },
+        "provider": {
+          "type": "string",
+          "example": "smtp"
+        },
+        "reason": {
+          "description": "hard_bounce | soft_bounce | complaint",
+          "type": "string",
+          "example": "hard_bounce"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.EraseUserDataRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.ExportUserDataDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ExportUserDataResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.ExportUserDataRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.ExportUserDataResponse": {
+      "type": "object",
+      "properties": {
+        "logs": {},
+        "subscriptions": {
+          "description": "FIX-10：Web Push 订阅随职责迁入本服务，GDPR 导出同域覆盖（新增字段，可累加）"
+        },
+        "tokens": {}
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.InternalPushSendRequest": {
+      "type": "object",
+      "required": [
+        "body",
+        "title"
+      ],
+      "properties": {
+        "body": {
+          "type": "string",
+          "example": "Login from Beijing - Approve?"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "title": {
+          "type": "string",
+          "example": "New Login Attempt"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "user-001"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.InternalRegisterPushSubscriptionRequest": {
+      "type": "object",
+      "required": [
+        "endpoint",
+        "keys",
+        "user_id"
+      ],
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "device_name": {
+          "type": "string",
+          "example": "Chrome on Windows"
+        },
+        "device_type": {
+          "type": "string",
+          "example": "web"
+        },
+        "endpoint": {
+          "type": "string",
+          "example": "https://fcm.googleapis.com/fcm/send/..."
+        },
+        "keys": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushSubscriptionKeys"
+        },
+        "user_agent": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "user-001"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.InternalSendDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.InternalSendResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.InternalSendRequest": {
+      "description": "内部服务间统一发送消息的请求参数",
+      "type": "object",
+      "required": [
+        "channel",
+        "to"
+      ],
+      "properties": {
+        "channel": {
+          "type": "string",
+          "example": "email"
+        },
+        "content": {
+          "type": "string",
+          "example": "您的验证码是123456"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "subject": {
+          "type": "string",
+          "example": "账户激活"
+        },
+        "template": {
+          "type": "string",
+          "example": "welcome"
+        },
+        "to": {
+          "type": "string",
+          "example": "user@example.com"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "variables": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.InternalSendResponse": {
+      "description": "内部统一发送接口的响应信息",
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "example": "email"
+        },
+        "message_id": {
+          "type": "string",
+          "example": "internal-1234567890"
+        },
+        "status": {
+          "type": "string",
+          "example": "queued"
+        },
+        "to": {
+          "type": "string",
+          "example": "user@example.com"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.MessageTemplateDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.MessageTemplateResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.MessageTemplateResponse": {
+      "description": "消息模板数据",
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "example": "sms"
+        },
+        "code": {
+          "type": "string",
+          "example": "verify_code"
+        },
+        "content": {
+          "type": "string",
+          "example": "您的验证码是{code}，5分钟内有效"
+        },
+        "content_type": {
+          "type": "string",
+          "example": "text"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "description": {
+          "type": "string",
+          "example": "用于发送登录验证码"
+        },
+        "id": {
+          "type": "string",
+          "example": "tpl_abc123"
+        },
+        "is_active": {
+          "type": "boolean",
+          "example": true
+        },
+        "name": {
+          "type": "string",
+          "example": "验证码模板"
+        },
+        "subject": {
+          "type": "string",
+          "example": "验证码通知"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"code\"]"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "example": 1
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.OKResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 0
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PreviewTemplateResponse": {
+      "description": "模板预览渲染结果，包含渠道、主题、正文、纯文本版的渲染效果",
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "example": "sms"
+        },
+        "code": {
+          "type": "string",
+          "example": "verify_code"
+        },
+        "content": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.RenderedContent"
+        },
+        "content_type": {
+          "type": "string",
+          "example": "text"
+        },
+        "name": {
+          "type": "string",
+          "example": "验证码模板"
+        },
+        "subject": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.RenderedContent"
+        },
+        "text_content": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.RenderedContent"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.ProviderConfigDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ProviderConfigResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.ProviderConfigResponse": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "channel": {
+          "type": "string"
+        },
+        "config": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushRequest": {
+      "description": "发送推送通知请求参数",
+      "type": "object",
+      "required": [
+        "body",
+        "title",
+        "user_id"
+      ],
+      "properties": {
+        "body": {
+          "description": "内容",
+          "type": "string",
+          "example": "您有一条新消息"
+        },
+        "channel": {
+          "description": "渠道",
+          "type": "string",
+          "example": "ios"
+        },
+        "data": {
+          "description": "数据",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "device_token": {
+          "description": "设备Token",
+          "type": "string",
+          "example": "device_token_xxx"
+        },
+        "platform": {
+          "description": "平台",
+          "type": "string",
+          "enum": [
+            "all",
+            "ios",
+            "android",
+            "web",
+            "desktop"
+          ],
+          "example": "all"
+        },
+        "title": {
+          "description": "标题",
+          "type": "string",
+          "example": "新消息通知"
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushResultDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushResultResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushResultResponse": {
+      "description": "推送发送结果",
+      "type": "object",
+      "properties": {
+        "sent": {
+          "type": "boolean",
+          "example": true
+        },
+        "tokens_failed": {
+          "type": "integer",
+          "example": 0
+        },
+        "tokens_sent": {
+          "type": "integer",
+          "example": 2
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushSendDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushSendResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushSendResponse": {
+      "type": "object",
+      "properties": {
+        "failed": {
+          "type": "integer",
+          "example": 0
+        },
+        "sent": {
+          "type": "integer",
+          "example": 3
+        },
+        "total": {
+          "type": "integer",
+          "example": 3
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushSubscriptionDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushSubscriptionResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushSubscriptionKeys": {
+      "type": "object",
+      "required": [
+        "auth",
+        "p256dh"
+      ],
+      "properties": {
+        "auth": {
+          "type": "string",
+          "example": "xK2s9..."
+        },
+        "p256dh": {
+          "type": "string",
+          "example": "BP7S2s9..."
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushSubscriptionListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushSubscriptionResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushSubscriptionResponse": {
+      "description": "Web Push 订阅信息",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-05-12T12:00:00Z"
+        },
+        "device_name": {
+          "type": "string",
+          "example": "Chrome on Windows"
+        },
+        "device_type": {
+          "type": "string",
+          "example": "web"
+        },
+        "endpoint": {
+          "type": "string",
+          "example": "https://fcm.googleapis.com/fcm/send/..."
+        },
+        "id": {
+          "type": "string",
+          "example": "sub-abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushTokenDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushTokenResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushTokenListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.PushTokenResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.PushTokenResponse": {
+      "description": "推送令牌信息",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "device_id": {
+          "type": "string",
+          "example": "iPhone15-001"
+        },
+        "id": {
+          "type": "string",
+          "example": "pt_abc123"
+        },
+        "is_active": {
+          "type": "boolean",
+          "example": true
+        },
+        "platform": {
+          "type": "string",
+          "example": "ios"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.RateLimitsDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.RateLimitsResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.RateLimitsResponse": {
+      "description": "通信服务各发送渠道的速率限制配置",
+      "type": "object",
+      "properties": {
+        "email": {
+          "$ref": "#/definitions/domain.ChannelRateLimitData"
+        },
+        "push": {
+          "$ref": "#/definitions/domain.ChannelRateLimitData"
+        },
+        "sms": {
+          "$ref": "#/definitions/domain.ChannelRateLimitData"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.ReleaseEmailSuppressionDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.ReleaseEmailSuppressionResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.ReleaseEmailSuppressionResponse": {
+      "type": "object",
+      "properties": {
+        "released": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.RenderedContent": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "rendered": {
+          "type": "string",
+          "example": "您的验证码是123456，5分钟内有效"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.SMSRequest": {
+      "description": "发送短信请求参数",
+      "type": "object",
+      "required": [
+        "phone"
+      ],
+      "properties": {
+        "content": {
+          "description": "内容",
+          "type": "string",
+          "example": "您的验证码是123456"
+        },
+        "phone": {
+          "description": "手机号",
+          "type": "string",
+          "example": "13800138000"
+        },
+        "purpose": {
+          "description": "Purpose 业务场景（审计/路由/脱敏；可选，向后兼容）。",
+          "type": "string",
+          "example": "sms_verification"
+        },
+        "send_at": {
+          "type": "string",
+          "example": "2026-06-07T10:00:00Z"
+        },
+        "template": {
+          "description": "模板",
+          "type": "string",
+          "example": "verify_code"
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "variables": {
+          "description": "变量",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.TemplateDetailDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.TemplateDetailResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.TemplateDetailResponse": {
+      "description": "模板详情数据（包含渲染示例）",
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "example": "sms"
+        },
+        "code": {
+          "type": "string",
+          "example": "verify_code"
+        },
+        "content": {
+          "type": "string",
+          "example": "您的验证码是{code}，5分钟内有效"
+        },
+        "content_type": {
+          "type": "string",
+          "example": "text"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "description": {
+          "type": "string",
+          "example": "用于发送登录验证码"
+        },
+        "id": {
+          "type": "string",
+          "example": "tpl_abc123"
+        },
+        "is_active": {
+          "type": "boolean",
+          "example": true
+        },
+        "name": {
+          "type": "string",
+          "example": "验证码模板"
+        },
+        "render_example": {
+          "type": "string",
+          "example": "您的验证码是[code]，5分钟内有效"
+        },
+        "subject": {
+          "type": "string",
+          "example": "验证码通知"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"code\"]"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "example": 1
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.TemplateListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.TemplateResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.TemplateResponse": {
+      "description": "模板数据",
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "example": "sms"
+        },
+        "code": {
+          "type": "string",
+          "example": "verify_code"
+        },
+        "content": {
+          "type": "string",
+          "example": "您的验证码是{code}，5分钟内有效"
+        },
+        "content_type": {
+          "type": "string",
+          "example": "text"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "description": {
+          "type": "string",
+          "example": "用于发送登录验证码"
+        },
+        "id": {
+          "type": "string",
+          "example": "tpl_abc123"
+        },
+        "is_active": {
+          "type": "boolean",
+          "example": true
+        },
+        "name": {
+          "type": "string",
+          "example": "验证码模板"
+        },
+        "subject": {
+          "type": "string",
+          "example": "验证码通知"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "updated_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"code\"]"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "example": 1
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.TemplateStatsListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.TemplateStatsResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.TemplateStatsResponse": {
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "example": "sms"
+        },
+        "delivered": {
+          "type": "integer",
+          "example": 480
+        },
+        "failed": {
+          "type": "integer",
+          "example": 20
+        },
+        "template_code": {
+          "type": "string",
+          "example": "verify_code"
+        },
+        "total_sent": {
+          "type": "integer",
+          "example": 500
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.TemplateVersionListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.TemplateVersionResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.TemplateVersionResponse": {
+      "type": "object",
+      "properties": {
+        "changed_by": {
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "channel": {
+          "type": "string",
+          "example": "sms"
+        },
+        "code": {
+          "type": "string",
+          "example": "verify_code"
+        },
+        "content": {
+          "type": "string",
+          "example": "您的验证码是{code}，5分钟内有效"
+        },
+        "content_type": {
+          "type": "string",
+          "example": "text"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "id": {
+          "type": "string",
+          "example": "tv_abc123"
+        },
+        "name": {
+          "type": "string",
+          "example": "验证码模板"
+        },
+        "subject": {
+          "type": "string",
+          "example": "验证码通知"
+        },
+        "template_id": {
+          "type": "string",
+          "example": "tpl_abc123"
+        },
+        "text_content": {
+          "type": "string"
+        },
+        "variables": {
+          "type": "string",
+          "example": "[\"code\"]"
+        },
+        "version": {
+          "type": "integer",
+          "example": 3
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.UpdateProviderConfigRequest": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "priority": {
+          "type": "integer",
+          "maximum": 100,
+          "minimum": 0
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.UpdatePushTokenRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "is_active": {
+          "type": "boolean",
+          "example": true
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.UpdateTemplateRequest": {
+      "description": "更新消息模板的请求参数",
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "example": "您的验证码是{code}，10分钟内有效"
+        },
+        "content_type": {
+          "type": "string",
+          "example": "text"
+        },
+        "description": {
+          "type": "string",
+          "example": "更新版验证码模板"
+        },
+        "format": {
+          "type": "string",
+          "example": "go-template"
+        },
+        "is_active": {
+          "type": "boolean",
+          "example": true
+        },
+        "name": {
+          "type": "string",
+          "example": "验证码模板v2"
+        },
+        "subject": {
+          "type": "string",
+          "example": "验证码通知v2"
+        },
+        "text_content": {
+          "type": "string",
+          "example": "Your code is {code}, valid for 10 min"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"code\"]"
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.VapidPublicKeyDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-communication_internal_handler_dto.VapidPublicKeyResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-communication_internal_handler_dto.VapidPublicKeyResponse": {
+      "description": "Web Push VAPID 公钥，前端注册 Push 订阅时使用",
+      "type": "object",
+      "properties": {
+        "public_key": {
+          "type": "string",
+          "example": "BEL5Oa..."
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "通信接口：邮件、短信、Webhook",
+      "name": "通信服务"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}

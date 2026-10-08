@@ -1,0 +1,6562 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "存储服务 API，提供文件上传、下载、管理和批量操作等功能",
+    "title": "存储服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/bff/storage/api/v1",
+  "paths": {
+    "/admin/storage/buckets": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前租户的所有存储桶列表，支持分页查询。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员获取存储桶列表",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "页码（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "存储桶列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BucketListResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为当前租户创建新的存储桶（逻辑记录 + MinIO物理桶），支持设置可见性（private/public/temp）和描述。默认桶不可删除。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员创建存储桶",
+        "parameters": [
+          {
+            "description": "创建存储桶请求 — name: 桶名称, visibility: 可见性(private/public/temp), description: 描述",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.CreateBucketRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "创建成功，返回存储桶详情",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BucketDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或桶名已存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误（MinIO操作失败等）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/buckets/{name}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据存储桶名称获取指定存储桶的详细信息，包括可见性、默认标记和描述。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员获取存储桶详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "存储桶名称",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "存储桶详情",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BucketDetailResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "存储桶不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新指定存储桶的可见性、描述或默认标记。默认桶不可取消默认。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员更新存储桶",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "存储桶名称",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新存储桶请求 — visibility: 可见性(private/public/temp), description: 描述, is_default: 是否为默认桶",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.UpdateBucketRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新成功，返回存储桶详情",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BucketDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "存储桶不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定存储桶及MinIO中对应的物理桶。默认桶（default bucket）不可删除。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员删除存储桶",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "存储桶名称",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "删除成功，无返回体"
+          },
+          "400": {
+            "description": "默认桶不可删除或桶非空",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "存储桶不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/clean-stale-uploads": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "清理超过指定时间的pending状态上传文件记录及其MinIO对象。仅处理metadata.status=pending的文件，硬删除记录并移除存储对象。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员清理过期pending上传",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "过期小时数（默认24小时，最小1小时）",
+            "name": "older_than_hours",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "清理结果，返回清理数量",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/data-retention-policy": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询当前租户的数据保留策略配置，包括保留天数、自动删除和删除前归档开关。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员获取数据保留策略",
+        "responses": {
+          "200": {
+            "description": "数据保留策略详情",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.DataRetentionPolicyDetailResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "未配置保留策略",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "配置当前租户的数据保留策略（保留天数、自动删除开关、删除前归档开关）。首次调用创建策略，后续调用更新。查询最旧文件以评估策略影响范围。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员配置数据保留策略",
+        "parameters": [
+          {
+            "description": "数据保留策略 — retention_days: 保留天数, auto_delete: 是否自动删除, archive_before_delete: 删除前是否归档",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.DataRetentionPolicyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "策略已生效，返回保留策略详情及生效时间",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.DataRetentionPolicyDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户数据不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/encryption-status": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "基于MinIO实际SSL/TLS配置返回存储服务的传输加密状态（UseSSL），供管理员进行合规审计与安全评估。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员查询存储加密状态",
+        "responses": {
+          "200": {
+            "description": "加密状态（静态加密、传输加密、算法、密钥管理）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.EncryptionStatusDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户数据不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/files": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /files 同体、同租户范围；供控制台在 admin 平面读取。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "获取文件列表（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "父文件夹ID，不填则查询根目录文件",
+            "name": "parent_id",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20，最大100）",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "文件名关键词搜索",
+            "name": "keyword",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileListResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /files 同体、同租户范围；供控制台在 admin 平面写入。",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "上传文件（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件所有者ID（缺省为当前认证用户）",
+            "name": "owner_id",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "description": "可见性：private（私有）/ public（公开），默认private",
+            "name": "visibility",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "description": "父文件夹ID，不填则上传到根目录",
+            "name": "parent_id",
+            "in": "formData"
+          },
+          {
+            "type": "file",
+            "description": "待上传的文件",
+            "name": "file",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "文件上传成功，返回文件元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.UploadFileDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或文件类型不允许",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "413": {
+            "description": "文件大小超限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "507": {
+            "description": "存储配额不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/files/{file_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /files/{file_id} 同体、同租户范围；供控制台在 admin 平面写入。软删除，入回收站。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "删除文件（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "文件删除成功，无返回体"
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在或无权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/files/{file_id}/download": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /files/{file_id}/download 同体、同租户范围；供控制台在 admin 平面读取。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/octet-stream",
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "下载文件（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件内容，Content-Disposition: attachment",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "206": {
+            "description": "部分内容，Content-Range 响应",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在或无权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "416": {
+            "description": "Range 请求不合法",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/folders": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /storage/folders 同体、同租户范围；供控制台在 admin 平面写入。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "创建文件夹（管理端）",
+        "parameters": [
+          {
+            "description": "文件夹创建请求 — name: 文件夹名称, parent_id: 父文件夹ID（可选）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.CreateFolderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "文件夹创建成功，返回文件夹元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.CreateFolderResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或父文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/quota": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前租户的存储配额及已使用情况（已用字节数、可用字节数、使用百分比）。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员获取存储配额",
+        "responses": {
+          "200": {
+            "description": "存储配额详情（配额总量、已用、可用）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.StorageQuotaDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新当前租户的存储配额上限（字节数）。记录审计日志（变更前后配额），发布QuotaUpdatedEvent。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员更新存储配额",
+        "parameters": [
+          {
+            "description": "配额更新请求 — quota_bytes: 配额上限（字节）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.UpdateStorageQuotaRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的存储配额信息",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.StorageQuotaDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/stats": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前租户的存储使用统计，包括文件数量、总大小、按MIME类型分布等管理数据。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "管理员存储统计",
+        "responses": {
+          "200": {
+            "description": "存储统计信息（总文件数、总大小、MIME类型分布）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.StorageStatsDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足，需要管理员角色",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户数据不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/trash": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /storage/trash 同体、同租户范围；供控制台在 admin 平面读取。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "获取回收站列表（管理端）",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "页码（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "回收站文件列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileListResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/trash/{trash_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /storage/trash/{trash_id} 同体、同租户范围；供控制台在 admin 平面写入。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "从回收站永久删除（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "回收站文件ID",
+            "name": "trash_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "永久删除成功，无返回体"
+          },
+          "400": {
+            "description": "文件不在回收站中，请先执行正常删除",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/storage/trash/{trash_id}/restore": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /storage/trash/{trash_id}/restore 同体、同租户范围；供控制台在 admin 平面写入。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "从回收站恢复文件（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "回收站文件ID",
+            "name": "trash_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "恢复成功",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "文件不在回收站中",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前用户在指定文件夹下的文件列表，支持分页和文件名关键词搜索，结果按创建时间倒序排列；include_directories=true 时同时返回子文件夹（目录浏览）。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "获取文件列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "父文件夹ID，不填则查询根目录文件",
+            "name": "parent_id",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20，最大100）",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "文件名关键词搜索",
+            "name": "keyword",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "是否包含子文件夹（默认false仅文件）",
+            "name": "include_directories",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileListResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "上传文件到对象存储服务，支持图片、视频、文档等多种文件类型。自动计算SHA-256哈希校验值，记录文件元数据并触发审计日志。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "上传文件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件所有者ID",
+            "name": "owner_id",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "可见性：private（私有）/ public（公开），默认private",
+            "name": "visibility",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "description": "父文件夹ID，不填则上传到根目录",
+            "name": "parent_id",
+            "in": "formData"
+          },
+          {
+            "type": "file",
+            "description": "待上传的文件",
+            "name": "file",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "文件上传成功，返回文件元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.UploadFileDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或文件类型不允许",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "413": {
+            "description": "文件大小超限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "507": {
+            "description": "存储配额不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/batch-download": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批量下载多个文件，将所有文件打包为ZIP压缩包流式返回。跳过下载失败的文件继续处理其余。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/zip",
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "批量下载（ZIP打包）",
+        "parameters": [
+          {
+            "description": "批量下载请求 — file_ids: 文件ID列表（至少1个）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BatchDownloadRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ZIP压缩包，Content-Disposition: attachment，文件名格式 download_YYYYMMDD_HHMMSS.zip",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误（ZIP打包失败）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/bulk-deletions": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批量删除文件或文件夹的旧版兼容端点，内部转发到同功能的 /storage/batch-delete 处理逻辑。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "批量删除（旧版兼容）",
+        "parameters": [
+          {
+            "description": "待删除的文件/文件夹ID列表 — file_ids: ID数组",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BatchDeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量删除成功，返回删除数量和ID列表",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BatchDeleteResultDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件/文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "文件夹非空，无法删除",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/bulk-uploads": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批量准备上传任务，为每个文件生成预签名上传URL（最多50个文件）。自动检查文件类型白名单和租户存储配额，批量创建文件记录。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "批量上传准备",
+        "parameters": [
+          {
+            "description": "批量上传准备请求 — files: 文件列表(含filename/content_type/size)",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BulkUploadPrepareRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "批量预签名上传URL列表及文件数量",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BulkUploadURLsDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或文件类型不允许",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "413": {
+            "description": "文件总大小超限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "507": {
+            "description": "存储配额不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/multipart/init": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "初始化大文件分片上传任务，为每个分片生成预签名PUT上传URL。自动检查文件类型白名单和租户存储配额（配额不足时拒绝）。创建multipart_pending状态的文件记录。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "初始化分片上传",
+        "parameters": [
+          {
+            "description": "分片上传初始化参数 — file_name: 文件名, content_type: MIME类型, total_size: 总大小(字节), part_count: 分片数(2-100), folder_id: 父文件夹ID(可选), visibility: 可见性(可选)",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.InitMultipartUploadRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "初始化成功，返回upload_id和各分片预签名上传URL",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.MultipartInitDataDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或文件类型不允许",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "413": {
+            "description": "文件总大小超限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "507": {
+            "description": "存储配额不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/multipart/{file_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "中止分片上传任务，清理MinIO中所有已上传的分片临时对象，硬删除文件记录。仅文件所有者可操作。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "中止分片上传",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "中止成功，无返回体"
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "仅文件所有者可中止上传",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/multipart/{file_id}/complete": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "验证所有分片已成功上传至MinIO，使用ComposeObjects合并分片为目标文件，清理临时分片对象。仅文件所有者可操作。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "完成分片上传",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "分片合并完成，返回组装后的文件元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileMetadataDetailResponse"
+            }
+          },
+          "400": {
+            "description": "分片未全部上传或文件状态不是multipart_pending",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "仅文件所有者可完成上传",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误（分片合并失败）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/shared/{token}": {
+      "get": {
+        "description": "使用分享Token直接下载文件，无需认证。自动验证分享有效性（未过期、未达访问上限），支持 HTTP Range 请求。记录访问次数。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/octet-stream",
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "通过分享链接下载",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "分享Token",
+            "name": "token",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件内容，Content-Disposition: attachment",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "206": {
+            "description": "部分内容，Content-Range 响应",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "分享链接无效或已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "416": {
+            "description": "Range 请求不合法",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/upload-url": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定文件生成一个预签名PUT上传URL（最大300秒过期），客户端可直接上传文件到对象存储。创建pending状态的文件记录。SF3安全收紧。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "获取上传预签名URL",
+        "parameters": [
+          {
+            "description": "上传URL请求 — filename: 文件名, content_type: MIME类型, expires_in: 过期秒数(默认/最大300), parent_id: 父文件夹ID(可选), visibility: 可见性(可选)",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.CreateUploadURLRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "上传URL信息（文件ID、预签名URL、Key、过期秒数）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.CreateUploadURLDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "413": {
+            "description": "文件大小超限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "507": {
+            "description": "存储配额不足",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据文件ID软删除文件及其存储对象，记录审计日志（含文件快照beforeSnapshot）。被删除文件进入回收站，可在保留期内恢复。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "删除文件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "文件删除成功，无返回体"
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在或无权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新文件名称或自定义元数据（metadata JSON合并）。验证文件存在且非文件夹，发布FileUpdatedEvent事件。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "更新文件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新请求 — name: 新文件名（可选）, metadata: 自定义元数据键值对（可选）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.UpdateFileNameRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的文件元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileMetadataDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或无字段可更新",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在或为文件夹",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/copy": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "复制文件到指定目标文件夹，在MinIO中执行服务端复制（CopyObject）避免数据搬运，支持自定义新文件名。复制失败时自动回滚。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "复制文件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "源文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "复制参数 — target_folder_id: 目标文件夹ID, new_name: 新文件名（可选）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.CopyFileTargetRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "复制结果，返回源文件和新文件的元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileCopyResultDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "源文件或目标文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/download": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据文件ID下载文件，通过租户隔离进行私有文件访问控制，记录下载指标。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/octet-stream",
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "下载文件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件内容，Content-Disposition: attachment",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "206": {
+            "description": "部分内容，Content-Range 响应",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在或无权访问",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "416": {
+            "description": "Range 请求不合法",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/metadata": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取文件的详细元数据信息，包括MinIO对象存储中的实际信息（最后修改时间、ETag校验值、大小等），用于校验数据库与存储一致性。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "获取文件元数据",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件元数据（含MinIO对象存储信息）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileMetadataExtendedDetailResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在或为文件夹",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/move": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "将文件移动到指定目标文件夹，在MinIO中先复制后删除以实现对象迁移。自动检测循环引用（禁止将文件夹移入自身或子文件夹）。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "移动文件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "移动参数 — target_folder_id: 目标文件夹ID",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.MoveFileRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "移动后的文件元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileMetadataDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或循环引用检测",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件或目标文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/presigned-url": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为文件生成临时访问URL，默认5分钟有效期（最大15分钟），可在有效期内无需认证直接访问/下载文件。SF3安全收紧。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "生成预签名URL",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "过期秒数（默认300秒，最大900秒）",
+            "name": "expires",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "预签名URL及过期时间",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.PresignedURLDetailResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/preview": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取文件预览：图片文件返回缩略图（Lanczos重采样），PDF文件返回预签名下载URL，其他文件返回download_only状态及预签名URL。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "文件预览",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "缩略图宽度（默认200，最大1200）",
+            "name": "width",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "缩略图高度（默认200，最大1200）",
+            "name": "height",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "预览数据（含文件信息、预览类型、预签名URL）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FilePreviewDetailResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/share": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据文件ID查看该文件的分享详情，包括Token、过期时间、访问统计等。仅分享创建者可查看。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "查看分享详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "分享详情，包含Token、过期时间和访问次数",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.ShareDetailDetailResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "仅分享创建者可查看",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件或分享不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为文件创建临时分享链接，支持设置过期时间和最大访问次数限制。分享者即当前认证用户。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "创建分享链接",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "分享参数 — expires_in: 过期时长(如24h/7d), max_access: 最大访问次数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.CreateShareRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "分享链接创建成功，返回分享URL、Token和过期时间",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileShareDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据文件ID和分享Token取消文件分享链接，仅分享创建者可操作。记录审计日志。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "取消分享链接",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "分享Token",
+            "name": "token",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "取消分享成功，无返回体"
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "仅分享创建者可取消分享",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "分享不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/thumbnail": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为图片文件生成指定尺寸的缩略图，支持自定义宽高、JPEG质量和输出格式（jpeg/png），使用Lanczos重采样算法保证缩略图质量。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "image/jpeg",
+          "image/png",
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "生成缩略图",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "缩略图宽度（默认200，单位像素）",
+            "name": "width",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "缩略图高度（默认200，单位像素）",
+            "name": "height",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "JPEG质量（默认80，范围1-100）",
+            "name": "quality",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "输出格式：jpeg / png（默认jpeg）",
+            "name": "format",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "缩略图图片数据",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "400": {
+            "description": "文件不是图片或格式不支持",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误（图片解码/编码失败）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/upload-complete": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "确认预签名上传的文件已完成真实上传，从MinIO获取实际文件大小和ContentType，更新文件状态从pending到completed。仅文件所有者可确认。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "上传完成确认",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "上传确认成功",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "文件状态不是pending，或未知上传状态",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "仅文件所有者可确认上传",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/versions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "列出MinIO中指定文件的所有历史版本（含版本ID、大小、ETag、是否当前版本、创建时间），支持客户端分页。需MinIO开启版本控制。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "获取文件版本列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件版本列表及当前版本标识",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileVersionDetailResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限访问该文件",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/versions/{version_id}/restore": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "将文件恢复到指定的历史版本，使用MinIO CopyObjectVersion将历史版本复制为当前版本。同步更新文件大小。记录审计日志，发布VersionRestoredEvent。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "恢复文件版本",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "要恢复到的版本ID",
+            "name": "version_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "版本恢复成功，返回文件当前元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileMetadataDetailResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件或指定版本不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误（版本恢复失败）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/visibility": {
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "切换文件的公开状态（private ↔ public），在MinIO私有桶和公开桶之间迁移对象。记录审计日志。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "更新文件可见性",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "可见性更新 — visibility: public / private",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.UpdateFileVisibilityRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的文件元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileMetadataDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/files/{file_id}/watermark": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为图片文件添加文字水印，生成带水印的新文件。支持自定义水印文字内容、位置（左上/右上/居中/左下/右下）、透明度和字体大小。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "添加水印",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "源文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "水印参数 — text: 水印文字, position: 位置, opacity: 透明度(0-1), font_size: 字体大小",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.WatermarkRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "水印添加成功，返回新生成的水印文件元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileMetadataDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或文件不是图片",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误（图片解码/水印渲染/存储写入失败）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/folders": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "在指定父文件夹下创建新文件夹，支持验证父文件夹存在性。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "创建文件夹",
+        "parameters": [
+          {
+            "description": "文件夹创建请求 — name: 文件夹名称, parent_id: 父文件夹ID（可选）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.CreateFolderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "文件夹创建成功，返回文件夹元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FolderMetadataDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或名称重复",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/folders/{folder_id}/contents": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "列出指定文件夹下的所有文件和子文件夹（最多500条），按创建时间倒序。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "获取文件夹内容",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件夹ID",
+            "name": "folder_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件夹内容列表",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileMetadataListDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/runtime": {
+      "get": {
+        "description": "内部API：获取存储服务运行时状态和健康检查信息（供monitoring服务调用）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务 - 内部接口"
+        ],
+        "summary": "内部接口：获取运行时信息",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部API密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "运行时状态信息",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "503": {
+            "description": "服务不可用",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/schedulers": {
+      "get": {
+        "description": "内部API：获取存储服务的所有定时任务及其运行状态（供内部监控和gateway调度面板调用）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务 - 内部接口"
+        ],
+        "summary": "内部接口：获取定时任务列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部API密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "定时任务列表",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/internal/storage/batch-delete": {
+      "post": {
+        "description": "内部API：根据用户ID和租户ID批量硬删除文件（跳过回收站），供合规审计等服务间调用。记录审计日志，发布BatchDeletedEvent。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务 - 内部接口"
+        ],
+        "summary": "内部接口：批量删除用户文件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部API密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "批量删除请求 — user_id: 用户ID, ids: 文件ID列表",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.InternalBatchDeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量删除结果（删除数量和ID列表）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BatchDeleteResultDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "删除操作失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/storage/erase-user": {
+      "post": {
+        "description": "内部API：根据用户ID和租户ID擦除该用户的所有文件数据（匿名化处理），供compliance-service数据擦除流程调用。参考：GDPR Art 17 (Right to Erasure)、GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务 - 内部接口"
+        ],
+        "summary": "内部接口：GDPR擦除用户文件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部API密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "擦除请求 — user_id: 用户ID",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "擦除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败（user_id必填）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/storage/export-user-data": {
+      "post": {
+        "description": "内部API：根据租户ID和用户ID导出用户的所有文件元数据列表，供合规、DSAR等服务间调用。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务 - 内部接口"
+        ],
+        "summary": "内部接口：导出用户数据",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部API密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "导出请求 — user_id: 用户ID",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.ExportUserDataRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "该用户的文件元数据列表",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileMetadataListDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/storage/files": {
+      "get": {
+        "description": "内部API：根据用户ID和租户ID获取文件列表（供合规、审计等服务间调用），支持分页和MIME类型筛选，按创建时间倒序排列。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务 - 内部接口"
+        ],
+        "summary": "内部接口：获取用户文件列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部API密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "MIME类型筛选（如 image/png）",
+            "name": "mime_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户文件列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileListResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/storage/usage": {
+      "get": {
+        "description": "内部API：根据租户ID查询存储使用量（已用字节数）和文件数量，供billing/tenant等服务间调用做计费计算和配额管理。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务 - 内部接口"
+        ],
+        "summary": "内部接口：获取租户存储用量",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部API密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "租户存储用量（已用字节数、文件数量）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.TenantUsageDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败（tenant_id为空）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/shares": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "列出当前用户创建的所有文件分享链接，支持分页。结果按创建时间倒序排列。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "列出分享",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "页码（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "分享列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.ShareListResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/batch-delete": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批量删除指定ID的文件或文件夹。非空文件夹拒绝删除，需要先清空子项。删除前记录快照用于审计追溯。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "批量删除文件/文件夹",
+        "parameters": [
+          {
+            "description": "批量删除请求 — file_ids: 待删除的文件/文件夹ID列表",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BatchDeleteRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量删除成功，返回删除数量和ID列表",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BatchDeleteResultDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件/文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "文件夹非空，无法删除",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/batch-move": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "将多个文件或文件夹移动到指定目标文件夹。自动检测循环引用（禁止将文件夹移入自身或子文件夹），发布BatchMovedEvent。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "批量移动文件/文件夹",
+        "parameters": [
+          {
+            "description": "批量移动参数 — ids: 要移动的文件/文件夹ID列表, target_id: 目标文件夹ID",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量移动成功，返回移动数量和目标ID",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BatchMoveResultDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或循环引用检测",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "目标文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/folders": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Storage API版本：创建新文件夹，支持验证父文件夹存在性，发布FolderCreatedEvent领域事件。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "Storage API 创建文件夹",
+        "parameters": [
+          {
+            "description": "文件夹创建请求 — name: 文件夹名称, parent_id: 父文件夹ID（可选）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.CreateFolderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "文件夹创建成功，返回文件夹元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.CreateFolderResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败或父文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/folders/{folder_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Storage API版本：获取文件夹详情及内容列表（最多500条），包含文件夹元数据和子项列表。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "获取文件夹内容",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件夹ID",
+            "name": "folder_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件夹信息及内容列表",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FolderContentsDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Storage API版本：删除空文件夹，非空文件夹拒绝删除（需先清空子项）。软删除后记录审计日志，发布FolderDeletedEvent。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "删除文件夹",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件夹ID",
+            "name": "folder_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "文件夹非空，无法删除",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "重命名文件夹。记录审计日志，发布FolderUpdatedEvent。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "更新文件夹",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "文件夹ID",
+            "name": "folder_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新请求 — name: 新文件夹名称",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handler_dto.UpdateFolderNameRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的文件夹元数据",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FolderMetadataDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件夹不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/public/encryption-status": {
+      "get": {
+        "description": "Trust Center：获取存储加密状态公开信息（无需认证，无需租户ID），供外部合规审计和信任中心展示。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "合规管理 - Trust Center"
+        ],
+        "summary": "公开：获取存储加密状态",
+        "responses": {
+          "200": {
+            "description": "加密状态（静态加密、传输加密、算法AES-256-GCM、密钥管理KMS）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.PublicEncryptionStatusDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/public/reports": {
+      "get": {
+        "description": "Trust Center：获取公开可下载的合规报告列表（无需认证），支持分页。仅返回公开文件。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "合规管理 - Trust Center"
+        ],
+        "summary": "公开：获取合规报告列表",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "页码（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "公开合规报告列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.PublicReportListResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/public/reports/{report_id}/download": {
+      "get": {
+        "description": "Trust Center：下载公开合规报告文件（无需认证）。设置1小时HTTP公共缓存。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/octet-stream",
+          "application/json"
+        ],
+        "tags": [
+          "合规管理 - Trust Center"
+        ],
+        "summary": "公开：下载合规报告",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "公开报告的文件ID",
+            "name": "report_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "报告文件，Content-Disposition: attachment，Cache-Control: public, max-age=3600",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "400": {
+            "description": "报告ID为空",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "报告不存在或非公开",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/quota": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前租户的存储使用量和配额信息（已用字节数、可用字节数、使用百分比），供普通用户查看。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "获取存储配额",
+        "responses": {
+          "200": {
+            "description": "存储配额详情（配额总量、已用、可用、使用百分比）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.StorageQuotaDetailResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/trash": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "列出当前用户已软删除（进入回收站）的文件和文件夹，支持分页查询。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "获取回收站列表",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "页码（默认1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认20）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "回收站文件列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.FileListResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "硬删除回收站中当前用户的文件和文件夹（仅本人 owner 名下，不触及其他用户）。记录审计日志。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "清空回收站",
+        "responses": {
+          "200": {
+            "description": "清空成功，返回删除数量",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.BatchDeleteResultDetailResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/trash/{trash_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "从回收站中硬删除文件/文件夹（从数据库和MinIO中彻底移除）。支持重试删除存储对象（最多3次）。验证文件确实在回收站中。发布FilePermanentlyDeletedEvent。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "从回收站永久删除",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "回收站文件ID",
+            "name": "trash_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "永久删除成功，无返回体"
+          },
+          "400": {
+            "description": "文件不在回收站中，请先执行正常删除",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/trash/{trash_id}/restore": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "恢复已软删除的文件或文件夹到正常状态（清除deleted_at字段）。验证文件确实在回收站中。记录审计日志，发布FileRestoredEvent。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "从回收站恢复文件",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "回收站文件ID",
+            "name": "trash_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "恢复成功",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "文件不在回收站中",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/storage/trends": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定时间范围内的存储使用趋势数据（按日/周），优先使用快照表数据，无快照时回退到当前总量。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "存储使用趋势",
+        "parameters": [
+          {
+            "type": "string",
+            "default": "day",
+            "description": "趋势周期：day(按日，默认)/week(按周)",
+            "name": "period",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "存储趋势数据（周期、每日数据点列表、更新时间）",
+            "schema": {
+              "$ref": "#/definitions/handler_dto.StorageTrendsDetailResponse"
+            }
+          },
+          "400": {
+            "description": "参数验证失败",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "dto.FieldViolation": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是错误代码（可选）\n用于程序识别错误类型，如 \"required\", \"format\", \"range\"",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description 是人类可读的错误描述\n应该说明违反了什么规则，如 \"必须是一个有效的邮箱地址\"",
+          "type": "string"
+        },
+        "field": {
+          "description": "Field 是错误字段的路径\n使用点号表示嵌套字段，如 \"user.email\" 或 \"addresses[0].city\"",
+          "type": "string"
+        },
+        "standard": {
+          "description": "Standard 是指向权威规范文档的 URI 引用\n用于告知 API 消费者具体违反哪个标准\n示例：\"https://www.rfc-editor.org/info/rfc5322\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是导致错误的值（可选，开发模式下使用）\n生产环境可能不返回此字段以避免泄露敏感信息"
+        }
+      }
+    },
+    "dto.Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是业务错误码\n用于程序处理特定错误场景\n示例：30101001",
+          "type": "integer"
+        },
+        "detail": {
+          "description": "Detail 是针对此具体错误实例的人类可读解释\n可以包含具体的错误细节，如\"Field 'email' is required\"",
+          "type": "string"
+        },
+        "errors": {
+          "description": "Errors 是字段级验证错误列表（扩展字段）\n遵循 Web API 标准实践，每个错误包含字段名和错误信息",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dto.FieldViolation"
+          }
+        },
+        "i18n_args": {
+          "description": "I18nArgs 是国际化参数\n用于动态填充翻译模板",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "i18n_key": {
+          "description": "I18nKey 是国际化键\n用于客户端本地化错误消息\n示例：\"error.user_not_found\"",
+          "type": "string"
+        },
+        "instance": {
+          "description": "Instance 是发生问题的具体URI引用\n通常是请求的URL，可能包含查询参数\n示例：\"/api/v1/users?limit=invalid\"",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "RequestID 是请求唯一标识\n用于日志关联和问题追踪\n示例：\"req_550e8400-e29b-41d4-a716-446655440000\"",
+          "type": "string"
+        },
+        "retry_after": {
+          "description": "RetryAfter 用于 429 Too Many Requests 响应\n指示客户端应在多少秒后重试请求（RFC 6585）",
+          "type": "integer"
+        },
+        "service": {
+          "description": "Service 是服务名\n用于微服务架构中定位错误来源\n示例：\"auth-service\"",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "SpanID 是当前 span 标识\n用于精确定位分布式链路中的当前节点",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status 是产生的HTTP状态码\n用于客户端区分问题类型，不随Accept-Language变化\n示例：400, 401, 403, 404, 500",
+          "type": "integer"
+        },
+        "timestamp": {
+          "description": "Timestamp 是错误发生时间\nISO 8601 格式\n示例：\"2026-04-03T12:00:00Z\"",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title 是简短、人类可读的问题类型摘要\n相同的 Type 应该始终有相同的 Title（不随实例变化）\n示例：\"Invalid Request Parameters\"",
+          "type": "string"
+        },
+        "trace_id": {
+          "description": "TraceID 是分布式追踪标识\n遵循 W3C Trace Context 标准\n示例：\"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type 是标识问题类型的URI引用\n当该URI被解引用时，应提供人类可读的文档\n示例：\"https://api.example.com/errors/invalid-request\"",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.PageInfo": {
+      "type": "object",
+      "properties": {
+        "has_next": {
+          "description": "HasNext indicates whether there is a next page",
+          "type": "boolean"
+        },
+        "has_prev": {
+          "description": "HasPrev indicates whether there is a previous page",
+          "type": "boolean"
+        },
+        "page": {
+          "description": "Page is the current page number (1-based)",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "PageSize is the number of items per page",
+          "type": "integer"
+        },
+        "total": {
+          "description": "Total is the total number of items across all pages",
+          "type": "integer"
+        },
+        "total_pages": {
+          "description": "TotalPages is the total number of pages",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.BatchDeleteRequest": {
+      "description": "批量删除文件请求参数",
+      "type": "object",
+      "required": [
+        "file_ids"
+      ],
+      "properties": {
+        "file_ids": {
+          "description": "文件ID列表",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"file_001\"",
+            "\"file_002\"]"
+          ]
+        },
+        "force": {
+          "description": "强制删除",
+          "type": "boolean",
+          "example": false
+        }
+      }
+    },
+    "handler_dto.BatchDeleteResultDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.BatchDeleteResultResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.BatchDeleteResultResponse": {
+      "type": "object",
+      "properties": {
+        "deleted_count": {
+          "type": "integer",
+          "example": 5
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"file_001\"",
+            "\"file_002\"]"
+          ]
+        }
+      }
+    },
+    "handler_dto.BatchDownloadRequest": {
+      "description": "批量下载文件请求参数",
+      "type": "object",
+      "required": [
+        "file_ids"
+      ],
+      "properties": {
+        "file_ids": {
+          "description": "文件ID列表",
+          "type": "array",
+          "maxItems": 50,
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"file_001\"",
+            "\"file_002\"]"
+          ]
+        }
+      }
+    },
+    "handler_dto.BatchMoveResultDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.BatchMoveResultResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.BatchMoveResultResponse": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"file_001\"",
+            "\"file_002\"]"
+          ]
+        },
+        "moved_count": {
+          "type": "integer",
+          "example": 3
+        },
+        "target_id": {
+          "type": "string",
+          "example": "folder_002"
+        }
+      }
+    },
+    "handler_dto.BucketDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.BucketResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.BucketListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.BucketResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "handler_dto.BucketResponse": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_default": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "physical_name": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.BulkUploadFileInfo": {
+      "type": "object",
+      "required": [
+        "content_type",
+        "filename",
+        "size"
+      ],
+      "properties": {
+        "content_type": {
+          "type": "string",
+          "example": "image/jpeg"
+        },
+        "filename": {
+          "type": "string",
+          "example": "photo.jpg"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "example": 1048576
+        }
+      }
+    },
+    "handler_dto.BulkUploadPrepareRequest": {
+      "type": "object",
+      "required": [
+        "files"
+      ],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.BulkUploadFileInfo"
+          }
+        }
+      }
+    },
+    "handler_dto.BulkUploadURLsDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.BulkUploadURLsResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.BulkUploadURLsResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "example": 5
+        },
+        "upload_urls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.UploadURLInfo"
+          }
+        }
+      }
+    },
+    "handler_dto.CopyFileTargetRequest": {
+      "type": "object",
+      "properties": {
+        "new_name": {
+          "type": "string",
+          "example": "copy-of-file.pdf"
+        },
+        "target_folder_id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        }
+      }
+    },
+    "handler_dto.CreateBucketRequest": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.CreateFolderRequest": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "My Folder"
+        },
+        "parent_id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        }
+      }
+    },
+    "handler_dto.CreateFolderResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.FolderMetadataResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.CreateShareRequest": {
+      "type": "object",
+      "properties": {
+        "expires_in": {
+          "type": "string",
+          "example": "24h"
+        },
+        "max_access": {
+          "type": "integer",
+          "example": 10
+        },
+        "password": {
+          "type": "string",
+          "example": "mypassword"
+        }
+      }
+    },
+    "handler_dto.CreateUploadURLDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.CreateUploadURLResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.CreateUploadURLRequest": {
+      "type": "object",
+      "required": [
+        "content_type",
+        "filename"
+      ],
+      "properties": {
+        "content_type": {
+          "type": "string"
+        },
+        "expires_in": {
+          "type": "integer"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "parent_id": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.CreateUploadURLResponse": {
+      "type": "object",
+      "properties": {
+        "expires_in": {
+          "type": "integer"
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "file_id": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "upload_url": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.DataRetentionPolicyDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.DataRetentionPolicyResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.DataRetentionPolicyRequest": {
+      "description": "数据保留策略配置请求参数",
+      "type": "object",
+      "required": [
+        "retention_days"
+      ],
+      "properties": {
+        "archive_before_delete": {
+          "description": "删除前归档?",
+          "type": "boolean",
+          "example": true
+        },
+        "auto_delete": {
+          "description": "自动删除",
+          "type": "boolean",
+          "example": true
+        },
+        "retention_days": {
+          "description": "保留天数",
+          "type": "integer",
+          "example": 365
+        }
+      }
+    },
+    "handler_dto.DataRetentionPolicyResponse": {
+      "description": "数据保留策略配置结果",
+      "type": "object",
+      "properties": {
+        "archive_before_delete": {
+          "description": "删除前归档?",
+          "type": "boolean",
+          "example": true
+        },
+        "auto_delete": {
+          "description": "自动删除",
+          "type": "boolean",
+          "example": true
+        },
+        "effective_at": {
+          "description": "生效时间",
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "retention_days": {
+          "description": "保留天数",
+          "type": "integer",
+          "example": 365
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        }
+      }
+    },
+    "handler_dto.EncryptionStatusDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.EncryptionStatusResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.EncryptionStatusResponse": {
+      "description": "存储服务加密配置与状态",
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "description": "算法",
+          "type": "string",
+          "example": "AES-256-GCM"
+        },
+        "encryption_at_rest": {
+          "description": "静态加密",
+          "type": "boolean",
+          "example": true
+        },
+        "encryption_in_transit": {
+          "description": "传输加密",
+          "type": "boolean",
+          "example": true
+        },
+        "key_rotation_date": {
+          "description": "轮换日期",
+          "type": "string",
+          "example": "2026-04-01T00:00:00Z"
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        }
+      }
+    },
+    "handler_dto.ExportUserDataRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "format": {
+          "type": "string",
+          "example": "json"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        }
+      }
+    },
+    "handler_dto.FileCopyResultDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.FileCopyResultResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.FileCopyResultResponse": {
+      "type": "object",
+      "properties": {
+        "copied_file": {
+          "$ref": "#/definitions/handler_dto.FileMetadataResponse"
+        },
+        "original_file": {
+          "$ref": "#/definitions/handler_dto.FileMetadataResponse"
+        }
+      }
+    },
+    "handler_dto.FileListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.FileMetadataResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "handler_dto.FileMetadataDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.FileMetadataResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.FileMetadataExtendedDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.FileMetadataExtendedResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.FileMetadataExtendedResponse": {
+      "description": "文件详细元数据信息，包含MinIO存储信息",
+      "type": "object",
+      "properties": {
+        "access_url": {
+          "type": "string",
+          "example": "https://cdn.example.com/file_abc123.jpg"
+        },
+        "bucket": {
+          "type": "string",
+          "example": "avatars"
+        },
+        "checksum": {
+          "type": "string",
+          "example": "abc123"
+        },
+        "content_type": {
+          "type": "string",
+          "example": "image/jpeg"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "filename": {
+          "type": "string",
+          "example": "avatar.jpg"
+        },
+        "id": {
+          "type": "string",
+          "example": "file_abc123"
+        },
+        "is_public": {
+          "type": "boolean",
+          "example": false
+        },
+        "key": {
+          "type": "string",
+          "example": "2026/04/file_abc123.jpg"
+        },
+        "metadata": {
+          "type": "string"
+        },
+        "minio_info": {
+          "$ref": "#/definitions/handler_dto.MinioInfoResponse"
+        },
+        "modified_at": {
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "original_name": {
+          "type": "string",
+          "example": "avatar.jpg"
+        },
+        "owner_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "path": {
+          "type": "string",
+          "example": "2026/04/file_abc123.jpg"
+        },
+        "provider": {
+          "type": "string",
+          "example": "minio"
+        },
+        "size": {
+          "type": "integer",
+          "example": 102400
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_xyz789"
+        }
+      }
+    },
+    "handler_dto.FileMetadataListDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.FileMetadataResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.FileMetadataResponse": {
+      "description": "文件元数据信息",
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "description": "存储桶",
+          "type": "string",
+          "example": "avatars"
+        },
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "etag": {
+          "description": "ETag",
+          "type": "string",
+          "example": "\"abc123def456\""
+        },
+        "file_id": {
+          "description": "文件ID",
+          "type": "string",
+          "example": "file_abc123"
+        },
+        "is_directory": {
+          "description": "是否为文件夹",
+          "type": "boolean",
+          "example": false
+        },
+        "is_public": {
+          "description": "可见性?",
+          "type": "boolean",
+          "example": false
+        },
+        "mime_type": {
+          "description": "MIME类型",
+          "type": "string",
+          "example": "image/jpeg"
+        },
+        "name": {
+          "description": "文件名称",
+          "type": "string",
+          "example": "avatar.jpg"
+        },
+        "object_name": {
+          "description": "对象名称?",
+          "type": "string",
+          "example": "2026/04/file_abc123.jpg"
+        },
+        "original_name": {
+          "description": "原始名称",
+          "type": "string",
+          "example": "avatar.jpg"
+        },
+        "owner_id": {
+          "description": "所有ID",
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "parent_id": {
+          "description": "父文件夹",
+          "type": "string",
+          "example": "folder_001"
+        },
+        "size": {
+          "description": "文件大小",
+          "type": "integer",
+          "example": 102400
+        },
+        "storage_class": {
+          "description": "存储类别",
+          "type": "string",
+          "example": "standard"
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "updated_at": {
+          "description": "更新时间",
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        }
+      }
+    },
+    "handler_dto.FilePreviewData": {
+      "type": "object",
+      "properties": {
+        "file_id": {
+          "type": "string"
+        },
+        "mime_type": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "presigned_url": {
+          "type": "string"
+        },
+        "preview": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer"
+        },
+        "suggestion": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.FilePreviewDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.FilePreviewData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.FileShareDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.FileShareResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.FileShareResponse": {
+      "description": "文件分享链接信息",
+      "type": "object",
+      "properties": {
+        "expires_at": {
+          "description": "过期时间",
+          "type": "string",
+          "example": "2026-04-15T11:00:00Z"
+        },
+        "share_url": {
+          "description": "分享URL",
+          "type": "string",
+          "example": "https://storage.example.com/shared/abc123"
+        },
+        "token": {
+          "description": "Token",
+          "type": "string",
+          "example": "tkn_abc123"
+        }
+      }
+    },
+    "handler_dto.FileVersionDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.FileVersionResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.FileVersionItem": {
+      "description": "文件版本记录",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "created_by": {
+          "description": "创建者",
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "etag": {
+          "description": "ETag",
+          "type": "string",
+          "example": "\"def456\""
+        },
+        "file_id": {
+          "description": "文件ID",
+          "type": "string",
+          "example": "file_abc123"
+        },
+        "is_current": {
+          "description": "当前版本",
+          "type": "boolean",
+          "example": true
+        },
+        "size": {
+          "description": "版本大小",
+          "type": "integer",
+          "example": 102400
+        },
+        "version_id": {
+          "description": "版本ID",
+          "type": "string",
+          "example": "ver_abc123"
+        }
+      }
+    },
+    "handler_dto.FileVersionResponse": {
+      "description": "文件版本历史列表",
+      "type": "object",
+      "properties": {
+        "current_version": {
+          "description": "当前版本",
+          "type": "string",
+          "example": "ver_latest"
+        },
+        "file_id": {
+          "description": "文件ID",
+          "type": "string",
+          "example": "file_abc123"
+        },
+        "versions": {
+          "description": "版本列表",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.FileVersionItem"
+          }
+        }
+      }
+    },
+    "handler_dto.FolderContentsDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.FolderContentsResultResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.FolderContentsResultResponse": {
+      "type": "object",
+      "properties": {
+        "contents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.FileMetadataResponse"
+          }
+        },
+        "folder": {
+          "$ref": "#/definitions/handler_dto.FolderMetadataResponse"
+        }
+      }
+    },
+    "handler_dto.FolderMetadataDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.FolderMetadataResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.FolderMetadataResponse": {
+      "description": "文件夹元数据信息",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-04-01T00:00:00Z"
+        },
+        "file_count": {
+          "description": "文件数",
+          "type": "integer",
+          "example": 15
+        },
+        "folder_id": {
+          "description": "文件夹ID",
+          "type": "string",
+          "example": "folder_abc123"
+        },
+        "is_public": {
+          "description": "是否公开",
+          "type": "boolean",
+          "example": false
+        },
+        "name": {
+          "description": "文件夹名称?",
+          "type": "string",
+          "example": "项目文档"
+        },
+        "owner_id": {
+          "description": "所有ID",
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "parent_id": {
+          "description": "父文件夹",
+          "type": "string",
+          "example": "folder_root"
+        },
+        "subfolder_count": {
+          "description": "子文件夹数?",
+          "type": "integer",
+          "example": 3
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "updated_at": {
+          "description": "更新时间",
+          "type": "string",
+          "example": "2026-04-10T14:20:00Z"
+        }
+      }
+    },
+    "handler_dto.InitMultipartUploadRequest": {
+      "type": "object",
+      "required": [
+        "content_type",
+        "file_name",
+        "part_count",
+        "total_size"
+      ],
+      "properties": {
+        "content_type": {
+          "type": "string",
+          "example": "video/mp4"
+        },
+        "file_name": {
+          "type": "string",
+          "example": "large-video.mp4"
+        },
+        "folder_id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        },
+        "part_count": {
+          "type": "integer",
+          "example": 4
+        },
+        "total_size": {
+          "type": "integer",
+          "example": 1073741824
+        },
+        "visibility": {
+          "type": "string",
+          "example": "private"
+        }
+      }
+    },
+    "handler_dto.InternalBatchDeleteRequest": {
+      "type": "object",
+      "required": [
+        "ids",
+        "user_id"
+      ],
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        }
+      }
+    },
+    "handler_dto.MimeTypeStat": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "example": 1500
+        },
+        "mime_type": {
+          "type": "string",
+          "example": "image/png"
+        },
+        "size": {
+          "type": "integer",
+          "example": 536870912
+        }
+      }
+    },
+    "handler_dto.MinioInfoResponse": {
+      "description": "MinIO存储对象统计信息",
+      "type": "object",
+      "properties": {
+        "content_type": {
+          "type": "string",
+          "example": "image/jpeg"
+        },
+        "etag": {
+          "type": "string",
+          "example": "\"abc123\""
+        },
+        "last_modified": {
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "size": {
+          "type": "integer",
+          "example": 102400
+        }
+      }
+    },
+    "handler_dto.MoveFileRequest": {
+      "description": "移动文件请求参数",
+      "type": "object",
+      "required": [
+        "target_folder_id"
+      ],
+      "properties": {
+        "target_folder_id": {
+          "description": "目标文件夹?",
+          "type": "string",
+          "example": "folder_002"
+        },
+        "target_owner_id": {
+          "description": "目标所有?",
+          "type": "string",
+          "example": "usr_456"
+        }
+      }
+    },
+    "handler_dto.MultipartInitData": {
+      "type": "object",
+      "properties": {
+        "expires_in": {
+          "type": "integer",
+          "example": 3600
+        },
+        "file_id": {
+          "type": "string",
+          "example": "file_abc123"
+        },
+        "parts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.MultipartPartInfo"
+          }
+        },
+        "upload_id": {
+          "type": "string",
+          "example": "upload_abc123"
+        }
+      }
+    },
+    "handler_dto.MultipartInitDataDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.MultipartInitData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.MultipartPartInfo": {
+      "type": "object",
+      "properties": {
+        "part_number": {
+          "type": "integer"
+        },
+        "part_path": {
+          "type": "string"
+        },
+        "part_size": {
+          "type": "integer"
+        },
+        "upload_url": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.PresignedURLDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.PresignedURLResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.PresignedURLResponse": {
+      "description": "预签名URL信息",
+      "type": "object",
+      "properties": {
+        "expires_in": {
+          "description": "有效期?",
+          "type": "integer",
+          "example": 3600
+        },
+        "url": {
+          "description": "访问URL",
+          "type": "string",
+          "example": "https://storage.example.com/..."
+        }
+      }
+    },
+    "handler_dto.PublicEncryptionStatus": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "example": "AES-256-GCM"
+        },
+        "encryption_at_rest": {
+          "type": "boolean",
+          "example": true
+        },
+        "encryption_in_transit": {
+          "type": "boolean",
+          "example": true
+        },
+        "key_management": {
+          "type": "string",
+          "example": "KMS"
+        }
+      }
+    },
+    "handler_dto.PublicEncryptionStatusDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.PublicEncryptionStatus"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.PublicReport": {
+      "type": "object",
+      "properties": {
+        "access_level": {
+          "type": "string",
+          "example": "public"
+        },
+        "content_type": {
+          "type": "string",
+          "example": "application/pdf"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "description": {
+          "type": "string",
+          "example": "2026年度SOC2 Type II审计报告"
+        },
+        "filename": {
+          "type": "string",
+          "example": "SOC2-Type-II-Report-2026.pdf"
+        },
+        "id": {
+          "type": "string",
+          "example": "file_abc123"
+        },
+        "size": {
+          "type": "integer",
+          "example": 2048000
+        },
+        "title": {
+          "type": "string",
+          "example": "SOC2 Type II Report"
+        }
+      }
+    },
+    "handler_dto.PublicReportListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.PublicReport"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "handler_dto.ShareDetailDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.ShareDetailResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.ShareDetailResponse": {
+      "description": "文件分享详细信息",
+      "type": "object",
+      "properties": {
+        "access_count": {
+          "description": "访问次数",
+          "type": "integer",
+          "example": 3
+        },
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "expires_at": {
+          "description": "过期时间",
+          "type": "string",
+          "example": "2026-04-15T11:00:00Z"
+        },
+        "file_id": {
+          "description": "文件ID",
+          "type": "string",
+          "example": "file_abc123"
+        },
+        "file_name": {
+          "description": "文件名称",
+          "type": "string",
+          "example": "document.pdf"
+        },
+        "id": {
+          "description": "分享ID",
+          "type": "string",
+          "example": "share_abc123"
+        },
+        "max_access": {
+          "description": "最大访问",
+          "type": "integer",
+          "example": 10
+        },
+        "token": {
+          "description": "Token",
+          "type": "string",
+          "example": "tkn_abc123"
+        }
+      }
+    },
+    "handler_dto.ShareListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.ShareResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "handler_dto.ShareResponse": {
+      "description": "分享列表项信息",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "expires_at": {
+          "description": "过期时间",
+          "type": "string",
+          "example": "2026-04-15T11:00:00Z"
+        },
+        "file_id": {
+          "description": "文件ID",
+          "type": "string",
+          "example": "file_abc123"
+        },
+        "file_name": {
+          "description": "文件名称",
+          "type": "string",
+          "example": "document.pdf"
+        },
+        "id": {
+          "description": "分享ID",
+          "type": "string",
+          "example": "share_abc123"
+        }
+      }
+    },
+    "handler_dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.StorageQuotaDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.StorageQuotaResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.StorageQuotaResponse": {
+      "description": "存储配额信息",
+      "type": "object",
+      "properties": {
+        "available_bytes": {
+          "description": "可用",
+          "type": "integer",
+          "example": 96636764160
+        },
+        "bucket_quotas": {
+          "description": "桶配额?",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "quota_bytes": {
+          "description": "配额",
+          "type": "integer",
+          "example": 107374182400
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "usage_percent": {
+          "description": "使用百分比",
+          "type": "number"
+        },
+        "used_bytes": {
+          "description": "已用",
+          "type": "integer",
+          "example": 10737418240
+        }
+      }
+    },
+    "handler_dto.StorageStatsDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.StorageStatsResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.StorageStatsResponse": {
+      "description": "存储使用统计",
+      "type": "object",
+      "properties": {
+        "mime_types": {
+          "description": "按类型统计?",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.MimeTypeStat"
+          }
+        },
+        "total_files": {
+          "description": "总文件数",
+          "type": "integer",
+          "example": 50000
+        },
+        "total_size": {
+          "description": "总大小?",
+          "type": "integer",
+          "example": 536870912000
+        }
+      }
+    },
+    "handler_dto.StorageTrendItem": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "example": "2026-05-20"
+        },
+        "used_bytes": {
+          "type": "integer",
+          "example": 10737418240
+        }
+      }
+    },
+    "handler_dto.StorageTrendsDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.StorageTrendsResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.StorageTrendsResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/handler_dto.StorageTrendItem"
+          }
+        },
+        "period": {
+          "type": "string",
+          "example": "day"
+        },
+        "updated": {
+          "type": "string",
+          "example": "2026-05-26T10:00:00Z"
+        }
+      }
+    },
+    "handler_dto.TenantUsageDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.TenantUsageResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.TenantUsageResponse": {
+      "type": "object",
+      "properties": {
+        "file_count": {
+          "type": "integer",
+          "example": 250
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "used_bytes": {
+          "type": "integer",
+          "example": 1073741824
+        }
+      }
+    },
+    "handler_dto.UpdateBucketRequest": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "is_default": {
+          "type": "boolean"
+        },
+        "visibility": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.UpdateFileNameRequest": {
+      "type": "object",
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "name": {
+          "type": "string",
+          "example": "new-name.pdf"
+        }
+      }
+    },
+    "handler_dto.UpdateFileVisibilityRequest": {
+      "description": "更新文件可见性请求参数",
+      "type": "object",
+      "required": [
+        "visibility"
+      ],
+      "properties": {
+        "visibility": {
+          "description": "可见性?",
+          "type": "string",
+          "enum": [
+            "private",
+            "public"
+          ],
+          "example": "public"
+        }
+      }
+    },
+    "handler_dto.UpdateFolderNameRequest": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "New Folder Name"
+        }
+      }
+    },
+    "handler_dto.UpdateStorageQuotaRequest": {
+      "description": "更新存储配额请求参数",
+      "type": "object",
+      "required": [
+        "quota_bytes"
+      ],
+      "properties": {
+        "quota_bytes": {
+          "description": "新配额?",
+          "type": "integer",
+          "example": 214748364800
+        }
+      }
+    },
+    "handler_dto.UploadFileDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/handler_dto.UploadFileResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "handler_dto.UploadFileResponse": {
+      "description": "文件上传结果",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "description": "上传时间",
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "file_id": {
+          "description": "文件ID",
+          "type": "string",
+          "example": "file_abc123"
+        },
+        "file_name": {
+          "description": "文件数",
+          "type": "string",
+          "example": "document.pdf"
+        },
+        "size": {
+          "description": "文件大小",
+          "type": "integer",
+          "example": 204800
+        },
+        "thumbnail_url": {
+          "description": "缩略图?",
+          "type": "string",
+          "example": "https://..."
+        },
+        "url": {
+          "description": "访问URL",
+          "type": "string",
+          "example": "https://storage.example.com/..."
+        }
+      }
+    },
+    "handler_dto.UploadURLInfo": {
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "file_id": {
+          "type": "string",
+          "example": "file_abc123"
+        },
+        "upload_url": {
+          "type": "string",
+          "example": "https://minio:9000/bucket/object?signature=..."
+        }
+      }
+    },
+    "handler_dto.WatermarkRequest": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "font_size": {
+          "type": "integer",
+          "example": 48
+        },
+        "opacity": {
+          "type": "number",
+          "example": 0.3
+        },
+        "position": {
+          "type": "string",
+          "example": "center"
+        },
+        "text": {
+          "type": "string",
+          "example": "Confidential"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "文件存储：上传、下载、桶管理",
+      "name": "存储服务"
+    },
+    {
+      "description": "公开信任中心：安全状态、合规证书、文档",
+      "name": "Trust Center"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}

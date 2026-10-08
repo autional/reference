@@ -1,0 +1,1440 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "网关服务 API，提供统一入口、路由转发、API 文档聚合等功能",
+    "title": "网关服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/admin/env-vars": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回 .env/.env.local 中加载的所有环境变量，敏感变量值自动脱敏（仅限 super_admin 访问）",
+        "tags": [
+          "网关 - 运维"
+        ],
+        "summary": "获取环境变量",
+        "responses": {
+          "200": {
+            "description": "环境变量列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.EnvVarsResult"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/admin/feature-flags": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回所有微服务的功能开关状态矩阵，包括启用/禁用汇总统计",
+        "tags": [
+          "网关 - 运维"
+        ],
+        "summary": "获取功能开关矩阵",
+        "responses": {
+          "200": {
+            "description": "功能开关矩阵",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.FeatureFlagsResult"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/admin/health/runtime": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回网关服务自身及所有上游微服务的 TCP 健康检查结果，含服务名、状态、延迟",
+        "tags": [
+          "网关 - 运维"
+        ],
+        "summary": "获取健康检查运行时信息",
+        "responses": {
+          "200": {
+            "description": "健康检查运行时信息",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/admin/infra-credentials": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回所有基础设施凭证的名称、环境变量键、所属容器和消费者服务清单（不含实际值）",
+        "tags": [
+          "网关 - 运维"
+        ],
+        "summary": "获取基础设施凭证清单",
+        "responses": {
+          "200": {
+            "description": "凭证清单",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.InfraCredentialsResult"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/admin/rate-limits": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回当前网关限流 provider 的可用状态和配置信息",
+        "tags": [
+          "网关 - 运维"
+        ],
+        "summary": "获取限流状态",
+        "responses": {
+          "200": {
+            "description": "限流状态",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.RateLimitStatsResult"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/admin/schedulers": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "聚合所有微服务的后台调度器运行状态（名称、间隔、启用状态），通过各服务 internal API 收集",
+        "tags": [
+          "网关 - 运维"
+        ],
+        "summary": "获取调度器状态",
+        "responses": {
+          "200": {
+            "description": "调度器状态",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.SystemSchedulersResult"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/admin/system/runtime": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回网关自身运行状态（启动时间、版本号）及所有微服务的元数据列表（名称、端口、分类、gRPC 端口）",
+        "tags": [
+          "网关 - 运维"
+        ],
+        "summary": "获取系统运行时聚合信息",
+        "responses": {
+          "200": {
+            "description": "系统运行时信息",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.SystemRuntimeResult"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/admin/topology": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回所有微服务的端口和依赖关系映射，包括网关自身和上游服务的拓扑结构",
+        "tags": [
+          "网关 - 运维"
+        ],
+        "summary": "获取服务依赖拓扑",
+        "responses": {
+          "200": {
+            "description": "服务拓扑",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.TopologyResult"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/developer/logs": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "按级别、服务、关键词、时间范围查询租户日志（Elasticsearch 代理，自动注入租户隔离过滤），支持分页",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 开发者工具"
+        ],
+        "summary": "日志查询",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "日志级别（DEBUG, INFO, WARN, ERROR）",
+            "name": "level",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "服务名称",
+            "name": "service",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "搜索关键词",
+            "name": "keyword",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "起始时间（RFC3339 格式）",
+            "name": "start_time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束时间（RFC3339 格式）",
+            "name": "end_time",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "日志列表",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/developer/status": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回所有上游微服务的 TCP 健康检查结果（healthy/unhealthy），缓存 30 秒，含网关自身运行时间和各服务延迟",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 开发者工具"
+        ],
+        "summary": "服务状态页面",
+        "responses": {
+          "200": {
+            "description": "服务状态列表",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/developer/traces/operations": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回指定服务在 Jaeger 中的 Span 操作名称列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 开发者工具"
+        ],
+        "summary": "追踪操作列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务名称",
+            "name": "service",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作列表",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/developer/traces/search": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "按服务、操作、时间范围搜索 Jaeger Trace，自动注入租户隔离过滤",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 开发者工具"
+        ],
+        "summary": "追踪搜索",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务名称",
+            "name": "service",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "操作名称",
+            "name": "operation",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "返回条数",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "起始时间（RFC3339 格式）",
+            "name": "start_time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束时间（RFC3339 格式）",
+            "name": "end_time",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "追踪列表",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/developer/traces/services": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "返回 Jaeger 中已注册的微服务列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 开发者工具"
+        ],
+        "summary": "追踪服务列表",
+        "responses": {
+          "200": {
+            "description": "服务列表",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/developer/traces/{traceID}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据 traceID 获取完整 Trace 详情，自动验证租户归属，防止跨租户数据泄露",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 开发者工具"
+        ],
+        "summary": "获取单条 Trace",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Trace ID",
+            "name": "traceID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trace 详情",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "404": {
+            "description": "Trace 未找到",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/docs": {
+      "get": {
+        "description": "返回服务导航首页，列出全部微服务卡片（中文名+英文名），点击进入单服务 API 文档。纯 HTML 页面。",
+        "produces": [
+          "text/html"
+        ],
+        "tags": [
+          "网关 - API 文档"
+        ],
+        "summary": "服务导航首页",
+        "responses": {
+          "200": {
+            "description": "服务导航首页 HTML 页面",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/docs/openapi.json": {
+      "get": {
+        "description": "返回所有上游微服务聚合后的 OpenAPI JSON 规范，包含完整的 API 端点定义、Schema 引用和服务分组",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - API 文档"
+        ],
+        "summary": "聚合 OpenAPI 规范",
+        "responses": {
+          "200": {
+            "description": "聚合后的 OpenAPI JSON 规范",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/docs/specs/{service}": {
+      "get": {
+        "description": "返回单个微服务的 OpenAPI JSON 规范（含网关前缀路径），可直接导入 Swagger UI 或 Postman",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - API 文档"
+        ],
+        "summary": "单服务 OpenAPI 规范",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务名称（例: identity-service）",
+            "name": "service",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OpenAPI JSON 规范",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/docs/{service}": {
+      "get": {
+        "description": "返回指定微服务的 Scalar UI 交互式文档页面，仅加载该服务的 OpenAPI 规范",
+        "produces": [
+          "text/html"
+        ],
+        "tags": [
+          "网关 - API 文档"
+        ],
+        "summary": "指定服务文档页面",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "服务名称（例: identity-service）",
+            "name": "service",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scalar UI HTML 页面",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "description": "返回网关服务自身及所有上游微服务的健康状态，用于负载均衡器和监控系统探活",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 运维"
+        ],
+        "summary": "健康检查",
+        "responses": {
+          "200": {
+            "description": "所有服务健康",
+            "schema": {
+              "$ref": "#/definitions/main.swaggerHealthResponse"
+            }
+          },
+          "503": {
+            "description": "部分服务不健康",
+            "schema": {
+              "$ref": "#/definitions/main.swaggerHealthResponse"
+            }
+          }
+        }
+      }
+    },
+    "/sdk/examples": {
+      "get": {
+        "description": "返回所有语言的 SDK 代码示例索引（含示例 ID、标题、语言、分类、摘要和关联端点）",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 开发者工具"
+        ],
+        "summary": "获取 SDK 示例列表",
+        "responses": {
+          "200": {
+            "description": "示例列表",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/sdk/versions": {
+      "get": {
+        "description": "返回所有支持的 SDK 语言及其可选版本号",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 开发者工具"
+        ],
+        "summary": "获取 SDK 版本列表",
+        "responses": {
+          "200": {
+            "description": "SDK 版本列表",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/sdk/{language}/changelog": {
+      "get": {
+        "description": "返回指定语言 SDK 的版本变更日志列表（按版本倒序）",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 开发者工具"
+        ],
+        "summary": "获取 SDK 变更日志",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "SDK 语言（go, javascript, python, java）",
+            "name": "language",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "变更日志列表",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "description": "跨 OpenAPI 规范与 SDK 示例资源进行模糊搜索，支持精确匹配和 Levenshtein 模糊回退",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "网关 - 开发者工具"
+        ],
+        "summary": "全局搜索",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "搜索关键词",
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "搜索类型（api: API 端点, sdk: SDK 示例）",
+            "name": "type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "搜索结果列表",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "gitee_com_autional_service-gateway_internal_handler_dto.EnvVarEntry": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "masked": {
+          "type": "boolean"
+        },
+        "source": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.EnvVarsResult": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.EnvVarEntry"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.FeatureFlagInfo": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.FeatureFlagsResult": {
+      "type": "object",
+      "properties": {
+        "services": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.ServiceFeatureFlagsResult"
+          }
+        },
+        "summary": {
+          "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.FeatureFlagsSummary"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.FeatureFlagsSummary": {
+      "type": "object",
+      "properties": {
+        "enabled_flags": {
+          "type": "integer"
+        },
+        "total_flags": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.GatewayInfo": {
+      "type": "object",
+      "properties": {
+        "service": {
+          "type": "string"
+        },
+        "uptime": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.InfraCredential": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "consumers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "container": {
+          "type": "string"
+        },
+        "infrastructure": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "source_file": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.InfraCredentialsResult": {
+      "type": "object",
+      "properties": {
+        "credentials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.InfraCredential"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.RateLimitStatsResult": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "provider_name": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.SchedulerItem": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "interval": {
+          "type": "string"
+        },
+        "last_count": {
+          "type": "integer"
+        },
+        "last_error": {
+          "type": "string"
+        },
+        "last_run": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "running": {
+          "type": "boolean"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.ServiceFeatureFlagsResult": {
+      "type": "object",
+      "properties": {
+        "display_name": {
+          "type": "string"
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.FeatureFlagInfo"
+          }
+        },
+        "port": {
+          "type": "integer"
+        },
+        "service": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.ServiceMeta": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "grpc_port": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.ServiceSchedulerInfo": {
+      "type": "object",
+      "properties": {
+        "schedulers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.SchedulerItem"
+          }
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "service_port": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.SystemRuntimeResult": {
+      "type": "object",
+      "properties": {
+        "gateway": {
+          "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.GatewayInfo"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.ServiceMeta"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.SystemSchedulersResult": {
+      "type": "object",
+      "properties": {
+        "services": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.ServiceSchedulerInfo"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.TopologyEntry": {
+      "type": "object",
+      "properties": {
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "port": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-gateway_internal_handler_dto.TopologyResult": {
+      "type": "object",
+      "properties": {
+        "metrics": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "topology": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/gitee_com_autional_service-gateway_internal_handler_dto.TopologyEntry"
+          }
+        }
+      }
+    },
+    "main.swaggerHealthResponse": {
+      "type": "object",
+      "properties": {
+        "checks": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "checks_latency": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "service": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "uptime": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "网关 API 文档：Scalar UI 交互式文档、OpenAPI 规范聚合与分发",
+      "name": "网关 - API 文档"
+    },
+    {
+      "description": "网关运维管理：服务状态、限流、路由配置、环境变量、健康检查、功能开关、凭证清单、调度器",
+      "name": "网关 - 运维"
+    },
+    {
+      "description": "网关安全仪表盘：用户安全画像、安全事件时间线、SSE 实时安全事件流",
+      "name": "网关 - 安全仪表盘"
+    },
+    {
+      "description": "网关 BFF 认证：登录、Token 刷新、登出（httpOnly session cookie 模式）",
+      "name": "网关 - BFF 认证"
+    },
+    {
+      "description": "网关开发者工具：全局搜索、SDK 下载、追踪查询、日志查询、服务状态检查",
+      "name": "网关 - 开发者工具"
+    }
+  ]
+}

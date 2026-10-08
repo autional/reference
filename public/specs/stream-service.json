@@ -1,0 +1,347 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "实时信息流独立瘦服务：域事件 MQ 订阅 → 共享投影/脱敏 → Redis Streams 背板 → SSE 边缘 → 指标。\n\n安全模型：本服务**不**自实现 JWT 验签（由入口网关完成并经 X-Auth-* 受信头注入主体）；SSE 建流改用一次性票据（浏览器 EventSource 无法携带 Authorization）。",
+    "title": "实时事件流服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/api/v1/admin/stream/events": {
+      "get": {
+        "security": [
+          {
+            "ticketAuth": []
+          }
+        ],
+        "description": "建立 SSE 长连接：`event: connected` 建流确认 → 回放帧（每条带 `id:` = Last-Event-ID 游标）→ 直播；游标不可续时下发 `event: state_resync_required`（回退最新起点，**不终止流**）。\n订阅 scope **唯一**取自一次性票据载荷：query 中的其它字段（含 tenant_id）与 body **结构性不参与授权**（AC-E08 / STRM-E-009）。\n响应 Content-Type = `text/event-stream`（帧协议：connected / stream-event / state_resync_required / `: heartbeat`）。",
+        "produces": [
+          "text/event-stream"
+        ],
+        "tags": [
+          "实时流"
+        ],
+        "summary": "SSE 实时事件流（建流）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "一次性建流票据（先 POST /api/v1/stream/ticket 或 /api/v1/admin/stream/ticket 换取；一次消费、短 TTL）",
+            "name": "ticket",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "断线续传游标（= 上一连接最后一条的 id:）",
+            "name": "Last-Event-ID",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SSE 帧流（text/event-stream）",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "403": {
+            "description": "鉴权失败 / 空或越权 scope（STRM-E-008）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "429": {
+            "description": "限流 / 单主体并发连接超限（STRM-E-013）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "503": {
+            "description": "背板不可达，显式拒绝建流（stream_backplane_unavailable）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/stream/ticket": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理面签发一次性建流票据。body `scope` 仅为**收窄声明**，授权上限恒由入口网关注入的受信主体（X-Auth-User-Id / X-Auth-Tenant-Id / X-Auth-Role）派生；非平台租户请求 `platform` 一律 403；跨租户 / 请求 `*` ⇒ 403（STRM-E-008）。浏览器 EventSource 无法携带 Authorization，故必须「先 POST 换票 → 再建流」。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "实时流"
+        ],
+        "summary": "签发 admin 一次性建流票据",
+        "parameters": [
+          {
+            "description": "收窄声明：{\\",
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "一次性票据 + 有效期秒数",
+            "schema": {
+              "$ref": "#/definitions/handler.StreamTicketResponse"
+            }
+          },
+          "400": {
+            "description": "请求体非法（stream_ticket_invalid_request）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "401": {
+            "description": "受信主体缺失（stream_ticket_unauthenticated）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "403": {
+            "description": "越权 scope（STRM-E-008）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "503": {
+            "description": "票据存储不可用（stream_ticket_store_unavailable）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stream/ticket": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "受信主体签发一次性建流票据：授权 scope **强制** `user:<受信主体>`，与请求体无关；请求体携带非 self 的 scope ⇒ 403。缺失受信头（入口网关未注入）⇒ 401（fail-closed，绝不匿名放行）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "实时流"
+        ],
+        "summary": "签发用户一次性建流票据",
+        "parameters": [
+          {
+            "description": "可选；仅允许与 self 等价的 user:<自己>（携带越权 scope ⇒ 403）",
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "一次性票据 + 有效期秒数",
+            "schema": {
+              "$ref": "#/definitions/handler.StreamTicketResponse"
+            }
+          },
+          "400": {
+            "description": "请求体非法（stream_ticket_invalid_request）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "401": {
+            "description": "受信主体缺失（stream_ticket_unauthenticated）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "403": {
+            "description": "越权 scope（STRM-E-008）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "503": {
+            "description": "票据存储不可用（stream_ticket_store_unavailable）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "description": "进程存活即 200。**无鉴权**；不探外部依赖（Redis/MQ 等）——依赖不可用由 /readyz 报 not ready。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "探针与指标"
+        ],
+        "summary": "存活探针",
+        "responses": {
+          "200": {
+            "description": "status/service/version",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "description": "Prometheus 文本 exposition：`stream_*` 族 + Go/进程默认采集器。**无鉴权**。",
+        "produces": [
+          "text/plain"
+        ],
+        "tags": [
+          "探针与指标"
+        ],
+        "summary": "Prometheus 指标",
+        "responses": {
+          "200": {
+            "description": "Prometheus 文本 exposition",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "description": "就绪即 200。**无鉴权**。当前骨架阶段无外部依赖恒 ready；背板/订阅器接线后依赖不可用将返回 503。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "探针与指标"
+        ],
+        "summary": "就绪探针",
+        "responses": {
+          "200": {
+            "description": "status/service/version",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "503": {
+            "description": "依赖不可用（接线后）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "handler.StreamTicketResponse": {
+      "type": "object",
+      "properties": {
+        "expires_in": {
+          "description": "ExpiresIn 有效期秒数。",
+          "type": "integer"
+        },
+        "ticket": {
+          "description": "Ticket 一次性句柄（32B crypto/rand → base64 RawURL；不可预测）。",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token. 验签在入口网关完成，本服务读取网关注入的 X-Auth-User-Id / X-Auth-Tenant-Id / X-Auth-Role 受信头；本服务不得直暴公网。",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    },
+    "ticketAuth": {
+      "description": "一次性建流票据：先 POST 签发端点换取短 TTL 票据，再以 ?ticket= 建流（一次消费，不可复用）。",
+      "type": "apiKey",
+      "name": "ticket",
+      "in": "query"
+    }
+  },
+  "tags": [
+    {
+      "description": "存活/就绪探针与 Prometheus 指标（无鉴权）",
+      "name": "探针与指标"
+    },
+    {
+      "description": "一次性建流票据签发与 SSE 建流边缘（票据 / 受信主体鉴权）",
+      "name": "实时流"
+    }
+  ]
+}

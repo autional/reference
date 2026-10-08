@@ -1,0 +1,4859 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Autional 角色权限管理服务",
+    "title": "RBAC 服务 API",
+    "contact": {},
+    "version": "1.0"
+  },
+  "basePath": "/bff/rbac/api/v1",
+  "paths": {
+    "/admin/approval-requests": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "列出租户下的所有审批请求，支持按状态筛选（pending/approved/rejected/cancelled）和分页。参考：NIST SP 800-53 AC-2 (Account Management)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 审批"
+        ],
+        "summary": "列出审批请求",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "审批状态（pending/approved/rejected/cancelled）",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 10,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "审批请求列表",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-rbac_internal_handler_dto_ApprovalRequestResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/approval-requests/{request_id}/approve": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批准指定的审批请求，执行审批请求中的操作（如分配角色）。仅在 pending 状态下可审批。参考：NIST SP 800-53 AC-2 (Account Management)、AC-5 (Separation of Duties)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 审批"
+        ],
+        "summary": "批准审批请求",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "审批请求ID",
+            "name": "request_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "批准原因（可选）",
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.ApproveRejectRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "审批已批准",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "审批请求不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "审批请求已处理（重复操作）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "无效的状态转换（非pending状态）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/approval-requests/{request_id}/reject": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "拒绝指定的审批请求，需提供拒绝原因。仅在 pending 状态下可拒绝。参考：NIST SP 800-53 AC-2 (Account Management)、AC-5 (Separation of Duties)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 审批"
+        ],
+        "summary": "拒绝审批请求",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "审批请求ID",
+            "name": "request_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "拒绝原因",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.ApproveRejectRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "审批已拒绝",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "审批请求不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "审批请求已处理（重复操作）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "422": {
+            "description": "无效的状态转换（非pending状态）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/permissions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询租户下的RBAC权限列表，支持分页和按资源/操作/分类筛选。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 权限"
+        ],
+        "summary": "查询权限列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "资源类型（模糊匹配）",
+            "name": "resource",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "操作类型（模糊匹配）",
+            "name": "action",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "分类（模糊匹配）",
+            "name": "category",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "权限列表",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建新的RBAC权限项，用于角色授权。权限编码全局唯一，支持 allow/deny 效果、资源分类和标签。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 权限"
+        ],
+        "summary": "创建权限",
+        "parameters": [
+          {
+            "description": "创建权限请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.CreatePermissionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "权限创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "权限编码已存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/permissions/simulate": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "模拟指定用户对一组资源和操作的权限检查结果（不更改任何数据），用于排查权限问题或预验证RBAC策略。参考：NIST SP 800-53 AC-3 (Access Enforcement)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 权限"
+        ],
+        "summary": "权限模拟/试算",
+        "parameters": [
+          {
+            "description": "权限模拟请求（最多50个检查项）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.SimulatePermissionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "权限模拟结果",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/permissions/{permission_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据权限ID获取权限的详细信息，包括资源、操作类型、效果、分类和标签。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 权限"
+        ],
+        "summary": "获取权限详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "权限ID",
+            "name": "permission_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "权限详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "权限不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据权限ID更新权限的名称、描述、分类和标签（编码、资源和操作不可变更）。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 权限"
+        ],
+        "summary": "更新权限信息",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "权限ID",
+            "name": "permission_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新权限请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.UpdatePermissionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "权限更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "权限不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据权限ID删除指定权限，删除前检查是否仍有角色引用（有角色引用时拒绝删除）。参考：NIST SP 800-53 AC-2 (Account Management)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 权限"
+        ],
+        "summary": "删除权限",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "权限ID",
+            "name": "permission_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "权限删除成功，无响应体"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "权限不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "权限仍被角色引用，无法删除",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/permissions/{permission_id}/roles": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询拥有指定权限的所有角色（\"哪些角色包含此权限\"反向查询）。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 权限"
+        ],
+        "summary": "获取权限的角色列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "权限ID",
+            "name": "permission_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "拥有该权限的角色列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "权限不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/permissions/{permission_id}/users": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询拥有指定权限的所有用户ID（通过角色继承或直赋），用于安全审计和权限溯源。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 权限"
+        ],
+        "summary": "获取权限的用户列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "权限ID",
+            "name": "permission_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "拥有该权限的用户ID列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_UserIDsResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "权限不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询租户下的RBAC角色列表，支持分页和按编码/名称筛选。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "查询角色列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色编码（模糊匹配）",
+            "name": "code",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "角色名称（模糊匹配）",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "角色列表",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建新的RBAC角色，用于权限管理。角色编码全局唯一，支持设置父角色建立层级继承关系、数据范围(DataScope)控制。参考：NIST SP 800-53 AC-2 (Account Management)、AC-5 (Separation of Duties)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "创建角色",
+        "parameters": [
+          {
+            "description": "创建角色请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.CreateRoleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "角色创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "角色编码已存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/batch/permissions": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为多个角色批量分配权限，分配前验证权限归属同一租户。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "批量分配权限",
+        "parameters": [
+          {
+            "description": "批量分配权限请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.BatchAssignPermissionsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量分配结果",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色或权限不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为多个角色批量撤销权限。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "批量撤销权限",
+        "parameters": [
+          {
+            "description": "批量撤销权限请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.BatchRevokePermissionsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量撤销结果",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/conflict-pairs": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询租户下所有已配置的职责分离（SoD）冲突对。参考：NIST SP 800-53 AC-5 (Separation of Duties)。",
+        "tags": [
+          "RBAC - SoD"
+        ],
+        "summary": "列出职责分离冲突对",
+        "responses": {
+          "200": {
+            "description": "冲突对列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_ConflictPairResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建新的职责分离冲突对，指定两个互斥的角色（如审批者与操作者不可为同一人）。创建后，系统在分配角色时自动检测并阻止冲突。参考：NIST SP 800-53 AC-5 (Separation of Duties)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - SoD"
+        ],
+        "summary": "创建职责分离（SoD）冲突对",
+        "parameters": [
+          {
+            "description": "冲突对请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.CreateConflictPairRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "冲突对创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_ConflictPairResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "冲突对已存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/conflict-pairs/{pair_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定的职责分离（SoD）冲突对，删除后相关角色不再互斥。参考：NIST SP 800-53 AC-5 (Separation of Duties)。",
+        "tags": [
+          "RBAC - SoD"
+        ],
+        "summary": "删除职责分离冲突对",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "冲突对ID",
+            "name": "pair_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "冲突对删除成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "冲突对不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/defaults": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "列出租户的所有默认角色及优先级。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "列出默认角色",
+        "responses": {
+          "200": {
+            "description": "默认角色列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_DefaultRoleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "添加租户级别默认角色，新用户注册时自动分配该角色。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "添加租户默认角色",
+        "parameters": [
+          {
+            "description": "添加默认角色请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.AddDefaultRoleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "默认角色添加成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/defaults/{role_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "移除租户的默认角色，移除后新用户不再自动分配该角色。参考：NIST SP 800-53 AC-2 (Account Management)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "移除默认角色",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "默认角色移除成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "默认角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/{role_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据角色ID获取角色的详细信息，包括角色名称、描述、数据范围、父子层级关系等。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "获取角色详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "角色详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据角色ID更新角色的名称、描述、父角色和数据范围配置。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "更新角色信息",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新角色请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.UpdateRoleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "角色更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据角色ID删除指定角色，删除前会检查是否有关联用户（有用户关联时拒绝删除）。参考：NIST SP 800-53 AC-2 (Account Management)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "删除角色",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "角色删除成功，无响应体"
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "角色仍有关联用户，无法删除",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/{role_id}/approval-requests": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建角色变更审批请求（如为用户分配角色、移除角色等），提交后进入审批流程等待管理员审批。参考：NIST SP 800-53 AC-2 (Account Management)、AC-5 (Separation of Duties)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 审批"
+        ],
+        "summary": "请求角色变更审批",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "审批请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RequestApprovalRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "审批请求创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_ApprovalRequestResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "已存在待审批的同类型请求",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/{role_id}/children": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询指定角色的所有直接子角色（下一层级）。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "获取子角色列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "子角色列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "将指定角色设为当前角色的子角色，建立层级继承关系（子角色自动继承父角色权限）。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "添加子角色",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "父角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "子角色请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.AddRoleChildRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "子角色添加成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "建立层级关系会导致环形引用",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/{role_id}/children/{child_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "解除指定角色与子角色的层级继承关系。参考：NIST SP 800-53 AC-2 (Account Management)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "移除子角色",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "父角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "子角色ID",
+            "name": "child_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "子角色移除成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/{role_id}/clone": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "复制现有角色的全部属性和权限创建新角色，需指定新的角色编码和名称。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "克隆角色",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "源角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "克隆请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.CloneRoleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "克隆成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "源角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "目标角色编码已存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/{role_id}/effective-permissions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询角色的所有有效权限（直接分配的权限 + 从所有父角色层级继承的权限），去重后的扁平列表。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "获取角色有效权限",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "有效权限列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/{role_id}/parents": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询指定角色的所有祖先角色（父→祖父→...→根），按层级从近到远排列。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "获取祖先角色链",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "祖先角色链列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/{role_id}/permissions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据角色ID获取该角色直接分配的所有权限列表（不含从父角色继承的权限）。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "获取角色直接分配的权限",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "角色权限列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定角色批量分配一个或多个权限，分配前验证权限归属同一租户。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "为角色分配权限",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "分配权限请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.AssignPermissionsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "权限分配成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色或权限不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "从指定角色中撤销一个或多个已分配的权限。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "撤销角色权限",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "撤销权限请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RevokePermissionsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "权限撤销成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/{role_id}/users": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询拥有指定角色的所有用户ID（\"谁有此角色\"反向查询），用于安全审计和权限溯源。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "获取角色的用户列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "角色ID",
+            "name": "role_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "拥有该角色的用户ID列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_UserIDsResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/batch/roles": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为多个用户批量分配角色（最多1000个用户），自动执行SoD冲突检测，返回每个用户的分配结果。参考：NIST SP 800-53 AC-2 (Account Management)、AC-5 (Separation of Duties)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 用户角色"
+        ],
+        "summary": "批量分配角色",
+        "parameters": [
+          {
+            "description": "批量分配角色请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.BatchAssignRolesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量分配结果",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为多个用户批量移除角色（最多1000个用户），返回每个用户的移除结果。参考：NIST SP 800-53 AC-2 (Account Management)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 用户角色"
+        ],
+        "summary": "批量移除角色",
+        "parameters": [
+          {
+            "description": "批量移除角色请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.BatchRemoveRolesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量移除结果",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{user_id}/permissions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定用户的所有有效权限（聚合：角色直接权限 + 角色层级继承权限 + 用户直赋权限），去重后的扁平列表。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 用户角色"
+        ],
+        "summary": "获取用户有效权限列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户权限列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "直接分配权限给用户（不通过角色），适用于临时或特殊权限场景。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 用户角色"
+        ],
+        "summary": "为用户直赋权限",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "直赋权限请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.AssignDirectPermissionsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "直赋权限分配成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户或权限不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "撤销直接分配给用户的一个或多个权限（不影响通过角色继承的权限）。参考：NIST SP 800-53 AC-2 (Account Management)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 用户角色"
+        ],
+        "summary": "撤销用户直赋权限",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "撤销直赋权限请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RevokeDirectPermissionsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "直赋权限撤销成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{user_id}/roles": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定用户当前拥有的所有角色列表，包含角色详情和层级关系。参考：NIST SP 800-53 AC-2 (Account Management)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 用户角色"
+        ],
+        "summary": "获取用户角色列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户角色列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定用户批量分配一个或多个角色，自动执行职责分离（SoD）冲突检测，支持设置有效期和授权类型。参考：NIST SP 800-53 AC-2 (Account Management)、AC-5 (Separation of Duties)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 用户角色"
+        ],
+        "summary": "为用户分配角色",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "分配角色请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.AssignRolesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "角色分配成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户或角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "409": {
+            "description": "存在职责分离（SoD）冲突",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "从指定用户中移除一个或多个已分配的角色。参考：NIST SP 800-53 AC-2 (Account Management)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 用户角色"
+        ],
+        "summary": "移除用户角色",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "移除角色请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RemoveRolesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "角色移除成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户或角色不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{user_id}/roles/validate": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "检查指定用户当前拥有的角色是否存在职责分离（SoD）冲突，返回冲突详情。参考：NIST SP 800-53 AC-5 (Separation of Duties)。",
+        "tags": [
+          "RBAC - SoD"
+        ],
+        "summary": "验证用户角色冲突",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SoD验证结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_ValidateUserRolesResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限（非管理员）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/auth/check-permission": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "检查当前登录用户是否拥有指定资源和操作的权限，用于前端按钮级权限控制。参考：NIST SP 800-53 AC-3 (Access Enforcement)、AC-6 (Least Privilege)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 用户角色"
+        ],
+        "summary": "检查用户权限（用户侧）",
+        "parameters": [
+          {
+            "description": "权限检查请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.CheckPermissionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "权限检查结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionCheckResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/auth/check-role": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "检查当前登录用户是否拥有指定的角色编码，用于前端角色门控。参考：NIST SP 800-53 AC-2 (Account Management)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "tags": [
+          "RBAC - 用户角色"
+        ],
+        "summary": "检查用户角色（用户侧）",
+        "parameters": [
+          {
+            "description": "角色检查请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.CheckRoleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "角色检查结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RoleCheckResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/rbac/bootstrap-admin": {
+      "post": {
+        "description": "内部API：创建管理员角色并分配给指定用户，仅在APP_ENV=development时可用。用于测试/CI环境快速设置admin角色，无需预先存在管理员。参考：NIST SP 800-53 AC-2 (Account Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 角色"
+        ],
+        "summary": "引导管理员角色",
+        "parameters": [
+          {
+            "description": "引导管理员请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.BootstrapAdminRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "引导成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_BootstrapAdminResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "禁止在生产环境使用",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/rbac/check-permission": {
+      "post": {
+        "description": "供其他微服务内部调用的权限检查接口，通过X-Tenant-ID请求头传入租户信息，支持直接指定user_id。需InternalAPIKeyAuth认证。参考：NIST SP 800-53 AC-3 (Access Enforcement)、OWASP ASVS V1.2 (Access Control Architecture)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 权限"
+        ],
+        "summary": "检查用户权限（内部服务调用）",
+        "parameters": [
+          {
+            "description": "内部权限检查请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.CheckPermissionInternalRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "权限检查结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionCheckDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/rbac/erase-user": {
+      "post": {
+        "description": "服务间内部调用：擦除指定用户的所有角色分配和直赋权限记录",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 内部接口"
+        ],
+        "summary": "内部GDPR擦除",
+        "parameters": [
+          {
+            "description": "{\\",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "擦除成功",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/rbac/relationships": {
+      "get": {
+        "description": "供其他微服务内部调用：按 object_type+object_id 列出全部关系元组（不限 relation），按 created_at ASC 排序。需InternalAPIKeyAuth + X-Tenant-ID。参考：Zanzibar 风格元组模型。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 内部接口"
+        ],
+        "summary": "列出对象元组（内部服务调用）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "对象类型（白名单: device）",
+            "name": "object_type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "对象ID（设备ID）",
+            "name": "object_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "元组列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_RebacRelationshipDTO"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "供其他微服务内部调用：upsert 语义——先删该 subject 旧 role 元组再建新元组（事务窗口最小，幂等 200）。需InternalAPIKeyAuth + X-Tenant-ID。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 内部接口"
+        ],
+        "summary": "新增对象元组（内部服务调用，upsert）",
+        "parameters": [
+          {
+            "description": "元组写入请求（全必填）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RebacAddRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "新元组",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RebacRelationshipDTO"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "供其他微服务内部调用：删除某 subject 在指定 object 下的全部 role 元组，返回受影响行数。deleted==0 → 404。需InternalAPIKeyAuth + X-Tenant-ID。参考：OWASP ASVS V4.2 对象级授权。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "RBAC - 内部接口"
+        ],
+        "summary": "删除对象元组（内部服务调用）",
+        "parameters": [
+          {
+            "description": "元组删除请求（全必填）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RebacRemoveRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RebacDeleteResult"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "元组不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "domain_rbac.SimulatePermissionCheck": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "resource": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.FieldViolation": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是错误代码（可选）\n用于程序识别错误类型，如 \"required\", \"format\", \"range\"",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description 是人类可读的错误描述\n应该说明违反了什么规则，如 \"必须是一个有效的邮箱地址\"",
+          "type": "string"
+        },
+        "field": {
+          "description": "Field 是错误字段的路径\n使用点号表示嵌套字段，如 \"user.email\" 或 \"addresses[0].city\"",
+          "type": "string"
+        },
+        "standard": {
+          "description": "Standard 是指向权威规范文档的 URI 引用\n用于告知 API 消费者具体违反哪个标准\n示例：\"https://www.rfc-editor.org/info/rfc5322\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是导致错误的值（可选，开发模式下使用）\n生产环境可能不返回此字段以避免泄露敏感信息"
+        }
+      }
+    },
+    "dto.ListResponse-gitee_com_autional_service-rbac_internal_handler_dto_ApprovalRequestResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.ApprovalRequestResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.ListResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.PermissionResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.ListResponse-gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RoleResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.PageInfo": {
+      "type": "object",
+      "properties": {
+        "has_next": {
+          "description": "HasNext indicates whether there is a next page",
+          "type": "boolean"
+        },
+        "has_prev": {
+          "description": "HasPrev indicates whether there is a previous page",
+          "type": "boolean"
+        },
+        "page": {
+          "description": "Page is the current page number (1-based)",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "PageSize is the number of items per page",
+          "type": "integer"
+        },
+        "total": {
+          "description": "Total is the total number of items across all pages",
+          "type": "integer"
+        },
+        "total_pages": {
+          "description": "TotalPages is the total number of pages",
+          "type": "integer"
+        }
+      }
+    },
+    "dto.Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是业务错误码\n用于程序处理特定错误场景\n示例：30101001",
+          "type": "integer"
+        },
+        "detail": {
+          "description": "Detail 是针对此具体错误实例的人类可读解释\n可以包含具体的错误细节，如\"Field 'email' is required\"",
+          "type": "string"
+        },
+        "errors": {
+          "description": "Errors 是字段级验证错误列表（扩展字段）\n遵循 Web API 标准实践，每个错误包含字段名和错误信息",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dto.FieldViolation"
+          }
+        },
+        "i18n_args": {
+          "description": "I18nArgs 是国际化参数\n用于动态填充翻译模板",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "i18n_key": {
+          "description": "I18nKey 是国际化键\n用于客户端本地化错误消息\n示例：\"error.user_not_found\"",
+          "type": "string"
+        },
+        "instance": {
+          "description": "Instance 是发生问题的具体URI引用\n通常是请求的URL，可能包含查询参数\n示例：\"/api/v1/users?limit=invalid\"",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "RequestID 是请求唯一标识\n用于日志关联和问题追踪\n示例：\"req_550e8400-e29b-41d4-a716-446655440000\"",
+          "type": "string"
+        },
+        "retry_after": {
+          "description": "RetryAfter 用于 429 Too Many Requests 响应\n指示客户端应在多少秒后重试请求（RFC 6585）",
+          "type": "integer"
+        },
+        "service": {
+          "description": "Service 是服务名\n用于微服务架构中定位错误来源\n示例：\"auth-service\"",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "SpanID 是当前 span 标识\n用于精确定位分布式链路中的当前节点",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status 是产生的HTTP状态码\n用于客户端区分问题类型，不随Accept-Language变化\n示例：400, 401, 403, 404, 500",
+          "type": "integer"
+        },
+        "timestamp": {
+          "description": "Timestamp 是错误发生时间\nISO 8601 格式\n示例：\"2026-04-03T12:00:00Z\"",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title 是简短、人类可读的问题类型摘要\n相同的 Type 应该始终有相同的 Title（不随实例变化）\n示例：\"Invalid Request Parameters\"",
+          "type": "string"
+        },
+        "trace_id": {
+          "description": "TraceID 是分布式追踪标识\n遵循 W3C Trace Context 标准\n示例：\"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type 是标识问题类型的URI引用\n当该URI被解引用时，应提供人类可读的文档\n示例：\"https://api.example.com/errors/invalid-request\"",
+          "type": "string"
+        }
+      }
+    },
+    "dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_ConflictPairResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.ConflictPairResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_DefaultRoleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.DefaultRoleResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.PermissionResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_RebacRelationshipDTO": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RebacRelationshipDTO"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-array_gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RoleResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_ApprovalRequestResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.ApprovalRequestResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_BootstrapAdminResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.BootstrapAdminResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_ConflictPairResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.ConflictPairResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionCheckDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.PermissionCheckDetailResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionCheckResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.PermissionCheckResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.PermissionResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RebacDeleteResult": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RebacDeleteResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RebacRelationshipDTO": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RebacRelationshipDTO"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RoleCheckResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RoleCheckResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_RoleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.RoleResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_UserIDsResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.UserIDsResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-rbac_internal_handler_dto_ValidateUserRolesResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.ValidateUserRolesResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.AddDefaultRoleRequest": {
+      "type": "object",
+      "required": [
+        "role_id"
+      ],
+      "properties": {
+        "role_id": {
+          "description": "角色ID",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.AddRoleChildRequest": {
+      "type": "object",
+      "required": [
+        "child_id"
+      ],
+      "properties": {
+        "child_id": {
+          "description": "子角色ID",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.ApprovalRequestResponse": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "example": "assign_role"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        },
+        "payload": {
+          "type": "string",
+          "example": "{}"
+        },
+        "reason": {
+          "type": "string",
+          "example": ""
+        },
+        "requester_id": {
+          "type": "string",
+          "example": "usr_example_001"
+        },
+        "reviewer_id": {
+          "type": "string",
+          "example": "usr_example_003"
+        },
+        "role_id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        },
+        "status": {
+          "type": "string",
+          "example": "pending"
+        },
+        "target_id": {
+          "type": "string",
+          "example": "usr_example_002"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_example_001"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.ApproveRejectRequest": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "description": "原因",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.AssignDirectPermissionsRequest": {
+      "type": "object",
+      "required": [
+        "permission_ids"
+      ],
+      "properties": {
+        "permission_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.AssignPermissionsRequest": {
+      "type": "object",
+      "required": [
+        "permission_ids"
+      ],
+      "properties": {
+        "permission_ids": {
+          "description": "Permission IDs",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.AssignRolesRequest": {
+      "type": "object",
+      "required": [
+        "role_ids"
+      ],
+      "properties": {
+        "department_id": {
+          "description": "Department ID",
+          "type": "string"
+        },
+        "expire_at": {
+          "description": "Expiration time",
+          "type": "string"
+        },
+        "grant_type": {
+          "description": "Grant type",
+          "type": "string"
+        },
+        "role_ids": {
+          "description": "Role IDs",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.BatchAssignPermissionsRequest": {
+      "type": "object",
+      "required": [
+        "permission_ids",
+        "role_ids"
+      ],
+      "properties": {
+        "permission_ids": {
+          "description": "权限ID列表",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "role_ids": {
+          "description": "角色ID列表",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.BatchAssignRolesRequest": {
+      "type": "object",
+      "required": [
+        "role_ids",
+        "user_ids"
+      ],
+      "properties": {
+        "role_ids": {
+          "description": "角色ID列表",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_ids": {
+          "description": "用户ID列表",
+          "type": "array",
+          "maxItems": 1000,
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.BatchRemoveRolesRequest": {
+      "type": "object",
+      "required": [
+        "role_ids",
+        "user_ids"
+      ],
+      "properties": {
+        "role_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_ids": {
+          "type": "array",
+          "maxItems": 1000,
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.BatchRevokePermissionsRequest": {
+      "type": "object",
+      "required": [
+        "permission_ids",
+        "role_ids"
+      ],
+      "properties": {
+        "permission_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "role_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.BootstrapAdminRequest": {
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "role_code": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.BootstrapAdminResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "admin role assigned"
+        },
+        "role_id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.CheckPermissionInternalRequest": {
+      "type": "object",
+      "required": [
+        "action",
+        "resource",
+        "user_id"
+      ],
+      "properties": {
+        "action": {
+          "description": "Action",
+          "type": "string"
+        },
+        "resource": {
+          "description": "Resource",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User ID",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.CheckPermissionRequest": {
+      "type": "object",
+      "required": [
+        "action",
+        "resource"
+      ],
+      "properties": {
+        "action": {
+          "description": "Action",
+          "type": "string"
+        },
+        "resource": {
+          "description": "Resource",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.CheckRoleRequest": {
+      "type": "object",
+      "required": [
+        "role_code"
+      ],
+      "properties": {
+        "role_code": {
+          "description": "Role code",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.CloneRoleRequest": {
+      "type": "object",
+      "required": [
+        "code",
+        "name"
+      ],
+      "properties": {
+        "code": {
+          "description": "新角色编码",
+          "type": "string"
+        },
+        "name": {
+          "description": "新角色名称",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.ConflictPairResponse": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "description": {
+          "description": "描述",
+          "type": "string",
+          "example": "审批与操作职责分离"
+        },
+        "id": {
+          "description": "冲突对ID",
+          "type": "string",
+          "example": "cp_abc123"
+        },
+        "role_id_a": {
+          "description": "角色A ID",
+          "type": "string",
+          "example": "role_admin"
+        },
+        "role_id_b": {
+          "description": "角色B ID",
+          "type": "string",
+          "example": "role_operator"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.CreateConflictPairRequest": {
+      "type": "object",
+      "required": [
+        "role_id_a",
+        "role_id_b"
+      ],
+      "properties": {
+        "description": {
+          "description": "描述",
+          "type": "string"
+        },
+        "role_id_a": {
+          "description": "角色A的ID",
+          "type": "string"
+        },
+        "role_id_b": {
+          "description": "角色B的ID",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.CreatePermissionRequest": {
+      "type": "object",
+      "required": [
+        "action",
+        "code",
+        "name",
+        "resource"
+      ],
+      "properties": {
+        "action": {
+          "description": "Action",
+          "type": "string"
+        },
+        "category": {
+          "description": "Category",
+          "type": "string"
+        },
+        "code": {
+          "description": "Permission code",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description",
+          "type": "string"
+        },
+        "effect": {
+          "description": "Effect",
+          "allOf": [
+            {
+              "$ref": "#/definitions/rbac.Effect"
+            }
+          ]
+        },
+        "name": {
+          "description": "Permission name",
+          "type": "string"
+        },
+        "resource": {
+          "description": "Resource",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Tags",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.CreateRoleRequest": {
+      "type": "object",
+      "required": [
+        "code",
+        "name"
+      ],
+      "properties": {
+        "code": {
+          "description": "Role code",
+          "type": "string"
+        },
+        "data_scope": {
+          "description": "Data scope",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description",
+          "type": "string"
+        },
+        "name": {
+          "description": "Role name",
+          "type": "string"
+        },
+        "parent_id": {
+          "description": "Parent role ID",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.DefaultRoleResponse": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        },
+        "id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        },
+        "priority": {
+          "type": "integer",
+          "example": 0
+        },
+        "role_id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.PermissionCheckDetailResponse": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "example": "create"
+        },
+        "allowed": {
+          "type": "boolean",
+          "example": true
+        },
+        "resource": {
+          "type": "string",
+          "example": "user"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_example_001"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.PermissionCheckResponse": {
+      "type": "object",
+      "properties": {
+        "allowed": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.PermissionResponse": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "description": "操作类型",
+          "type": "string",
+          "example": "create"
+        },
+        "category": {
+          "description": "分类",
+          "type": "string",
+          "example": "user_mgmt"
+        },
+        "code": {
+          "description": "权限编码",
+          "type": "string",
+          "example": "user:create"
+        },
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        },
+        "description": {
+          "description": "描述",
+          "type": "string",
+          "example": "创建用户权限"
+        },
+        "effect": {
+          "description": "效果",
+          "allOf": [
+            {
+              "$ref": "#/definitions/rbac.Effect"
+            }
+          ],
+          "example": "allow"
+        },
+        "id": {
+          "description": "权限ID",
+          "type": "string",
+          "example": "perm_abc123"
+        },
+        "name": {
+          "description": "权限名称",
+          "type": "string",
+          "example": "创建用户"
+        },
+        "resource": {
+          "description": "资源类型",
+          "type": "string",
+          "example": "user"
+        },
+        "tags": {
+          "description": "标签",
+          "type": "string",
+          "example": "管理,账户"
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "updated_at": {
+          "description": "更新时间",
+          "type": "string",
+          "example": "2026-04-10T14:20:00Z"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.RebacAddRequest": {
+      "type": "object",
+      "required": [
+        "object_id",
+        "object_type",
+        "relation",
+        "subject_id",
+        "subject_type"
+      ],
+      "properties": {
+        "object_id": {
+          "description": "对象ID（设备ID）",
+          "type": "string"
+        },
+        "object_type": {
+          "description": "对象类型（白名单: device）",
+          "type": "string"
+        },
+        "relation": {
+          "description": "关系（角色，枚举/长度校验）",
+          "type": "string"
+        },
+        "subject_id": {
+          "description": "主体ID（用户ID）",
+          "type": "string"
+        },
+        "subject_type": {
+          "description": "主体类型（白名单: user）",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.RebacDeleteResult": {
+      "type": "object",
+      "properties": {
+        "deleted": {
+          "description": "受影响行数",
+          "type": "integer",
+          "example": 2
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.RebacRelationshipDTO": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "description": "创建时间（RFC3339）",
+          "type": "string",
+          "example": "2026-08-07T10:00:00Z"
+        },
+        "object_id": {
+          "description": "对象ID（设备ID）",
+          "type": "string",
+          "example": "dev_abc123"
+        },
+        "object_type": {
+          "description": "对象类型（白名单: device）",
+          "type": "string",
+          "example": "device"
+        },
+        "relation": {
+          "description": "关系（角色）",
+          "type": "string",
+          "example": "parent_admin"
+        },
+        "subject_id": {
+          "description": "主体ID（用户ID）",
+          "type": "string",
+          "example": "usr_xyz789"
+        },
+        "subject_type": {
+          "description": "主体类型（白名单: user）",
+          "type": "string",
+          "example": "user"
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "01KSQCBNVMS6SX64PJS937CE33"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.RebacRemoveRequest": {
+      "type": "object",
+      "required": [
+        "object_id",
+        "object_type",
+        "subject_id",
+        "subject_type"
+      ],
+      "properties": {
+        "object_id": {
+          "description": "对象ID（设备ID）",
+          "type": "string"
+        },
+        "object_type": {
+          "description": "对象类型（白名单: device）",
+          "type": "string"
+        },
+        "subject_id": {
+          "description": "主体ID（用户ID）",
+          "type": "string"
+        },
+        "subject_type": {
+          "description": "主体类型（白名单: user）",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.RemoveRolesRequest": {
+      "type": "object",
+      "properties": {
+        "role_ids": {
+          "description": "Role IDs",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.RequestApprovalRequest": {
+      "type": "object",
+      "required": [
+        "action",
+        "target_id"
+      ],
+      "properties": {
+        "action": {
+          "description": "操作",
+          "type": "string"
+        },
+        "expire_at": {
+          "description": "过期时间",
+          "type": "string"
+        },
+        "payload": {
+          "description": "附加数据",
+          "type": "string"
+        },
+        "target_id": {
+          "description": "目标ID",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.RevokeDirectPermissionsRequest": {
+      "type": "object",
+      "required": [
+        "permission_ids"
+      ],
+      "properties": {
+        "permission_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.RevokePermissionsRequest": {
+      "type": "object",
+      "required": [
+        "permission_ids"
+      ],
+      "properties": {
+        "permission_ids": {
+          "description": "Permission IDs",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.RoleCheckResponse": {
+      "type": "object",
+      "properties": {
+        "has_role": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.RoleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "角色编码",
+          "type": "string",
+          "example": "admin"
+        },
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        },
+        "data_scope": {
+          "description": "数据范围",
+          "type": "string",
+          "example": "self"
+        },
+        "description": {
+          "description": "描述",
+          "type": "string",
+          "example": "系统管理员"
+        },
+        "id": {
+          "description": "角色ID",
+          "type": "string",
+          "example": "rol_abc123"
+        },
+        "is_system": {
+          "description": "是否系统角色",
+          "type": "boolean",
+          "example": false
+        },
+        "name": {
+          "description": "角色名称",
+          "type": "string",
+          "example": "管理员"
+        },
+        "parent_id": {
+          "description": "父角色ID",
+          "type": "string",
+          "example": "rol_parent"
+        },
+        "permission_count": {
+          "description": "关联权限数量",
+          "type": "integer",
+          "example": 0
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "updated_at": {
+          "description": "更新时间",
+          "type": "string",
+          "example": "2026-04-10T14:20:00Z"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.SimulatePermissionRequest": {
+      "type": "object",
+      "required": [
+        "checks",
+        "user_id"
+      ],
+      "properties": {
+        "checks": {
+          "type": "array",
+          "maxItems": 50,
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/domain_rbac.SimulatePermissionCheck"
+          }
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.UpdatePermissionRequest": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "description": "Category",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description",
+          "type": "string"
+        },
+        "name": {
+          "description": "Permission name",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Tags",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.UpdateRoleRequest": {
+      "type": "object",
+      "properties": {
+        "data_scope": {
+          "description": "Data scope",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description",
+          "type": "string"
+        },
+        "name": {
+          "description": "Role name",
+          "type": "string"
+        },
+        "parent_id": {
+          "description": "Parent role ID",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.UserIDsResponse": {
+      "type": "object",
+      "properties": {
+        "user_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"01ARZ3NDEKTSV4RRFFQ69G5FAV\"]"
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-rbac_internal_handler_dto.ValidateUserRolesResponse": {
+      "type": "object",
+      "properties": {
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-rbac_internal_handler_dto.ConflictPairResponse"
+          }
+        },
+        "has_conflict": {
+          "type": "boolean",
+          "example": false
+        }
+      }
+    },
+    "rbac.Effect": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny"
+      ],
+      "x-enum-varnames": [
+        "EffectAllow",
+        "EffectDeny"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "角色权限管理：角色CRUD、权限分配、审批流程、SoD",
+      "name": "RBAC"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}

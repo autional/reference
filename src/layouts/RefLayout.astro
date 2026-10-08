@@ -1,34 +1,34 @@
 ---
 import '../styles/global.css';
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/inter/600.css';
-import '@fontsource/inter/700.css';
-import '@fontsource/inter/800.css';
 
 const services = [
-  { name:'identity-service', title:'Identity Service' },
-  { name:'profile-service', title:'Profile Service' },
-  { name:'tenant-service', title:'Tenant Service' },
-  { name:'session-service', title:'Session Service' },
-  { name:'mfa-service', title:'MFA Service' },
-  { name:'oauth-service', title:'OAuth Service' },
-  { name:'wallet-service', title:'Wallet Service' },
-  { name:'point-service', title:'Point Service' },
-  { name:'audit-service', title:'Audit Service' },
-  { name:'notification-service', title:'Notification Service' },
-  { name:'communication-service', title:'Communication Service' },
-  { name:'storage-service', title:'Storage Service' },
-  { name:'billing-service', title:'Billing Service' },
-  { name:'compliance-service', title:'Compliance Service' },
-  { name:'status-service', title:'Status Service' },
-  { name:'secret-service', title:'Secret Service' },
-  { name:'saml-service', title:'SAML Service' },
-  { name:'pay-service', title:'Pay Service' },
-  { name:'thirdparty-service', title:'Thirdparty Service' },
-  { name:'verification-service', title:'Verification Service' },
-  { name:'rbac-service', title:'RBAC Service' },
-  { name:'gateway-service', title:'Gateway Service' },
+  { name:'identity-service', title:'身份服务' },
+  { name:'profile-service', title:'用户资料服务' },
+  { name:'tenant-service', title:'租户服务' },
+  { name:'session-service', title:'会话服务' },
+  { name:'mfa-service', title:'多因素认证服务' },
+  { name:'oauth-service', title:'OAuth 服务' },
+  { name:'wallet-service', title:'钱包服务' },
+  { name:'point-service', title:'积分服务' },
+  { name:'audit-service', title:'审计服务' },
+  { name:'notification-service', title:'通知服务' },
+  { name:'communication-service', title:'通信服务' },
+  { name:'storage-service', title:'存储服务' },
+  { name:'billing-service', title:'计费服务' },
+  { name:'compliance-service', title:'合规服务' },
+  { name:'status-service', title:'状态服务' },
+  { name:'secret-service', title:'密钥服务' },
+  { name:'saml-service', title:'SAML 服务' },
+  { name:'pay-service', title:'支付服务' },
+  { name:'thirdparty-service', title:'第三方服务' },
+  { name:'verification-service', title:'身份验证服务' },
+  { name:'rbac-service', title:'RBAC 服务' },
+  { name:'gateway-service', title:'网关服务' },
+  { name:'hash-service-standard', title:'密码哈希服务' },
+  { name:'hash-service-sm', title:'国密哈希服务' },
+  { name:'captcha3d-service', title:'3D 验证码服务' },
+  { name:'config-service', title:'配置中心服务' },
+  { name:'stream-service', title:'实时事件流服务' },
 ];
 
 export interface Props {
@@ -37,8 +37,8 @@ export interface Props {
   keywords?: string;
 }
 const {
-  title = 'Autional API Reference',
-  description = 'Interactive OpenAPI 3.0 reference for all 22 Autional microservices. Explore 1,400+ REST endpoints with Scalar UI.',
+  title = 'API 参考 — Autional',
+  description = '覆盖全部 27 个 Autional 微服务的交互式 Swagger 2.0（OpenAPI 2.0）参考文档，基于 Scalar UI 浏览 1,500+ REST 端点。',
   keywords,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -47,24 +47,29 @@ const ogImage = new URL('/og-default.png', Astro.site).href;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/tokens.css" />
+    <link rel="stylesheet" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/profiles/docs.css" />
+    <link rel="icon" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/favicon-16x16.png">
+    <link rel="icon" type="image/svg+xml" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/apple-touch-icon.png">
+    <link rel="manifest" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/site.webmanifest">
+
   <title>{title}</title>
   <meta name="description" content={description} />
   {keywords && <meta name="keywords" content={keywords} />}
   <link rel="canonical" href={canonical.href}>
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=7">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=7">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=7">
-  <link rel="manifest" href="/site.webmanifest?v=7">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#003153">
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonical.href} />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Autional API Reference" />
+  <meta property="og:site_name" content="Autional API 参考" />
   <meta property="og:image" content={ogImage} />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -75,34 +80,52 @@ const ogImage = new URL('/og-default.png', Astro.site).href;
   <script type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Autional API Reference',
-    url: 'https://reference.autional.com',
-    description: 'Interactive OpenAPI 3.0 reference for all Autional microservices.',
-    publisher: { '@type': 'Organization', name: 'Autional', url: 'https://www.autional.com' },
+    name: 'Autional API 参考',
+    url: 'https://reference.autional.cn',
+    description: 'Autional 全部微服务的交互式 Swagger 2.0（OpenAPI 2.0）参考文档。',
+    publisher: { '@type': 'Organization', name: 'Autional', url: 'https://www.autional.cn' },
   })} />
 </head>
 <body class="min-h-screen flex flex-col text-neutral-900">
-  <!-- Top bar -->
-  <header class="sticky top-0 z-50 h-12 flex items-center justify-between px-5 border-b border-primary-100/70 bg-white/90 backdrop-blur-xl">
+  <!-- 顶部栏 -->
+  <header class="site-header site-header--translucent h-[var(--layout-header-height)] px-5 justify-between">
     <a href="/" class="flex items-center gap-2.5 no-underline">
       <img src="/logo-mark.svg" alt="Autional" class="h-5 w-5 object-contain">
-      <span class="text-sm font-extrabold tracking-[-0.03em] text-primary-900">API Reference</span>
+      <span class="text-sm font-extrabold tracking-[var(--letter-spacing-heading-lg)] text-primary-900">API 参考</span>
     </a>
-    <div class="flex items-center gap-5">
-      <a href="https://wiki.autional.com" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">API Wiki</a>
-      <a href="https://github.com/autional/reference" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">GitHub</a>
-      <a href="https://www.autional.com" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">autional.com &rarr;</a>
+    <div class="flex items-center gap-4">
+      <button
+        id="svc-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="svc-drawer"
+        class="lg:hidden inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+      >
+        <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M2 4h12M2 8h12M2 12h12" stroke-linecap="round" />
+        </svg>
+        服务
+      </button>
+      <div class="hidden sm:flex items-center gap-5">
+        <a href="https://wiki.autional.cn" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">API 知识库</a>
+        <a href="https://github.com/autional-cn/reference" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">GitHub</a>
+        <a href="https://www.autional.cn" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">autional.cn &rarr;</a>
+      </div>
     </div>
   </header>
   <div class="flex h-[calc(100vh-48px)] overflow-hidden">
-    <!-- LEFT SIDEBAR -->
-    <aside class="w-60 shrink-0 border-r border-neutral-100 overflow-y-auto bg-neutral-50/50 flex flex-col">
+    <!-- 左侧服务列表（<lg 为抽屉形态） -->
+    <div id="svc-backdrop" class="hidden lg:hidden fixed inset-0 z-[55] bg-neutral-900/40" aria-hidden="true"></div>
+    <aside
+      id="svc-drawer"
+      class="w-60 shrink-0 -translate-x-full transition-transform fixed inset-y-0 left-0 z-[60] flex flex-col overflow-y-auto border-r border-neutral-100 bg-white shadow-brand lg:static lg:translate-x-0 lg:transition-none lg:z-auto lg:bg-neutral-50/50 lg:shadow-none"
+    >
       <div class="px-4 py-2.5">
-        <span class="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary-500">Services</span>
+        <span class="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary-500">服务</span>
       </div>
       <nav class="flex-1 overflow-y-auto py-2">
         {services.map(s => (
-          <a href={`/${s.name}/`} class={`block mx-2 my-0.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
+          <a href={`/${s.name}/`} class={`block mx-2 my-0.5 rounded-lg px-3 py-3 text-sm font-medium transition ${
             currentSvc === s.name
               ? 'bg-primary-100 text-primary-800'
               : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
@@ -111,12 +134,34 @@ const ogImage = new URL('/og-default.png', Astro.site).href;
           </a>
         ))}
       </nav>
+      <div class="mt-auto border-t border-neutral-100 px-4 py-3 lg:hidden">
+        <a href="https://wiki.autional.cn" class="block py-2 text-xs font-medium text-primary-500">API 知识库</a>
+        <a href="https://github.com/autional-cn/reference" class="block py-2 text-xs font-medium text-primary-500">GitHub</a>
+        <a href="https://www.autional.cn" class="block py-2 text-xs font-medium text-primary-500">autional.cn &rarr;</a>
+      </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col overflow-hidden min-w-0">
       <slot />
     </div>
   </div>
+  <script is:inline>
+    (() => {
+      const toggle = document.getElementById('svc-toggle');
+      const drawer = document.getElementById('svc-drawer');
+      const backdrop = document.getElementById('svc-backdrop');
+      if (!toggle || !drawer || !backdrop) return;
+      const setOpen = (open) => {
+        drawer.classList.toggle('-translate-x-full', !open);
+        backdrop.classList.toggle('hidden', !open);
+        toggle.setAttribute('aria-expanded', String(open));
+      };
+      toggle.addEventListener('click', () => setOpen(drawer.classList.contains('-translate-x-full')));
+      backdrop.addEventListener('click', () => setOpen(false));
+      drawer.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+    })();
+  </script>
 </body>
 </html>

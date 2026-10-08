@@ -1,0 +1,430 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "3D 验证码服务 API：获取验证码挑战、生成验证码图片、验证第三方验证码 Token",
+    "title": "3D 验证码服务 API",
+    "contact": {},
+    "version": "1.0"
+  },
+  "basePath": "/bff/captcha3d/api/v1",
+  "paths": {
+    "/captcha/challenge": {
+      "post": {
+        "description": "生成一个新的 3D 验证码挑战，返回挑战 ID、类型和挑战数据",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证码服务"
+        ],
+        "summary": "获取验证码挑战",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID",
+            "name": "X-Tenant-ID",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "挑战数据",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-captcha3d_internal_handler_dto_GenerateChallengeResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/captcha/generate": {
+      "post": {
+        "description": "根据挑战生成验证码图片（Base64），支持多种 3D 引擎",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证码服务"
+        ],
+        "summary": "生成验证码图片",
+        "parameters": [
+          {
+            "description": "生成验证码请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-captcha3d_internal_handler_dto.GenerateCaptchaRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证码图片数据",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-captcha3d_internal_handler_dto_GenerateCaptchaResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "429": {
+            "description": "请求过于频繁",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/captcha/verify": {
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "内部 API：验证用户提交的验证码答案。需 InternalAPIKey 认证。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "验证码服务 - 内部接口"
+        ],
+        "summary": "内部验证验证码",
+        "parameters": [
+          {
+            "description": "验证验证码请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-captcha3d_internal_handler_dto.VerifyCaptchaRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证结果",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-captcha3d_internal_handler_dto_VerifyCaptchaResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未授权",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "dto.DataResponse-gitee_com_autional_service-captcha3d_internal_handler_dto_GenerateCaptchaResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-captcha3d_internal_handler_dto.GenerateCaptchaResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-captcha3d_internal_handler_dto_GenerateChallengeResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-captcha3d_internal_handler_dto.GenerateChallengeResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-captcha3d_internal_handler_dto_VerifyCaptchaResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-captcha3d_internal_handler_dto.VerifyCaptchaResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.FieldViolation": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是错误代码（可选）\n用于程序识别错误类型，如 \"required\", \"format\", \"range\"",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description 是人类可读的错误描述\n应该说明违反了什么规则，如 \"必须是一个有效的邮箱地址\"",
+          "type": "string"
+        },
+        "field": {
+          "description": "Field 是错误字段的路径\n使用点号表示嵌套字段，如 \"user.email\" 或 \"addresses[0].city\"",
+          "type": "string"
+        },
+        "standard": {
+          "description": "Standard 是指向权威规范文档的 URI 引用\n用于告知 API 消费者具体违反哪个标准\n示例：\"https://www.rfc-editor.org/info/rfc5322\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是导致错误的值（可选，开发模式下使用）\n生产环境可能不返回此字段以避免泄露敏感信息"
+        }
+      }
+    },
+    "dto.Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是业务错误码\n用于程序处理特定错误场景\n示例：30101001",
+          "type": "integer"
+        },
+        "detail": {
+          "description": "Detail 是针对此具体错误实例的人类可读解释\n可以包含具体的错误细节，如\"Field 'email' is required\"",
+          "type": "string"
+        },
+        "errors": {
+          "description": "Errors 是字段级验证错误列表（扩展字段）\n遵循 Web API 标准实践，每个错误包含字段名和错误信息",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dto.FieldViolation"
+          }
+        },
+        "i18n_args": {
+          "description": "I18nArgs 是国际化参数\n用于动态填充翻译模板",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "i18n_key": {
+          "description": "I18nKey 是国际化键\n用于客户端本地化错误消息\n示例：\"error.user_not_found\"",
+          "type": "string"
+        },
+        "instance": {
+          "description": "Instance 是发生问题的具体URI引用\n通常是请求的URL，可能包含查询参数\n示例：\"/api/v1/users?limit=invalid\"",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "RequestID 是请求唯一标识\n用于日志关联和问题追踪\n示例：\"req_550e8400-e29b-41d4-a716-446655440000\"",
+          "type": "string"
+        },
+        "retry_after": {
+          "description": "RetryAfter 用于 429 Too Many Requests 响应\n指示客户端应在多少秒后重试请求（RFC 6585）",
+          "type": "integer"
+        },
+        "service": {
+          "description": "Service 是服务名\n用于微服务架构中定位错误来源\n示例：\"auth-service\"",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "SpanID 是当前 span 标识\n用于精确定位分布式链路中的当前节点",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status 是产生的HTTP状态码\n用于客户端区分问题类型，不随Accept-Language变化\n示例：400, 401, 403, 404, 500",
+          "type": "integer"
+        },
+        "timestamp": {
+          "description": "Timestamp 是错误发生时间\nISO 8601 格式\n示例：\"2026-04-03T12:00:00Z\"",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title 是简短、人类可读的问题类型摘要\n相同的 Type 应该始终有相同的 Title（不随实例变化）\n示例：\"Invalid Request Parameters\"",
+          "type": "string"
+        },
+        "trace_id": {
+          "description": "TraceID 是分布式追踪标识\n遵循 W3C Trace Context 标准\n示例：\"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type 是标识问题类型的URI引用\n当该URI被解引用时，应提供人类可读的文档\n示例：\"https://api.example.com/errors/invalid-request\"",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-captcha3d_internal_handler_dto.ChallengeDataDTO": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "string"
+        },
+        "difficulty": {
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-captcha3d_internal_handler_dto.GenerateCaptchaRequest": {
+      "type": "object",
+      "required": [
+        "pow_id",
+        "pow_token"
+      ],
+      "properties": {
+        "colors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "density": {
+          "type": "integer"
+        },
+        "engine_type": {
+          "description": "\"particle3d\"(default) | \"slide\" | \"click\" | \"rotate\"",
+          "type": "string"
+        },
+        "noise": {
+          "type": "integer"
+        },
+        "pow_id": {
+          "type": "string"
+        },
+        "pow_token": {
+          "type": "string"
+        },
+        "shape": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-captcha3d_internal_handler_dto.GenerateCaptchaResponse": {
+      "type": "object",
+      "properties": {
+        "captcha_id": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "image_type": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-captcha3d_internal_handler_dto.GenerateChallengeResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-captcha3d_internal_handler_dto.ChallengeDataDTO"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-captcha3d_internal_handler_dto.VerifyCaptchaRequest": {
+      "type": "object",
+      "required": [
+        "answer",
+        "captcha_id"
+      ],
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "captcha_id": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-captcha3d_internal_handler_dto.VerifyCaptchaResponse": {
+      "type": "object",
+      "properties": {
+        "expired": {
+          "type": "boolean"
+        },
+        "remaining_attempts": {
+          "type": "integer"
+        },
+        "score": {
+          "type": "number"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "3D 验证码：挑战、生成、校验",
+      "name": "验证码"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}

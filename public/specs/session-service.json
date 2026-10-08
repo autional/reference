@@ -1,0 +1,4353 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "会话管理服务，提供会话创建、Token生成与刷新、会话分析等功能",
+    "title": "会话服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/bff/session/api/v1",
+  "paths": {
+    "/admin/devices/{device_id}/risk": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员基于设备关联的所有会话历史（登录次数、撤销数、活跃会话数）评估设备风险评分。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "获取设备风险评分",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "设备ID",
+            "name": "device_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设备风险评分及风险因素",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.DeviceRiskResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员或安全管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "设备不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/sessions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员查询当前租户下所有活跃会话，支持按用户ID和会话状态筛选，分页返回。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "管理员查询会话列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID（可选，用于筛选）",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "会话状态（active/expired/revoked）",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "会话列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.SessionListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/sessions/active-count": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员获取当前租户的活跃会话数量。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "获取活跃会话数量",
+        "responses": {
+          "200": {
+            "description": "活跃会话数量",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.ActiveCountResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员或安全管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/sessions/bulk": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员批量撤销指定会话ID列表中的会话，最多100个，同步执行，返回成功/失败统计。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "批量撤销会话",
+        "parameters": [
+          {
+            "description": "批量撤销请求，包含 session_ids（会话ID列表）和 reason（撤销原因）",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "批量撤销结果统计",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.BatchRevokeResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误（session_ids为空或超过100个）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/sessions/device-fingerprint": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员获取指定会话关联的设备指纹信息，包括浏览器、操作系统、设备型号等元数据。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "获取会话设备指纹",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "会话ID（可选）",
+            "name": "session_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "设备指纹信息",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.DeviceFingerprintResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员或安全管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/sessions/expired": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员批量清理当前租户下所有已过期的会话记录。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "清理过期会话",
+        "responses": {
+          "200": {
+            "description": "过期会话清理完成",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/sessions/risk-score": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员基于会话的IP地址、设备指纹、登录时间、地理位置等多维度评估会话风险评分。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "获取会话风险评分",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "会话ID（可选，不填则返回当前所有会话的汇总风险评分）",
+            "name": "session_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "风险评分结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.RiskScoreResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员或安全管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/sessions/stats": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员获取当前租户的会话和令牌统计信息，包括活跃总数、撤销数、设备类型分布等多维度数据。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "获取会话统计",
+        "responses": {
+          "200": {
+            "description": "会话统计数据",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.SessionStatsResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员或安全管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/sessions/user/{user_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员撤销指定用户的所有活跃会话，强制该用户所有设备登出。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "撤销用户所有会话",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "目标用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "撤销原因（可选），包含 reason 字段",
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "所有会话已撤销",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tokens": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员查询当前租户下的令牌列表，支持按用户ID、令牌类型、状态筛选，分页返回。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "查询令牌列表",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页数量",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "用户ID（可选，用于筛选）",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "令牌类型（access/refresh）",
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "令牌状态（active/revoked/expired）",
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "令牌列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tokens/blacklist": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员查询当前租户下的黑名单令牌列表，支持按用户ID筛选，分页返回。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "查询黑名单令牌列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID（可选，用于筛选）",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "黑名单令牌列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.BlacklistedTokenListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tokens/blacklist/{device_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员根据ID删除指定的黑名单令牌记录。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "删除黑名单令牌",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "黑名单令牌记录ID",
+            "name": "device_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "黑名单记录不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tokens/config": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员获取当前租户的自定义JWT令牌配置（Access Token TTL、Refresh Token TTL、时钟偏差容忍度）。\n未配置时返回系统默认值。参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "获取租户级JWT配置",
+        "responses": {
+          "200": {
+            "description": "JWT配置信息",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TenantJWTConfigResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员设置当前租户的自定义JWT令牌TTL和时钟偏差容忍度，支持按租户差异化令牌有效期策略。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "更新租户级JWT配置",
+        "parameters": [
+          {
+            "description": "JWT配置参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.UpdateTenantJWTConfigRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的JWT配置",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TenantJWTConfigResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员删除当前租户的自定义JWT配置，恢复为系统默认值。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "重置租户级JWT配置",
+        "responses": {
+          "200": {
+            "description": "JWT配置已重置为默认值",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tokens/exchange": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "OAuth 2.0 令牌交换（RFC 8693），使用已有令牌交换新的访问令牌和刷新令牌。\n响应使用系统标准信封 dto_base.DataResponse[T]。参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "令牌交换",
+        "parameters": [
+          {
+            "description": "令牌交换请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.ExchangeTokenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "交换后的新令牌对",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenExchangeResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "令牌不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tokens/introspect": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "OAuth 2.0 令牌自省端点（RFC 7662），检查令牌的当前状态并返回元信息。\n响应使用系统标准信封 dto_base.DataResponse[T]。参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "令牌自省",
+        "parameters": [
+          {
+            "description": "令牌自省请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.IntrospectTokenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "令牌自省结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenIntrospectionResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "令牌不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tokens/revoke-all": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员撤销指定用户的所有令牌（支持按类型筛选 access/refresh），强制重新认证。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "撤销所有令牌",
+        "parameters": [
+          {
+            "description": "撤销请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.RevokeAllTokensRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "令牌撤销成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tokens/{device_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员根据令牌ID获取令牌的详细信息，包括用户ID、类型、状态、过期时间等。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "获取令牌详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "令牌ID",
+            "name": "device_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "令牌详细信息",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "令牌不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/trusted-devices": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Admin: list trusted devices for a given user.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "Admin list trusted devices",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "Page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "Page size",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trusted devices list",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TrustedDeviceListResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/admin/trusted-devices/{device_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Admin: revoke a trusted device by ID.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "Admin revoke trusted device",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Device ID",
+            "name": "device_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device revoked",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/blacklist-token": {
+      "post": {
+        "description": "内部API：将指定令牌加入黑名单，使其立即失效。通过 X-Tenant-ID 请求头传递租户上下文。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "将令牌加入黑名单",
+        "parameters": [
+          {
+            "description": "令牌黑名单请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.BlacklistTokenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "令牌已加入黑名单",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误或缺少 X-Tenant-ID",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "内部API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/create": {
+      "post": {
+        "description": "内部API，供其他服务通过 InternalAPIKeyAuth + X-Tenant-ID 创建会话。与用户端 POST /sessions 共用一个 handler，区别仅在于认证方式。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "内部创建会话",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "创建会话请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.CreateSessionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "创建成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-session_internal_handler_dto_CreateSessionData"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未提供有效的X-API-Key",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/export-user-data": {
+      "post": {
+        "description": "内部API：导出指定用户的全量会话数据，供合规擦除Saga或GDPR数据可携带权使用。\n通过 X-Tenant-ID 请求头传递租户上下文。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "内部导出用户会话数据",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "{\\",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户会话数据导出结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.UserSessionsExportResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误或缺少 X-Tenant-ID",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "内部API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/generate-tokens": {
+      "post": {
+        "description": "内部API：为指定会话生成新的访问令牌（Access Token）和刷新令牌（Refresh Token）。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "生成令牌对",
+        "parameters": [
+          {
+            "description": "生成令牌请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.GenerateTokensRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "生成的令牌对",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenPairResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误或缺少 X-Tenant-ID",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "内部API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/session/user/{user_id}": {
+      "delete": {
+        "description": "内部API：撤销指定用户的所有活跃会话，用于GDPR合规擦除Saga流程。\n通过 X-Tenant-ID 请求头传递租户上下文，无需JWT认证。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "内部撤销用户所有会话",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户所有会话已撤销",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误或缺少 X-Tenant-ID",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "内部API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/sessions/{user_id}": {
+      "get": {
+        "description": "内部API：获取指定用户的所有活跃会话列表，通过 X-Tenant-ID 请求头传递租户上下文，无需JWT认证。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "获取用户所有活跃会话",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "会话列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.SessionListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误或缺少 X-Tenant-ID",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "内部API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/sessions/{user_id}/active": {
+      "get": {
+        "description": "内部API：轻量检查指定用户是否有活跃会话，返回活跃状态和会话数量。\n通过 X-Tenant-ID 请求头传递租户上下文，无需JWT认证。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "轻量检查用户是否有活跃会话",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "活跃状态及会话数量",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.ActiveSessionStatus"
+            }
+          },
+          "400": {
+            "description": "请求参数有误或缺少 X-Tenant-ID",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "内部API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/trusted-devices": {
+      "get": {
+        "description": "Internal API: list all trusted devices for a user per NIST SP 800-63B §5.2.3.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "List trusted devices",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Tenant ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "Page",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "Page size",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trusted devices list",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TrustedDeviceListResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "Invalid internal API key",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Internal API: mark a device as trusted. Device bypasses re-auth during trust window per NIST SP 800-63B §5.2.3.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "Create trusted device",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Tenant ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "Create trusted device request",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.CreateTrustedDeviceRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trusted device created",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TrustedDeviceResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "Invalid internal API key",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/trusted-devices/{device_fingerprint}": {
+      "delete": {
+        "description": "Internal API: remove a device's trusted status. Device requires re-auth on next login per NIST SP 800-63B §5.2.3.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "Revoke trusted device",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Tenant ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Device fingerprint",
+            "name": "device_fingerprint",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device trust revoked",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "Invalid internal API key",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/validate-token": {
+      "post": {
+        "description": "内部API：验证访问令牌（Access Token）的有效性，解析并返回令牌中的用户声明（User Claims）。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "验证访问令牌",
+        "parameters": [
+          {
+            "description": "访问令牌验证请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.ValidateAccessTokenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "令牌有效，返回用户声明",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenValidationResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "令牌无效或已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/internal/session/{session_id}/usage": {
+      "get": {
+        "description": "内部端点：获取指定会话的每日使用情况统计。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "获取会话每日使用统计",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部 API 密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "会话ID",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "使用统计",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未授权",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "内部端点：记录指定会话的使用情况数据。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理 - 内部接口"
+        ],
+        "summary": "追踪会话使用情况",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部 API 密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "会话ID",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "记录成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未授权",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询指定用户的活跃会话列表，支持租户隔离和分页。\n非管理员只能查询自己的会话。参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "查询用户会话列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "认证用户ID",
+            "name": "auth_user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "会话列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.SessionListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限查询其他用户的会话",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为用户创建新的会话，记录设备信息、IP地址、User-Agent等上下文，\n返回访问令牌（Access Token）和刷新令牌（Refresh Token）。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "创建会话",
+        "parameters": [
+          {
+            "description": "创建会话请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.CreateSessionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "会话创建成功，返回会话信息和令牌对",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.CreateSessionData"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限为其他用户创建会话",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/sessions/refresh": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "使用刷新令牌（Refresh Token）获取新的访问令牌（Access Token）和轮换后的刷新令牌。\n支持刷新频率限制，防止令牌滥用。参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "刷新令牌",
+        "parameters": [
+          {
+            "description": "刷新令牌请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.RefreshTokensRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "刷新成功，返回新的访问令牌和刷新令牌",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenPairResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "刷新令牌无效或已被撤销",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "会话不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/sessions/rotate-access": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "使用刷新令牌（Refresh Token）仅获取新的访问令牌（Access Token），\n不轮换刷新令牌（Refresh Token）。参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "旋转访问令牌",
+        "parameters": [
+          {
+            "description": "刷新令牌请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.RefreshTokensRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "旋转成功，返回新的访问令牌",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.AccessTokenResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "刷新令牌无效或已被撤销",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "会话不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/sessions/user/{user_id}/sessions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询当前认证用户自己的所有活跃会话列表，JWT用户身份必须与路径参数 user_id 匹配。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "查询用户会话列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID，必须与当前JWT用户一致",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "会话列表及分页信息",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.SessionListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "JWT用户与路径参数不匹配",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据会话ID获取会话的详细信息，包括用户信息、设备信息、登录时间、MFA验证状态等。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "获取会话详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "会话ID",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "会话详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.GetSessionData"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限访问其他用户的会话",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "会话不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "根据会话ID撤销指定会话，使该会话立即失效，可选附带撤销原因。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "撤销会话",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "会话ID",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "撤销原因（可选），包含 reason 字段",
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "会话撤销成功，无响应体"
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限撤销其他用户的会话",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "会话不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/activity": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新指定会话的最后活动时间，用于会话保活和空闲超时检测。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "更新会话活动时间",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "会话ID",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "活动时间更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作该会话",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "会话不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/upgrade-mfa": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "在完成多因素认证（MFA）步进认证后，将指定会话标记为MFA已验证状态。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "升级会话MFA验证状态",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "会话ID",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "MFA状态升级成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.UpgradeSessionMFAResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限升级该会话",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "会话不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{session_id}/validate": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "验证指定会话和访问令牌的有效性，返回令牌中的用户声明信息。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "验证会话有效性",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "会话ID",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "验证结果及用户声明",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenValidationResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限访问该会话",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "会话不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/tokens/blacklist": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "将指定的访问令牌或刷新令牌加入黑名单，使其立即失效。\n常用场景：用户登出、密码修改、账号异常冻结。参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "将令牌加入黑名单",
+        "parameters": [
+          {
+            "description": "令牌黑名单请求参数",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.AddToBlacklistRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "令牌已加入黑名单",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限操作其他用户的令牌",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "令牌不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/tokens/blacklist/check": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询指定令牌是否已被加入黑名单，通过黑名单仓库进行真实查询。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "检查令牌黑名单状态",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "待检查的令牌",
+            "name": "token",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "黑名单检查结果",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.BlacklistCheckResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数有误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无权限查询",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/trusted-devices": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Lists trusted devices for the current user.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "设备信任"
+        ],
+        "summary": "List my trusted devices",
+        "responses": {
+          "200": {
+            "description": "Trusted devices list",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TrustedDeviceListResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Marks device as trusted for current user. Trust expires after DefaultTrustedDeviceTTLDays (30 days).",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "设备信任"
+        ],
+        "summary": "Trust device",
+        "parameters": [
+          {
+            "description": "Device trust request",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TrustDeviceRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device trusted",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/trusted-devices/{device_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Revokes a trusted device by ID. Device must belong to the authenticated user.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "设备信任"
+        ],
+        "summary": "Revoke my trusted device",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Device ID",
+            "name": "device_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device revoked",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "dto.DataResponse-gitee_com_autional_service-session_internal_handler_dto_CreateSessionData": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.CreateSessionData"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.FieldViolation": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是错误代码（可选）\n用于程序识别错误类型，如 \"required\", \"format\", \"range\"",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description 是人类可读的错误描述\n应该说明违反了什么规则，如 \"必须是一个有效的邮箱地址\"",
+          "type": "string"
+        },
+        "field": {
+          "description": "Field 是错误字段的路径\n使用点号表示嵌套字段，如 \"user.email\" 或 \"addresses[0].city\"",
+          "type": "string"
+        },
+        "standard": {
+          "description": "Standard 是指向权威规范文档的 URI 引用\n用于告知 API 消费者具体违反哪个标准\n示例：\"https://www.rfc-editor.org/info/rfc5322\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是导致错误的值（可选，开发模式下使用）\n生产环境可能不返回此字段以避免泄露敏感信息"
+        }
+      }
+    },
+    "dto.Problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code 是业务错误码\n用于程序处理特定错误场景\n示例：30101001",
+          "type": "integer"
+        },
+        "detail": {
+          "description": "Detail 是针对此具体错误实例的人类可读解释\n可以包含具体的错误细节，如\"Field 'email' is required\"",
+          "type": "string"
+        },
+        "errors": {
+          "description": "Errors 是字段级验证错误列表（扩展字段）\n遵循 Web API 标准实践，每个错误包含字段名和错误信息",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dto.FieldViolation"
+          }
+        },
+        "i18n_args": {
+          "description": "I18nArgs 是国际化参数\n用于动态填充翻译模板",
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "i18n_key": {
+          "description": "I18nKey 是国际化键\n用于客户端本地化错误消息\n示例：\"error.user_not_found\"",
+          "type": "string"
+        },
+        "instance": {
+          "description": "Instance 是发生问题的具体URI引用\n通常是请求的URL，可能包含查询参数\n示例：\"/api/v1/users?limit=invalid\"",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "RequestID 是请求唯一标识\n用于日志关联和问题追踪\n示例：\"req_550e8400-e29b-41d4-a716-446655440000\"",
+          "type": "string"
+        },
+        "retry_after": {
+          "description": "RetryAfter 用于 429 Too Many Requests 响应\n指示客户端应在多少秒后重试请求（RFC 6585）",
+          "type": "integer"
+        },
+        "service": {
+          "description": "Service 是服务名\n用于微服务架构中定位错误来源\n示例：\"auth-service\"",
+          "type": "string"
+        },
+        "span_id": {
+          "description": "SpanID 是当前 span 标识\n用于精确定位分布式链路中的当前节点",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status 是产生的HTTP状态码\n用于客户端区分问题类型，不随Accept-Language变化\n示例：400, 401, 403, 404, 500",
+          "type": "integer"
+        },
+        "timestamp": {
+          "description": "Timestamp 是错误发生时间\nISO 8601 格式\n示例：\"2026-04-03T12:00:00Z\"",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title 是简短、人类可读的问题类型摘要\n相同的 Type 应该始终有相同的 Title（不随实例变化）\n示例：\"Invalid Request Parameters\"",
+          "type": "string"
+        },
+        "trace_id": {
+          "description": "TraceID 是分布式追踪标识\n遵循 W3C Trace Context 标准\n示例：\"00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01\"",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type 是标识问题类型的URI引用\n当该URI被解引用时，应提供人类可读的文档\n示例：\"https://api.example.com/errors/invalid-request\"",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.PageInfo": {
+      "type": "object",
+      "properties": {
+        "has_next": {
+          "description": "HasNext indicates whether there is a next page",
+          "type": "boolean"
+        },
+        "has_prev": {
+          "description": "HasPrev indicates whether there is a previous page",
+          "type": "boolean"
+        },
+        "page": {
+          "description": "Page is the current page number (1-based)",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "PageSize is the number of items per page",
+          "type": "integer"
+        },
+        "total": {
+          "description": "Total is the total number of items across all pages",
+          "type": "integer"
+        },
+        "total_pages": {
+          "description": "TotalPages is the total number of pages",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.AccessTokenResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.ActiveCountResponse": {
+      "description": "当前活跃会话数量",
+      "type": "object",
+      "properties": {
+        "count": {
+          "description": "数量",
+          "type": "integer",
+          "example": 42
+        },
+        "timestamp": {
+          "description": "时间",
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.ActiveSessionStatus": {
+      "type": "object",
+      "properties": {
+        "active": {
+          "type": "boolean",
+          "example": true
+        },
+        "session_count": {
+          "type": "integer",
+          "example": 3
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.AddToBlacklistRequest": {
+      "description": "将令牌加入黑名单请求参数",
+      "type": "object",
+      "required": [
+        "token",
+        "token_type",
+        "user_id"
+      ],
+      "properties": {
+        "reason": {
+          "description": "原因",
+          "type": "string"
+        },
+        "token": {
+          "description": "令牌",
+          "type": "string"
+        },
+        "token_type": {
+          "description": "类型",
+          "type": "string",
+          "enum": [
+            "access",
+            "refresh"
+          ]
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.BatchRevokeResponse": {
+      "type": "object",
+      "properties": {
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "sess_xyz789"
+          ]
+        },
+        "succeeded": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "sess_abc123",
+            "sess_def456"
+          ]
+        },
+        "total": {
+          "type": "integer",
+          "example": 3
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.BlacklistCheckResponse": {
+      "description": "检查令牌是否在黑名单中",
+      "type": "object",
+      "properties": {
+        "blacklisted": {
+          "description": "是否黑名单",
+          "type": "boolean",
+          "example": false
+        },
+        "reason": {
+          "description": "原因",
+          "type": "string",
+          "example": ""
+        },
+        "token": {
+          "description": "令牌",
+          "type": "string",
+          "example": "abc123..."
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.BlacklistTokenRequest": {
+      "type": "object",
+      "required": [
+        "token",
+        "token_type",
+        "user_id"
+      ],
+      "properties": {
+        "app_id": {
+          "description": "应用ID",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "过期时间",
+          "type": "integer"
+        },
+        "reason": {
+          "description": "原因",
+          "type": "string"
+        },
+        "token": {
+          "description": "令牌",
+          "type": "string"
+        },
+        "token_type": {
+          "description": "类型",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.BlacklistedTokenListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.BlacklistedTokenResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.BlacklistedTokenResponse": {
+      "description": "黑名单令牌信息",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-04-15T08:00:00Z"
+        },
+        "expires_at": {
+          "type": "string",
+          "example": "2026-04-16T08:00:00Z"
+        },
+        "id": {
+          "type": "string",
+          "example": "bl_01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        },
+        "reason": {
+          "type": "string",
+          "example": "manual_revoke"
+        },
+        "token_hash": {
+          "type": "string",
+          "example": "a1b2c3d4e5f6..."
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.CreateSessionData": {
+      "type": "object",
+      "properties": {
+        "session": {
+          "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.SessionResponse"
+        },
+        "tokens": {
+          "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenPairResponse"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.CreateSessionRequest": {
+      "description": "创建新会话请求参数",
+      "type": "object",
+      "required": [
+        "auth_user_id"
+      ],
+      "properties": {
+        "amr": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "password",
+            "totp"
+          ]
+        },
+        "app_id": {
+          "type": "string",
+          "example": "app_xyz"
+        },
+        "auth_user_id": {
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "browser": {
+          "type": "string",
+          "example": "Chrome 123"
+        },
+        "device_fingerprint": {
+          "type": "string",
+          "example": "sha256:a1b2c3d4"
+        },
+        "device_id": {
+          "type": "string",
+          "example": "dev_abc123"
+        },
+        "device_type": {
+          "type": "string",
+          "example": "desktop"
+        },
+        "ip": {
+          "type": "string",
+          "example": "192.168.1.1"
+        },
+        "os": {
+          "type": "string",
+          "example": "Windows 11"
+        },
+        "user_agent": {
+          "type": "string",
+          "example": "Mozilla/5.0"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.CreateTrustedDeviceRequest": {
+      "type": "object",
+      "required": [
+        "device_fingerprint",
+        "user_id"
+      ],
+      "properties": {
+        "browser": {
+          "type": "string"
+        },
+        "device_fingerprint": {
+          "type": "string"
+        },
+        "device_type": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string"
+        },
+        "os": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.DeviceFingerprintResponse": {
+      "description": "设备指纹信息",
+      "type": "object",
+      "properties": {
+        "browser": {
+          "description": "浏览器",
+          "type": "string",
+          "example": "Chrome 123"
+        },
+        "device_hash": {
+          "description": "哈希",
+          "type": "string",
+          "example": "a1b2c3d4e5f6..."
+        },
+        "device_type": {
+          "description": "类型",
+          "type": "string",
+          "example": "desktop"
+        },
+        "fingerprint_id": {
+          "description": "指纹ID",
+          "type": "string",
+          "example": "fp_abc123"
+        },
+        "first_seen_at": {
+          "description": "首次",
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        },
+        "ip": {
+          "description": "IP",
+          "type": "string",
+          "example": "192.168.1.1"
+        },
+        "is_trusted": {
+          "description": "是否信任",
+          "type": "boolean",
+          "example": true
+        },
+        "last_seen_at": {
+          "description": "最近",
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "location": {
+          "description": "位置",
+          "type": "string",
+          "example": "北京市"
+        },
+        "os": {
+          "description": "系统",
+          "type": "string",
+          "example": "Windows 11"
+        },
+        "screen_res": {
+          "description": "分辨率",
+          "type": "string",
+          "example": "1920x1080"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.DeviceRiskResponse": {
+      "type": "object",
+      "properties": {
+        "active_sessions": {
+          "type": "integer",
+          "example": 3
+        },
+        "audit_failure_count": {
+          "type": "integer",
+          "example": 0
+        },
+        "device_id": {
+          "type": "string",
+          "example": "dev_01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        },
+        "evaluated_at": {
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "revoked_sessions": {
+          "type": "integer",
+          "example": 2
+        },
+        "risk_factors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"unusual_location\"",
+            "\"new_device\"]"
+          ]
+        },
+        "risk_level": {
+          "type": "string",
+          "example": "low"
+        },
+        "risk_score": {
+          "type": "integer",
+          "example": 35
+        },
+        "total_sessions": {
+          "type": "integer",
+          "example": 15
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.ExchangeTokenRequest": {
+      "type": "object",
+      "required": [
+        "grant_type",
+        "subject_token"
+      ],
+      "properties": {
+        "audience": {
+          "description": "目标受众",
+          "type": "string",
+          "example": "api.example.com"
+        },
+        "grant_type": {
+          "description": "授权类型",
+          "type": "string",
+          "example": "urn:ietf:params:oauth:grant-type:token-exchange"
+        },
+        "subject_token": {
+          "description": "主题令牌",
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIs..."
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.GenerateTokensRequest": {
+      "type": "object",
+      "required": [
+        "auth_user_id",
+        "session_id",
+        "tenant_id"
+      ],
+      "properties": {
+        "app_id": {
+          "description": "应用ID",
+          "type": "string"
+        },
+        "auth_user_id": {
+          "description": "用户ID",
+          "type": "string"
+        },
+        "session_id": {
+          "description": "会话ID",
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.GetSessionData": {
+      "type": "object",
+      "properties": {
+        "session": {
+          "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.SessionResponse"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.IntrospectTokenRequest": {
+      "type": "object",
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "token": {
+          "description": "令牌",
+          "type": "string"
+        },
+        "type": {
+          "description": "access, refresh (optional hint)",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.RefreshTokensRequest": {
+      "description": "刷新访问令牌请求参数",
+      "type": "object",
+      "required": [
+        "refresh_token"
+      ],
+      "properties": {
+        "refresh_token": {
+          "description": "刷新令牌",
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.RevokeAllTokensRequest": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "description": "原因",
+          "type": "string",
+          "example": "suspicious activity"
+        },
+        "type": {
+          "description": "为空则撤销所有类型",
+          "type": "string",
+          "example": "access"
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.RiskFactor": {
+      "description": "风险评估因素",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "描述",
+          "type": "string",
+          "example": "登录地点异常"
+        },
+        "score": {
+          "description": "评分",
+          "type": "integer",
+          "example": 20
+        },
+        "type": {
+          "description": "类型",
+          "type": "string",
+          "example": "unusual_location"
+        },
+        "weight": {
+          "description": "权重",
+          "type": "integer",
+          "example": 30
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.RiskScoreResponse": {
+      "description": "会话风险评分结果",
+      "type": "object",
+      "properties": {
+        "evaluated_at": {
+          "description": "评估时间",
+          "type": "string",
+          "example": "2026-04-14T12:00:00Z"
+        },
+        "factors": {
+          "description": "因素",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.RiskFactor"
+          }
+        },
+        "recommended_action": {
+          "description": "建议",
+          "type": "string",
+          "example": "allow"
+        },
+        "risk_level": {
+          "description": "等级",
+          "type": "string",
+          "example": "low"
+        },
+        "risk_score": {
+          "description": "评分",
+          "type": "integer",
+          "example": 25
+        },
+        "session_id": {
+          "description": "会话ID",
+          "type": "string",
+          "example": "sess_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.SessionListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.SessionResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.SessionResponse": {
+      "description": "用户会话信息",
+      "type": "object",
+      "properties": {
+        "amr": {
+          "description": "认证方法引用",
+          "type": "string",
+          "example": "password,totp"
+        },
+        "authenticated_at": {
+          "description": "认证时间",
+          "type": "string",
+          "example": "2026-04-15T08:00:00Z"
+        },
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-04-15T08:00:00Z"
+        },
+        "device_id": {
+          "description": "设备ID",
+          "type": "string",
+          "example": "dev_abc123"
+        },
+        "device_type": {
+          "description": "设备类型",
+          "type": "string",
+          "example": "desktop"
+        },
+        "expires_at": {
+          "description": "过期时间",
+          "type": "string",
+          "example": "2026-04-16T08:00:00Z"
+        },
+        "geoip": {
+          "description": "GeoIP 地理位置",
+          "type": "string",
+          "example": "Beijing, CN"
+        },
+        "id": {
+          "description": "会话ID",
+          "type": "string",
+          "example": "sess_abc123"
+        },
+        "idle_expires_at": {
+          "description": "空闲过期时间",
+          "type": "string",
+          "example": "2026-04-15T12:00:00Z"
+        },
+        "ip": {
+          "description": "IP",
+          "type": "string",
+          "example": "192.168.1.1"
+        },
+        "last_active_at": {
+          "description": "最后活跃",
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "status": {
+          "description": "状态",
+          "type": "string",
+          "example": "active"
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "user_agent": {
+          "description": "UA",
+          "type": "string",
+          "example": "Mozilla/5.0..."
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.SessionStatsResponse": {
+      "description": "用户会话统计数据",
+      "type": "object",
+      "properties": {
+        "active_sessions": {
+          "description": "活跃",
+          "type": "integer",
+          "example": 3
+        },
+        "device_breakdown": {
+          "description": "设备分布",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "example": {
+            "desktop": 5,
+            "mobile": 10
+          }
+        },
+        "expired_sessions": {
+          "description": "过期",
+          "type": "integer",
+          "example": 10
+        },
+        "revoked_sessions": {
+          "description": "已撤销",
+          "type": "integer",
+          "example": 2
+        },
+        "total_sessions": {
+          "description": "总会话数",
+          "type": "integer",
+          "example": 15
+        },
+        "updated_at": {
+          "description": "统计时间",
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TenantJWTConfigResponse": {
+      "type": "object",
+      "properties": {
+        "access_expiry": {
+          "type": "string",
+          "example": "24h"
+        },
+        "leeway": {
+          "type": "string",
+          "example": "5s"
+        },
+        "refresh_expiry": {
+          "type": "string",
+          "example": "168h"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_example_001"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TokenDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenInfoResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TokenExchangeResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIs..."
+        },
+        "audience": {
+          "type": "string",
+          "example": "api.example.com"
+        },
+        "expires_in": {
+          "type": "integer",
+          "example": 3600
+        },
+        "grant_type": {
+          "type": "string",
+          "example": "urn:ietf:params:oauth:grant-type:token-exchange"
+        },
+        "refresh_token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIs..."
+        },
+        "token_type": {
+          "type": "string",
+          "example": "Bearer"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TokenInfoResponse": {
+      "description": "令牌详细信息",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-04-15T08:00:00Z"
+        },
+        "expires_at": {
+          "description": "过期时间",
+          "type": "string",
+          "example": "2026-04-15T09:00:00Z"
+        },
+        "id": {
+          "description": "令牌ID",
+          "type": "string",
+          "example": "tok_abc123"
+        },
+        "ip": {
+          "description": "IP",
+          "type": "string",
+          "example": "192.168.1.1"
+        },
+        "status": {
+          "description": "状态",
+          "type": "string",
+          "example": "active"
+        },
+        "token_type": {
+          "description": "类型",
+          "type": "string",
+          "example": "access"
+        },
+        "user_agent": {
+          "description": "UA",
+          "type": "string",
+          "example": "Mozilla/5.0..."
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TokenIntrospectionResponse": {
+      "description": "Token自省结果",
+      "type": "object",
+      "properties": {
+        "active": {
+          "description": "是否有效",
+          "type": "boolean",
+          "example": true
+        },
+        "client_id": {
+          "description": "客户端",
+          "type": "string",
+          "example": "app_xyz"
+        },
+        "exp": {
+          "description": "过期",
+          "type": "integer",
+          "example": 1713175200
+        },
+        "iat": {
+          "description": "签发",
+          "type": "integer",
+          "example": 1713171600
+        },
+        "iss": {
+          "description": "签发者",
+          "type": "string",
+          "example": "auth.example.com"
+        },
+        "scope": {
+          "description": "范围",
+          "type": "string",
+          "example": "read write"
+        },
+        "sub": {
+          "description": "主题",
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "token_type": {
+          "description": "类型",
+          "type": "string",
+          "example": "access"
+        },
+        "username": {
+          "description": "用户名",
+          "type": "string",
+          "example": "john.doe"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TokenListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TokenInfoResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TokenPairResponse": {
+      "description": "访问令牌和刷新令牌",
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "description": "访问令牌",
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        },
+        "expires_in": {
+          "description": "过期秒数",
+          "type": "integer",
+          "example": 3600
+        },
+        "refresh_token": {
+          "description": "刷新令牌",
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        },
+        "token_type": {
+          "description": "类型",
+          "type": "string",
+          "example": "Bearer"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TokenValidationResponse": {
+      "type": "object",
+      "properties": {
+        "claims": {},
+        "error": {
+          "type": "string",
+          "example": ""
+        },
+        "valid": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TrustDeviceRequest": {
+      "type": "object",
+      "required": [
+        "device_fingerprint"
+      ],
+      "properties": {
+        "device_fingerprint": {
+          "type": "string"
+        },
+        "device_name": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TrustedDeviceListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.TrustedDeviceResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.TrustedDeviceResponse": {
+      "type": "object",
+      "properties": {
+        "browser": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "device_fingerprint": {
+          "type": "string"
+        },
+        "device_name": {
+          "type": "string"
+        },
+        "device_type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string"
+        },
+        "os": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "trusted_until": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.UpdateTenantJWTConfigRequest": {
+      "type": "object",
+      "required": [
+        "access_expiry",
+        "refresh_expiry"
+      ],
+      "properties": {
+        "access_expiry": {
+          "type": "string"
+        },
+        "leeway": {
+          "type": "string"
+        },
+        "refresh_expiry": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.UpgradeSessionMFAResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "session MFA status upgraded"
+        },
+        "mfa_verified": {
+          "type": "boolean",
+          "example": true
+        },
+        "session_id": {
+          "type": "string",
+          "example": "sess_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.UserSessionsExportResponse": {
+      "type": "object",
+      "properties": {
+        "sessions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-session_internal_handler_dto.SessionResponse"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "example": 5
+        }
+      }
+    },
+    "gitee_com_autional_service-session_internal_handler_dto.ValidateAccessTokenRequest": {
+      "type": "object",
+      "required": [
+        "access_token"
+      ],
+      "properties": {
+        "access_token": {
+          "description": "访问令牌",
+          "type": "string"
+        },
+        "device_fingerprint": {
+          "description": "BindToDevice 检查",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "会话管理：创建、验证、撤销、黑名单",
+      "name": "会话服务"
+    },
+    {
+      "description": "会话令牌管理：生成、刷新、验证",
+      "name": "会话管理"
+    },
+    {
+      "description": "凭证管理：证书、凭证创建与验证",
+      "name": "凭证管理"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}

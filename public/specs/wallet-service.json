@@ -1,0 +1,6639 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "钱包服务 API，提供账户余额、交易记录、充值提现等功能",
+    "title": "钱包服务 API",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "basePath": "/bff/wallet/api/v1",
+  "paths": {
+    "/admin/wallets": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询钱包列表，支持按状态筛选和分页",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "钱包列表",
+        "parameters": [
+          {
+            "enum": [
+              "active",
+              "frozen",
+              "closed"
+            ],
+            "type": "string",
+            "description": "状态筛选",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "钱包列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定用户创建钱包，支持指定币种。参考：GAAP/IFRS (Double-Entry Accounting Principles)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "创建钱包",
+        "parameters": [
+          {
+            "description": "创建钱包请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CreateWalletRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "钱包创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/batch-freeze": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批量冻结多个用户钱包资金",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "批量冻结",
+        "parameters": [
+          {
+            "description": "批量冻结请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.BatchFreezeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.BatchFreezeResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/batch-unfreeze": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批量解冻多个冻结记录",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "批量解冻",
+        "parameters": [
+          {
+            "description": "批量解冻参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.BatchUnfreezeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.BatchUnfreezeResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/coupons": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取优惠券列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "优惠券列表",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建新的优惠券",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "创建优惠券",
+        "parameters": [
+          {
+            "description": "创建优惠券请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CreateCouponRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponCreateDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/coupons/{coupon_id}": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新指定优惠券",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "更新优惠券",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "优惠券ID",
+            "name": "coupon_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新优惠券请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.UpdateCouponRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponCreateDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定优惠券",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "删除优惠券",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "优惠券ID",
+            "name": "coupon_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/coupons/{coupon_id}/usages": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定优惠券的使用记录列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "优惠券使用记录",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "优惠券ID",
+            "name": "coupon_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponUsageListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/fraud-rules": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取反欺诈规则列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "反欺诈规则",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.FraudRuleListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "批量更新反欺诈规则",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "更新反欺诈规则",
+        "parameters": [
+          {
+            "description": "反欺诈规则请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.UpdateFraudRulesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/fraud-rules/{fraud_rule_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定ID的反欺诈规则",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "删除反欺诈规则",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "规则ID",
+            "name": "fraud_rule_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/freeze-records/{freeze_record_id}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员删除指定冻结记录",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "删除冻结记录",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "冻结记录ID",
+            "name": "freeze_record_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "冻结记录不存在",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/reconciliation": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定租户的对账数据",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "对账",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "对账日期",
+            "name": "date",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ReconciliationDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/snapshots": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "分页查询所有钱包快照记录，按快照日期倒序排列",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "钱包快照列表",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletSnapshotListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/tenants/{tenant_id}/apps/{app_id}/policy": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定应用的钱包策略配置",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "查询钱包策略",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "应用ID",
+            "name": "app_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletPolicyResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建或更新指定应用的钱包策略配置",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "更新钱包策略",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "应用ID",
+            "name": "app_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "策略配置",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/domain.WalletPolicy"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定租户和应用的策略配置",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "删除钱包策略",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "应用ID",
+            "name": "app_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/tenants/{tenant_id}/apps/{app_id}/summary": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定租户下指定应用的钱包余额汇总",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "应用钱包总览",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "应用ID",
+            "name": "app_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TenantBalanceSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/tenants/{tenant_id}/disputes": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取租户下的争议列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "争议列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "状态",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.DisputeListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/tenants/{tenant_id}/disputes/{dispute_id}/resolve": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "处理指定争议",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "争议处理",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "争议ID",
+            "name": "dispute_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "处理请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "remark": {
+                  "type": "string"
+                },
+                "resolution": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ResolveDisputeResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/tenants/{tenant_id}/stats": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取租户下所有钱包的聚合统计数据",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "租户级统计",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "30d",
+            "description": "统计周期",
+            "name": "period",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "开始日期",
+            "name": "start_date",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束日期",
+            "name": "end_date",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.StatsResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/tenants/{tenant_id}/summary": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定租户下所有钱包的余额汇总",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "租户钱包总览",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TenantBalanceSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/tenants/{tenant_id}/transactions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取租户下所有交易流水",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "租户级交易流水",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "交易类型",
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "状态",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "开始日期",
+            "name": "start_date",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束日期",
+            "name": "end_date",
+            "in": "query"
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/users/{user_id}/adjust": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "管理员手动调整用户余额（需审计）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "手动调账",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "调账参数",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.AdjustBalanceResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/webhook-payloads": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "分页查询webhook回调记录，支持按状态筛选",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "webhook回调记录列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "支付网关筛选",
+            "name": "gateway",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "状态筛选 (pending/processed/failed)",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "回调记录列表",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-wallet_internal_handler_dto_WebhookPayloadResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/webhook-payloads/{webhook_payload_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取单条webhook回调记录详情",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "webhook回调记录详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "回调记录ID",
+            "name": "webhook_payload_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "回调记录详情",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-wallet_internal_handler_dto_WebhookPayloadResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "回调记录不存在",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/withdrawals": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户查看自己的提现申请列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "提现申请列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "状态筛选",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WithdrawalRequestListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/withdrawals/{withdrawal_id}/approve": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "审批通过提现申请",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "审批提现",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "提现申请ID",
+            "name": "withdrawal_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "审批请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ApproveWithdrawalRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WithdrawalRequestResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/withdrawals/{withdrawal_id}/reject": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "拒绝提现申请",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "拒绝提现",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "提现申请ID",
+            "name": "withdrawal_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "拒绝请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.RejectWithdrawalRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WithdrawalRequestResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/{wallet_id}": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新钱包状态",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "更新钱包",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "钱包ID",
+            "name": "wallet_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.UpdateWalletRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除指定钱包",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "删除钱包",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "钱包ID",
+            "name": "wallet_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/wallets/{wallet_id}/integrity": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "验证指定钱包的事件哈希链完整性，检测篡改或数据损坏",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "验证钱包完整性",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "钱包ID",
+            "name": "wallet_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "完整性验证结果",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-domain_WalletIntegrityResult"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/exchange-rates": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询两种币种之间的当前兑换率，生成60秒有效的报价ID",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "查询兑换率",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "USD",
+            "description": "源币种",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "CNY",
+            "description": "目标币种",
+            "name": "to",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "兑换率信息",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-wallet_internal_handler_dto_ExchangeRateResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/exchange-rates/convert": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "使用报价ID执行币种兑换。参考：GAAP/IFRS (Double-Entry Accounting Principles)。quote_id在60秒内有效，兑换后即失效防止重放。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "执行兑换",
+        "parameters": [
+          {
+            "description": "兑换请求",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ExchangeConvertRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "兑换结果",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-wallet_internal_handler_dto_ExchangeConvertResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "报价已过期或重复使用",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "兑换金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/runtime": {
+      "get": {
+        "description": "获取服务的运行时状态信息",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务 - 内部接口"
+        ],
+        "summary": "运行时信息",
+        "responses": {
+          "200": {
+            "description": "运行时状态（动态JSON，由health服务生成）",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/wallet/balance": {
+      "get": {
+        "description": "内部服务调用查询余额接口，返回钱包可用余额和冻结余额",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务 - 内部接口"
+        ],
+        "summary": "内部查询余额",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "余额信息",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.BalanceResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/wallet/erase-user": {
+      "post": {
+        "description": "服务间内部调用：擦除指定用户在钱包服务中的所有PII数据",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务 - 内部接口"
+        ],
+        "summary": "内部GDPR擦除",
+        "parameters": [
+          {
+            "description": "{\\",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "擦除成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/wallet/export-user-data": {
+      "post": {
+        "description": "供 identity-service 等内部服务调用，返回该用户在 wallet-service 中的所有钱包、交易数据（用于GDPR数据可携带权）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务 - 内部接口"
+        ],
+        "summary": "内部导出用户钱包数据",
+        "parameters": [
+          {
+            "description": "{\\",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "用户钱包数据导出",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-wallet_internal_handler_dto_ExportUserDataResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/wallet/refund": {
+      "post": {
+        "description": "内部服务调用退款接口，按GAAP/IFRS复式记账原则处理精算退款",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务 - 内部接口"
+        ],
+        "summary": "内部退款",
+        "parameters": [
+          {
+            "description": "退款请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.RefundRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "退款成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.RefundDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或API密钥无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询钱包列表，支持按状态筛选和分页",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "钱包列表",
+        "parameters": [
+          {
+            "enum": [
+              "active",
+              "frozen",
+              "closed"
+            ],
+            "type": "string",
+            "description": "状态筛选",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "钱包列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定用户创建钱包，支持指定币种。参考：GAAP/IFRS (Double-Entry Accounting Principles)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "创建钱包",
+        "parameters": [
+          {
+            "description": "创建钱包请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CreateWalletRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "钱包创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/coupons": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取优惠券列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "优惠券列表",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "创建新的优惠券",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "创建优惠券",
+        "parameters": [
+          {
+            "description": "创建优惠券请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CreateCouponRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponCreateDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/snapshot": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "查询指定日期的钱包余额快照",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "钱包快照",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "快照日期（YYYY-MM-DD）",
+            "name": "date",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletSnapshotListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "生成钱包余额快照",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "余额快照",
+        "parameters": [
+          {
+            "description": "快照请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.SnapshotRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.SnapshotCreateDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/transactions/{transaction_id}/cancel": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "取消指定交易",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "取消交易",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "交易ID",
+            "name": "transaction_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "取消交易请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CancelTransactionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CancelTransactionDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/transactions/{transaction_id}/dispute": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "对指定交易发起争议",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "交易争议",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "交易ID",
+            "name": "transaction_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "争议请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionDisputeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.DisputeSubmitDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/transfer": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "在用户之间转账。参考：GAAP/IFRS (Double-Entry Accounting Principles)，确保借貸平衡。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "钱包转账",
+        "parameters": [
+          {
+            "description": "转账请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransferRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "转账成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransferDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定用户的钱包详情，包含余额、冻结金额、币种和状态信息",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "获取钱包详情",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "钱包详情",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/balance": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定用户钱包余额",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "查询余额",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.BalanceResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/balance-history": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取用户钱包余额变动审计追踪",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "余额变动历史",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.BalanceHistoryListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/coupons": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定用户的优惠券列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "用户优惠券",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/coupons/{code}/redeem": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户使用优惠券码兑换优惠券",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "兑换优惠券",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "优惠券码",
+            "name": "code",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "钱包ID",
+            "name": "wallet_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.RedeemCouponResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/deposit": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "向指定用户钱包充值。参考：GAAP/IFRS (Double-Entry Accounting Principles)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "钱包充值",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "充值请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.DepositRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "充值成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.DepositDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/disputes": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户查看自己的交易争议列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "争议列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "状态筛选",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.DisputeListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/freeze": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "冻结指定用户钱包中的资金",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "冻结资金",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "冻结请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.FreezeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.FreezeDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/freezes": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定用户的冻结记录",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "冻结记录",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "状态",
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.FreezeRecordListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/refund": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "对指定用户钱包进行退款",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "钱包退款",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "退款请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.RefundRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.RefundDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/stats": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定用户的钱包统计数据",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "钱包统计",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "all",
+            "description": "统计周期",
+            "name": "period",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "开始日期",
+            "name": "start_date",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束日期",
+            "name": "end_date",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletStatsDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/transactions": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定用户的交易记录",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "交易记录",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "交易类型",
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "状态",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "开始日期",
+            "name": "start_date",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束日期",
+            "name": "end_date",
+            "in": "query"
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/unfreeze": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "解冻指定用户钱包中的冻结资金",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "解冻资金",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "解冻请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.UnfreezeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.UnfreezeDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/withdraw": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "从指定用户钱包提现。参考：GAAP/IFRS (Double-Entry Accounting Principles)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "钱包提现",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "提现请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WithdrawRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "提现成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WithdrawDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/withdraw/request": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "提交提现申请",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "申请提现",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "提现申请请求体",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WithdrawalRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WithdrawalRequestResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{user_id}/withdrawals": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "用户查看自己的提现申请列表",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "钱包服务"
+        ],
+        "summary": "提现申请列表",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "状态筛选",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "页码",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "每页条数",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WithdrawalRequestListResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "409": {
+            "description": "余额不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "422": {
+            "description": "金额无效",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "domain.WalletIntegrityResult": {
+      "type": "object",
+      "properties": {
+        "broken_at": {
+          "type": "integer"
+        },
+        "last_hash": {
+          "type": "string"
+        },
+        "total": {
+          "type": "integer"
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "wallet_id": {
+          "type": "string"
+        }
+      }
+    },
+    "domain.WalletPolicy": {
+      "type": "object",
+      "properties": {
+        "application_id": {
+          "type": "string"
+        },
+        "auto_approve_limit": {
+          "type": "number"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "daily_withdraw_limit": {
+          "type": "number"
+        },
+        "default_list_page_size": {
+          "type": "integer"
+        },
+        "export_page_size": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "idempotency_ttl": {
+          "type": "integer"
+        },
+        "internal_client_timeout": {
+          "type": "integer"
+        },
+        "max_balance": {
+          "description": "0 = 无限制",
+          "type": "number"
+        },
+        "min_withdraw_amount": {
+          "type": "number"
+        },
+        "monthly_withdraw_limit": {
+          "type": "number"
+        },
+        "quote_cache_ttl": {
+          "type": "integer"
+        },
+        "rate_limit_per_hour": {
+          "type": "integer"
+        },
+        "rate_limit_per_min": {
+          "type": "integer"
+        },
+        "supported_currencies": {
+          "description": "comma-separated",
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "timezone": {
+          "description": "租户时区，用于日限额计算",
+          "type": "string"
+        },
+        "transfer_enabled": {
+          "type": "boolean"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "withdrawal_require_review": {
+          "type": "boolean"
+        }
+      }
+    },
+    "dto.DataResponse-domain_WalletIntegrityResult": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/domain.WalletIntegrityResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-wallet_internal_handler_dto_ExchangeConvertResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ExchangeConvertResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-wallet_internal_handler_dto_ExchangeRateResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ExchangeRateResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-wallet_internal_handler_dto_ExportUserDataResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ExportUserDataResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-wallet_internal_handler_dto_WebhookPayloadResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WebhookPayloadResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.ListResponse-gitee_com_autional_service-wallet_internal_handler_dto_WebhookPayloadResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WebhookPayloadResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.PageInfo": {
+      "type": "object",
+      "properties": {
+        "has_next": {
+          "description": "HasNext indicates whether there is a next page",
+          "type": "boolean"
+        },
+        "has_prev": {
+          "description": "HasPrev indicates whether there is a previous page",
+          "type": "boolean"
+        },
+        "page": {
+          "description": "Page is the current page number (1-based)",
+          "type": "integer"
+        },
+        "page_size": {
+          "description": "PageSize is the number of items per page",
+          "type": "integer"
+        },
+        "total": {
+          "description": "Total is the total number of items across all pages",
+          "type": "integer"
+        },
+        "total_pages": {
+          "description": "TotalPages is the total number of pages",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-core_base_dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.AdjustBalanceResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ManualAdjustResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ApproveWithdrawalRequest": {
+      "type": "object",
+      "properties": {
+        "approved_by": {
+          "type": "string"
+        },
+        "remark": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.BalanceHistoryEntry": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "example": "100.50"
+        },
+        "balance_after": {
+          "type": "string",
+          "example": "1000.50"
+        },
+        "balance_before": {
+          "type": "string",
+          "example": "900.00"
+        },
+        "date": {
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "description": {
+          "type": "string",
+          "example": "账户充值"
+        },
+        "transaction_id": {
+          "type": "string",
+          "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        },
+        "type": {
+          "type": "string",
+          "example": "deposit"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.BalanceHistoryListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.BalanceHistoryEntry"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.BalanceResponse": {
+      "description": "钱包余额信息",
+      "type": "object",
+      "properties": {
+        "available_balance": {
+          "description": "可用",
+          "type": "string",
+          "example": "900.00"
+        },
+        "balance": {
+          "description": "余额",
+          "type": "string",
+          "example": "1000.00"
+        },
+        "frozen_balance": {
+          "description": "冻结",
+          "type": "string",
+          "example": "100.00"
+        },
+        "wallet_id": {
+          "description": "钱包ID",
+          "type": "string",
+          "example": "wlt_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.BatchFreezeRequest": {
+      "type": "object",
+      "required": [
+        "amount",
+        "user_ids"
+      ],
+      "properties": {
+        "amount": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "user_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.BatchFreezeResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.BatchFreezeResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.BatchFreezeResult": {
+      "type": "object",
+      "properties": {
+        "frozen_count": {
+          "type": "integer",
+          "example": 5
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.BatchUnfreezeRequest": {
+      "type": "object",
+      "required": [
+        "freeze_ids"
+      ],
+      "properties": {
+        "freeze_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.BatchUnfreezeResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.BatchUnfreezeResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.BatchUnfreezeResult": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"frz_xyz: already released\"]"
+          ]
+        },
+        "failed": {
+          "type": "integer",
+          "example": 1
+        },
+        "succeeded": {
+          "type": "integer",
+          "example": 9
+        },
+        "total": {
+          "type": "integer",
+          "example": 10
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CancelTransactionDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CancelTransactionResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CancelTransactionRequest": {
+      "description": "取消交易请求参数",
+      "type": "object",
+      "properties": {
+        "reason": {
+          "description": "原因",
+          "type": "string",
+          "example": "重复下单"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CancelTransactionResult": {
+      "type": "object",
+      "properties": {
+        "cancelled": {
+          "description": "是否取消成功",
+          "type": "boolean"
+        },
+        "refund_amount": {
+          "description": "退款金额",
+          "type": "string",
+          "example": "100.00"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CouponCreateDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponCreateResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CouponCreateResult": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "优惠券码",
+          "type": "string",
+          "example": "SUMMER2026"
+        },
+        "coupon_id": {
+          "description": "优惠券ID",
+          "type": "string",
+          "example": "cpn_abc123"
+        },
+        "currency": {
+          "description": "货币",
+          "type": "string",
+          "example": "CNY"
+        },
+        "expires_at": {
+          "description": "过期时间",
+          "type": "string",
+          "example": "2026-12-31T23:59:59Z"
+        },
+        "status": {
+          "description": "状态",
+          "type": "string",
+          "example": "active"
+        },
+        "type": {
+          "description": "类型",
+          "type": "string",
+          "example": "discount"
+        },
+        "value": {
+          "description": "价值",
+          "type": "string",
+          "example": "10.00"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CouponListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CouponResponse": {
+      "description": "优惠券信息",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "码",
+          "type": "string",
+          "example": "DISCOUNT20"
+        },
+        "created_at": {
+          "description": "创建",
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        },
+        "id": {
+          "description": "ID",
+          "type": "string",
+          "example": "cpn_abc123"
+        },
+        "min_amount": {
+          "description": "最低消费",
+          "type": "string",
+          "example": "100.00"
+        },
+        "name": {
+          "description": "名称",
+          "type": "string",
+          "example": "20元优惠券"
+        },
+        "status": {
+          "description": "状态",
+          "type": "string",
+          "example": "unused"
+        },
+        "type": {
+          "description": "类型",
+          "type": "string",
+          "example": "cash"
+        },
+        "used_at": {
+          "description": "使用时间",
+          "type": "string",
+          "example": ""
+        },
+        "used_order_id": {
+          "description": "订单ID",
+          "type": "string",
+          "example": ""
+        },
+        "valid_from": {
+          "description": "生效",
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        },
+        "valid_until": {
+          "description": "失效",
+          "type": "string",
+          "example": "2026-12-31T23:59:59Z"
+        },
+        "value": {
+          "description": "价值",
+          "type": "string",
+          "example": "20.00"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CouponUsageListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponUsageResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CouponUsageResponse": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "example": "2026-01-15T10:00:00Z"
+        },
+        "id": {
+          "type": "string",
+          "example": "cu_001"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "user_001"
+        },
+        "wallet_id": {
+          "type": "string",
+          "example": "wallet_001"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CreateCouponRequest": {
+      "description": "创建优惠券请求参数",
+      "type": "object",
+      "required": [
+        "code",
+        "type",
+        "value"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "SUMMER2026"
+        },
+        "currency": {
+          "type": "string",
+          "example": "CNY"
+        },
+        "expires_at": {
+          "type": "string",
+          "example": "2026-12-31T23:59:59Z"
+        },
+        "min_spend": {
+          "type": "string",
+          "example": "50.00"
+        },
+        "name": {
+          "type": "string",
+          "example": "夏日优惠券"
+        },
+        "type": {
+          "type": "string",
+          "example": "discount"
+        },
+        "value": {
+          "type": "string",
+          "example": "10.00"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.CreateWalletRequest": {
+      "description": "创建新钱包请求参数",
+      "type": "object",
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "currency": {
+          "description": "货币",
+          "type": "string",
+          "example": "CNY"
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.DepositDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.DepositResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.DepositRequest": {
+      "description": "钱包充值请求参数",
+      "type": "object",
+      "required": [
+        "amount"
+      ],
+      "properties": {
+        "amount": {
+          "description": "金额",
+          "type": "string",
+          "example": "100.00"
+        },
+        "description": {
+          "description": "描述",
+          "type": "string",
+          "example": "账户充值"
+        },
+        "reference_id": {
+          "description": "外部参考",
+          "type": "string",
+          "example": "order_123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.DepositResult": {
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "description": "交易记录",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionResponse"
+            }
+          ]
+        },
+        "wallet": {
+          "description": "钱包信息",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+            }
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.DisputeListItem": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transaction_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.DisputeListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.DisputeListItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.DisputeSubmitDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.DisputeSubmitResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.DisputeSubmitResult": {
+      "type": "object",
+      "properties": {
+        "dispute_id": {
+          "description": "争议ID",
+          "type": "string",
+          "example": "dsp-001"
+        },
+        "status": {
+          "description": "状态",
+          "type": "string",
+          "example": "submitted"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ExchangeConvertRequest": {
+      "type": "object",
+      "required": [
+        "amount",
+        "quote_id"
+      ],
+      "properties": {
+        "amount": {
+          "type": "string",
+          "example": "100.00"
+        },
+        "quote_id": {
+          "type": "string",
+          "example": "qt_abc123def"
+        },
+        "remark": {
+          "type": "string",
+          "example": "USD to CNY conversion"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ExchangeConvertResponse": {
+      "type": "object",
+      "properties": {
+        "from_amount": {
+          "type": "string",
+          "example": "100.00"
+        },
+        "from_currency": {
+          "type": "string",
+          "example": "USD"
+        },
+        "message": {
+          "type": "string",
+          "example": "兑换成功"
+        },
+        "quote_id": {
+          "type": "string",
+          "example": "qt_abc123def"
+        },
+        "rate": {
+          "type": "number",
+          "example": 7.24
+        },
+        "to_amount": {
+          "type": "string",
+          "example": "724.00"
+        },
+        "to_currency": {
+          "type": "string",
+          "example": "CNY"
+        },
+        "transaction_id": {
+          "type": "string",
+          "example": "txn_001"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ExchangeRateResponse": {
+      "type": "object",
+      "properties": {
+        "expires_at": {
+          "type": "string",
+          "example": "2026-05-12T10:01:00Z"
+        },
+        "from_currency": {
+          "type": "string",
+          "example": "USD"
+        },
+        "quote_id": {
+          "type": "string",
+          "example": "qt_abc123def"
+        },
+        "rate": {
+          "type": "number",
+          "example": 7.24
+        },
+        "to_currency": {
+          "type": "string",
+          "example": "CNY"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ExportUserDataResponse": {
+      "type": "object",
+      "properties": {
+        "transaction_count": {
+          "type": "integer",
+          "example": 42
+        },
+        "transactions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionResponse"
+          }
+        },
+        "wallet": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.FraudRuleItem": {
+      "description": "单条反欺诈规则配置",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "是否启用",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "名称",
+          "type": "string",
+          "example": "单笔限额"
+        },
+        "rule_id": {
+          "description": "规则ID",
+          "type": "string",
+          "example": "rule-001"
+        },
+        "threshold": {
+          "description": "阈值",
+          "type": "string",
+          "example": "10000"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.FraudRuleListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.FraudRuleResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.FraudRuleResponse": {
+      "description": "反欺诈规则配置",
+      "type": "object",
+      "properties": {
+        "action": {
+          "description": "动作",
+          "type": "string",
+          "example": "block"
+        },
+        "condition": {
+          "description": "条件",
+          "type": "string",
+          "example": "单笔超过5000"
+        },
+        "id": {
+          "description": "规则ID",
+          "type": "string",
+          "example": "fraud_abc123"
+        },
+        "name": {
+          "description": "名称",
+          "type": "string",
+          "example": "单笔限额"
+        },
+        "priority": {
+          "description": "优先级",
+          "type": "integer",
+          "example": 1
+        },
+        "status": {
+          "description": "状态",
+          "type": "string",
+          "example": "enabled"
+        },
+        "type": {
+          "description": "类型",
+          "type": "string",
+          "example": "amount_limit"
+        },
+        "updated_at": {
+          "description": "更新时间",
+          "type": "string",
+          "example": "2026-04-15T10:00:00Z"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.FreezeDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.FreezeResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.FreezeRecordListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.FreezeRecordResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.FreezeRecordResponse": {
+      "description": "资金冻结记录",
+      "type": "object",
+      "properties": {
+        "amount": {
+          "description": "金额",
+          "type": "string",
+          "example": "100.00"
+        },
+        "created_at": {
+          "description": "创建",
+          "type": "string",
+          "example": "2026-04-10T00:00:00Z"
+        },
+        "id": {
+          "description": "记录ID",
+          "type": "string",
+          "example": "frz_abc123"
+        },
+        "reason": {
+          "description": "原因",
+          "type": "string",
+          "example": "争议冻结"
+        },
+        "released_at": {
+          "description": "解冻",
+          "type": "string",
+          "example": "2026-04-15T00:00:00Z"
+        },
+        "status": {
+          "description": "状态",
+          "type": "string",
+          "example": "active"
+        },
+        "wallet_id": {
+          "description": "钱包ID",
+          "type": "string",
+          "example": "wlt_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.FreezeRequest": {
+      "description": "冻结资金请求参数",
+      "type": "object",
+      "required": [
+        "amount"
+      ],
+      "properties": {
+        "amount": {
+          "description": "金额",
+          "type": "string",
+          "example": "100.00"
+        },
+        "reason": {
+          "description": "原因",
+          "type": "string",
+          "example": "争议冻结"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.FreezeResult": {
+      "type": "object",
+      "properties": {
+        "freeze": {
+          "description": "冻结记录",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.FreezeRecordResponse"
+            }
+          ]
+        },
+        "wallet": {
+          "description": "钱包信息",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+            }
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ManualAdjustResult": {
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionResponse"
+        },
+        "wallet": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ReconciliationDetail": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "description": "对账日期",
+          "type": "string",
+          "example": "2026-04-14"
+        },
+        "records": {
+          "description": "各钱包对账记录",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ReconciliationRecord"
+          }
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "wallet_count": {
+          "description": "钱包数量",
+          "type": "integer",
+          "example": 100
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ReconciliationDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ReconciliationDetail"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ReconciliationRecord": {
+      "description": "单个钱包的对账记录",
+      "type": "object",
+      "properties": {
+        "closing_balance": {
+          "description": "期末余额",
+          "type": "string",
+          "example": "1200.00"
+        },
+        "opening_balance": {
+          "description": "期初余额",
+          "type": "string",
+          "example": "1000.00"
+        },
+        "total_deposit": {
+          "description": "累计充值",
+          "type": "string",
+          "example": "500.00"
+        },
+        "total_refund": {
+          "description": "累计退款",
+          "type": "string",
+          "example": "0.00"
+        },
+        "total_transfer_in": {
+          "description": "累计转入",
+          "type": "string",
+          "example": "100.00"
+        },
+        "total_transfer_out": {
+          "description": "累计转出",
+          "type": "string",
+          "example": "50.00"
+        },
+        "total_withdraw": {
+          "description": "累计提现",
+          "type": "string",
+          "example": "200.00"
+        },
+        "transaction_count": {
+          "description": "交易笔数",
+          "type": "integer",
+          "example": 10
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "wallet_id": {
+          "description": "钱包ID",
+          "type": "string",
+          "example": "wlt_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.RedeemCouponResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.CouponResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.RefundDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.RefundResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.RefundRequest": {
+      "description": "退款请求参数",
+      "type": "object",
+      "required": [
+        "transaction_id"
+      ],
+      "properties": {
+        "amount": {
+          "description": "金额",
+          "type": "string",
+          "example": "50.00"
+        },
+        "reason": {
+          "description": "原因",
+          "type": "string",
+          "example": "商品退货"
+        },
+        "reference_id": {
+          "description": "参考",
+          "type": "string",
+          "example": "REF-001"
+        },
+        "transaction_id": {
+          "description": "原交易",
+          "type": "string",
+          "example": "txn_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.RefundResult": {
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "description": "退款交易记录",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionResponse"
+            }
+          ]
+        },
+        "wallet": {
+          "description": "钱包信息",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+            }
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.RejectWithdrawalRequest": {
+      "type": "object",
+      "properties": {
+        "remark": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ResolveDisputeResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.ResolveDisputeResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.ResolveDisputeResult": {
+      "type": "object",
+      "properties": {
+        "dispute_id": {
+          "type": "string",
+          "example": "dsp_01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        },
+        "status": {
+          "type": "string",
+          "example": "resolved"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.SimpleResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.SnapshotCreateDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.SnapshotCreateResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.SnapshotCreateResult": {
+      "type": "object",
+      "properties": {
+        "snapshot_count": {
+          "description": "快照记录数",
+          "type": "integer",
+          "example": 100
+        },
+        "snapshot_date": {
+          "description": "快照日期",
+          "type": "string",
+          "example": "2026-04-14"
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "wallets_total": {
+          "description": "钱包总数",
+          "type": "integer",
+          "example": 100
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.SnapshotRequest": {
+      "description": "生成钱包余额快照的请求参数",
+      "type": "object",
+      "required": [
+        "snapshot_date"
+      ],
+      "properties": {
+        "snapshot_date": {
+          "description": "快照日期",
+          "type": "string",
+          "example": "2026-04-14"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.StatsResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletStatsDetail"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.TenantBalanceSummaryResponse": {
+      "type": "object",
+      "properties": {
+        "active_wallet_count": {
+          "type": "integer",
+          "example": 38
+        },
+        "total_balance": {
+          "type": "string",
+          "example": "50000.00"
+        },
+        "total_frozen_balance": {
+          "type": "string",
+          "example": "5000.00"
+        },
+        "wallet_count": {
+          "type": "integer",
+          "example": 42
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.TransactionDisputeRequest": {
+      "description": "对钱包交易发起争议申诉的请求参数",
+      "type": "object",
+      "required": [
+        "reason"
+      ],
+      "properties": {
+        "contact": {
+          "description": "联系方式",
+          "type": "string",
+          "example": "user@example.com"
+        },
+        "evidence": {
+          "description": "证据",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reason": {
+          "description": "原因",
+          "type": "string",
+          "example": "未授权交易"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.TransactionListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.TransactionResponse": {
+      "description": "交易记录信息",
+      "type": "object",
+      "properties": {
+        "amount": {
+          "description": "金额",
+          "type": "string",
+          "example": "100.00"
+        },
+        "balance_after": {
+          "description": "后余额",
+          "type": "string",
+          "example": "1000.00"
+        },
+        "balance_before": {
+          "description": "前余额",
+          "type": "string",
+          "example": "900.00"
+        },
+        "counterparty_id": {
+          "description": "对方",
+          "type": "string",
+          "example": "usr_xyz456"
+        },
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "currency": {
+          "description": "货币",
+          "type": "string",
+          "example": "CNY"
+        },
+        "description": {
+          "description": "描述",
+          "type": "string",
+          "example": "账户充值"
+        },
+        "id": {
+          "description": "交易ID",
+          "type": "string",
+          "example": "txn_abc123"
+        },
+        "reference_id": {
+          "description": "参考",
+          "type": "string",
+          "example": "order_123"
+        },
+        "status": {
+          "description": "状态",
+          "type": "string",
+          "example": "completed"
+        },
+        "type": {
+          "description": "类型",
+          "type": "string",
+          "example": "deposit"
+        },
+        "wallet_id": {
+          "description": "钱包ID",
+          "type": "string",
+          "example": "wlt_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.TransferDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransferResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.TransferRequest": {
+      "description": "转账请求参数",
+      "type": "object",
+      "required": [
+        "amount",
+        "from_user_id",
+        "to_user_id"
+      ],
+      "properties": {
+        "amount": {
+          "description": "金额",
+          "type": "string",
+          "example": "100.00"
+        },
+        "description": {
+          "description": "描述",
+          "type": "string",
+          "example": "转账给对方"
+        },
+        "from_user_id": {
+          "description": "转出用户",
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "to_user_id": {
+          "description": "转入用户",
+          "type": "string",
+          "example": "usr_xyz456"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.TransferResult": {
+      "type": "object",
+      "properties": {
+        "from_transaction": {
+          "description": "转出交易记录",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionResponse"
+            }
+          ]
+        },
+        "from_wallet": {
+          "description": "转出方钱包",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+            }
+          ]
+        },
+        "to_transaction": {
+          "description": "转入交易记录",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionResponse"
+            }
+          ]
+        },
+        "to_wallet": {
+          "description": "转入方钱包",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+            }
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.UnfreezeDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.UnfreezeResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.UnfreezeRequest": {
+      "description": "解冻资金请求参数",
+      "type": "object",
+      "required": [
+        "freeze_id"
+      ],
+      "properties": {
+        "freeze_id": {
+          "description": "冻结记录ID",
+          "type": "string",
+          "example": "frz_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.UnfreezeResult": {
+      "type": "object",
+      "properties": {
+        "freeze": {
+          "description": "冻结记录",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.FreezeRecordResponse"
+            }
+          ]
+        },
+        "wallet": {
+          "description": "钱包信息",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+            }
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.UpdateCouponRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "min_spend": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.UpdateFraudRulesRequest": {
+      "description": "批量更新反欺诈规则配置的请求参数",
+      "type": "object",
+      "required": [
+        "rules"
+      ],
+      "properties": {
+        "rules": {
+          "description": "规则列表",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.FraudRuleItem"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.UpdateWalletRequest": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WalletDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WalletListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WalletPolicyResponse": {
+      "type": "object",
+      "properties": {
+        "application_id": {
+          "type": "string",
+          "example": "app_example_001"
+        },
+        "auto_approve_limit": {
+          "type": "string",
+          "example": "1000.00"
+        },
+        "daily_withdraw_limit": {
+          "type": "string",
+          "example": "5000.00"
+        },
+        "max_balance": {
+          "type": "string",
+          "example": "100000.00"
+        },
+        "min_withdraw_amount": {
+          "type": "string",
+          "example": "10.00"
+        },
+        "monthly_withdraw_limit": {
+          "type": "string",
+          "example": "50000.00"
+        },
+        "supported_currencies": {
+          "type": "string",
+          "example": "CNY,USD"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "tnt_example_001"
+        },
+        "timezone": {
+          "type": "string",
+          "example": "Asia/Shanghai"
+        },
+        "transfer_enabled": {
+          "type": "boolean",
+          "example": true
+        },
+        "withdrawal_require_review": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse": {
+      "description": "用户钱包信息",
+      "type": "object",
+      "properties": {
+        "application_id": {
+          "description": "应用ID",
+          "type": "string",
+          "example": "app_abc123"
+        },
+        "balance": {
+          "description": "余额",
+          "type": "string",
+          "example": "1000.00"
+        },
+        "created_at": {
+          "description": "创建时间",
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        },
+        "currency": {
+          "description": "货币",
+          "type": "string",
+          "example": "CNY"
+        },
+        "frozen_balance": {
+          "description": "冻结",
+          "type": "string",
+          "example": "100.00"
+        },
+        "status": {
+          "description": "状态",
+          "type": "string",
+          "example": "active"
+        },
+        "tenant_id": {
+          "description": "租户ID",
+          "type": "string",
+          "example": "tnt_xyz789"
+        },
+        "updated_at": {
+          "description": "更新时间",
+          "type": "string",
+          "example": "2026-04-15T10:30:00Z"
+        },
+        "user_id": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "wallet_id": {
+          "description": "钱包ID",
+          "type": "string",
+          "example": "wlt_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WalletSnapshotListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletSnapshotResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WalletSnapshotResponse": {
+      "type": "object",
+      "properties": {
+        "balance": {
+          "type": "string",
+          "example": "100.0000"
+        },
+        "snapshot_at": {
+          "type": "string",
+          "example": "2026-06-04T00:00:00Z"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "user_001"
+        },
+        "wallet_id": {
+          "type": "string",
+          "example": "wallet_abc123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WalletStatsDetail": {
+      "type": "object",
+      "properties": {
+        "average_transaction": {
+          "description": "平均交易金额",
+          "type": "string",
+          "example": "500.00"
+        },
+        "end_date": {
+          "description": "结束日期",
+          "type": "string",
+          "example": "2026-04-30"
+        },
+        "largest_transaction": {
+          "description": "最大单笔交易",
+          "type": "string",
+          "example": "5000.00"
+        },
+        "period": {
+          "description": "统计周期",
+          "type": "string",
+          "example": "month"
+        },
+        "start_date": {
+          "description": "开始日期",
+          "type": "string",
+          "example": "2026-04-01"
+        },
+        "total_deposits": {
+          "description": "总充值",
+          "type": "string",
+          "example": "10000.00"
+        },
+        "total_transfers_in": {
+          "description": "总转入",
+          "type": "string",
+          "example": "20000.00"
+        },
+        "total_transfers_out": {
+          "description": "总转出",
+          "type": "string",
+          "example": "15000.00"
+        },
+        "total_withdrawals": {
+          "description": "总提现",
+          "type": "string",
+          "example": "5000.00"
+        },
+        "transaction_count": {
+          "description": "交易笔数",
+          "type": "integer",
+          "example": 150
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WalletStatsDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletStatsDetail"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WebhookPayloadResponse": {
+      "description": "webhook回调记录",
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "description": "创建",
+          "type": "string",
+          "example": "2026-04-10T00:00:00Z"
+        },
+        "event_type": {
+          "description": "事件类型",
+          "type": "string",
+          "example": "payment.success"
+        },
+        "gateway": {
+          "description": "支付网关",
+          "type": "string",
+          "example": "wechat"
+        },
+        "id": {
+          "description": "记录ID",
+          "type": "string",
+          "example": "wh_abc123"
+        },
+        "status": {
+          "description": "状态",
+          "type": "string",
+          "example": "processed"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WithdrawDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WithdrawResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WithdrawRequest": {
+      "description": "钱包提现请求参数",
+      "type": "object",
+      "required": [
+        "amount"
+      ],
+      "properties": {
+        "amount": {
+          "description": "金额",
+          "type": "string",
+          "example": "50.00"
+        },
+        "description": {
+          "description": "描述",
+          "type": "string",
+          "example": "余额提现"
+        },
+        "reference_id": {
+          "description": "参考",
+          "type": "string",
+          "example": "withdraw_123"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WithdrawResult": {
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "description": "交易记录",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.TransactionResponse"
+            }
+          ]
+        },
+        "wallet": {
+          "description": "钱包信息",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WalletResponse"
+            }
+          ]
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WithdrawalRequest": {
+      "type": "object",
+      "required": [
+        "amount"
+      ],
+      "properties": {
+        "amount": {
+          "type": "string"
+        },
+        "remark": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WithdrawalRequestListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-wallet_internal_handler_dto.WithdrawalRequestResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-wallet_internal_handler_dto.WithdrawalRequestResponse": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "example": "100.50"
+        },
+        "id": {
+          "type": "string",
+          "example": "wdr_01ARZ3NDEKTSV4RRFFQ69G5FAV"
+        },
+        "status": {
+          "type": "string",
+          "example": "pending"
+        },
+        "user_id": {
+          "type": "string",
+          "example": "usr_example_001"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "description": "Type \"Bearer\" followed by a space and JWT token.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "tags": [
+    {
+      "description": "钱包管理：余额、交易、充值、提现",
+      "name": "钱包服务"
+    },
+    {
+      "description": "钱包管理后台：全局配置、费率、审批",
+      "name": "钱包服务 - 管理"
+    }
+  ],
+  "host": "api.autional.cn",
+  "schemes": [
+    "https"
+  ]
+}
