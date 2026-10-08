@@ -6,3 +6,6 @@ build_log.txt
 package-lock.json
 pnpm-workspace.yaml
 .astro/
+
+# 构建前生成物（scripts/gen-static.mjs 按区域 SITE_URL 生成；勿手改、勿入库）
+public/robots.txt

@@ -1,35 +1,8 @@
 ---
 import '../styles/global.css';
-
-const services = [
-  { name:'identity-service', title:'身份服务' },
-  { name:'profile-service', title:'用户资料服务' },
-  { name:'tenant-service', title:'租户服务' },
-  { name:'session-service', title:'会话服务' },
-  { name:'mfa-service', title:'多因素认证服务' },
-  { name:'oauth-service', title:'OAuth 服务' },
-  { name:'wallet-service', title:'钱包服务' },
-  { name:'point-service', title:'积分服务' },
-  { name:'audit-service', title:'审计服务' },
-  { name:'notification-service', title:'通知服务' },
-  { name:'communication-service', title:'通信服务' },
-  { name:'storage-service', title:'存储服务' },
-  { name:'billing-service', title:'计费服务' },
-  { name:'compliance-service', title:'合规服务' },
-  { name:'status-service', title:'状态服务' },
-  { name:'secret-service', title:'密钥服务' },
-  { name:'saml-service', title:'SAML 服务' },
-  { name:'pay-service', title:'支付服务' },
-  { name:'thirdparty-service', title:'第三方服务' },
-  { name:'verification-service', title:'身份验证服务' },
-  { name:'rbac-service', title:'RBAC 服务' },
-  { name:'gateway-service', title:'网关服务' },
-  { name:'hash-service-standard', title:'密码哈希服务' },
-  { name:'hash-service-sm', title:'国密哈希服务' },
-  { name:'captcha3d-service', title:'3D 验证码服务' },
-  { name:'config-service', title:'配置中心服务' },
-  { name:'stream-service', title:'实时事件流服务' },
-];
+import { t } from '../i18n';
+import { LOCALE, SITE_URL, SITE_ROOT_DOMAIN, brotherUrl, cdnAsset, GITHUB_REPO_URL } from '../lib/site-env';
+import { SERVICES } from '../data/services';
 
 export interface Props {
   title?: string;
@@ -37,28 +10,41 @@ export interface Props {
   keywords?: string;
 }
 const {
-  title = 'API 参考 — Autional',
-  description = '覆盖全部 27 个 Autional 微服务的交互式 Swagger 2.0（OpenAPI 2.0）参考文档，基于 Scalar UI 浏览 1,500+ REST 端点。',
+  title = t('layout.meta.title'),
+  description = t('layout.meta.description'),
   keywords,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const currentSvc = Astro.url.pathname.split('/')[1] || '';
 const ogImage = new URL('/og-default.png', Astro.site).href;
+
+const defaultJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: t('layout.meta.siteName'),
+  url: SITE_URL,
+  description: t('layout.jsonLd.description'),
+  publisher: { '@type': 'Organization', name: 'Autional', url: brotherUrl('www') },
+};
+
+// 切换按钮展示目标语言（本区默认 zh → EN；en → 中文）；初始态与服务端一致，客户端脚本按当前语言重算。
+const targetLang = LOCALE === 'zh-CN' ? 'en' : 'zh';
+const targetLangLabel = t(targetLang === 'en' ? 'lang.switchToEn' : 'lang.switchToZh');
 ---
 
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang={LOCALE}>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/tokens.css" />
-    <link rel="stylesheet" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/profiles/docs.css" />
-    <link rel="icon" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/favicon-16x16.png">
-    <link rel="icon" type="image/svg+xml" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/favicon.svg">
-    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/apple-touch-icon.png">
-    <link rel="manifest" href="https://cdn.autional.cn/ui/v0.1.0-rc.f0db1b97/icons/site.webmanifest">
+    <link rel="stylesheet" href={cdnAsset('tokens.css')} />
+    <link rel="stylesheet" href={cdnAsset('profiles/docs.css')} />
+    <link rel="icon" href={cdnAsset('icons/favicon.ico')} sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href={cdnAsset('icons/favicon-32x32.png')}>
+    <link rel="icon" type="image/png" sizes="16x16" href={cdnAsset('icons/favicon-16x16.png')}>
+    <link rel="icon" type="image/svg+xml" href={cdnAsset('icons/favicon.svg')}>
+    <link rel="apple-touch-icon" sizes="180x180" href={cdnAsset('icons/apple-touch-icon.png')}>
+    <link rel="manifest" href={cdnAsset('icons/site.webmanifest')}>
 
   <title>{title}</title>
   <meta name="description" content={description} />
@@ -69,7 +55,7 @@ const ogImage = new URL('/og-default.png', Astro.site).href;
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonical.href} />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Autional API 参考" />
+  <meta property="og:site_name" content={t('layout.meta.siteName')} />
   <meta property="og:image" content={ogImage} />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -77,21 +63,14 @@ const ogImage = new URL('/og-default.png', Astro.site).href;
   <meta name="twitter:image" content={ogImage} />
   <meta name="twitter:site" content="@autional" />
   <meta name="twitter:creator" content="@autional" />
-  <script type="application/ld+json" set:html={JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Autional API 参考',
-    url: 'https://reference.autional.cn',
-    description: 'Autional 全部微服务的交互式 Swagger 2.0（OpenAPI 2.0）参考文档。',
-    publisher: { '@type': 'Organization', name: 'Autional', url: 'https://www.autional.cn' },
-  })} />
+  <script type="application/ld+json" set:html={JSON.stringify(defaultJsonLd)} />
 </head>
 <body class="min-h-screen flex flex-col text-neutral-900">
   <!-- 顶部栏 -->
   <header class="site-header site-header--translucent h-[var(--layout-header-height)] px-5 justify-between">
     <a href="/" class="flex items-center gap-2.5 no-underline">
       <img src="/logo-mark.svg" alt="Autional" class="h-5 w-5 object-contain">
-      <span class="text-sm font-extrabold tracking-[var(--letter-spacing-heading-lg)] text-primary-900">API 参考</span>
+      <span class="text-sm font-extrabold tracking-[var(--letter-spacing-heading-lg)] text-primary-900" data-i18n="layout.brand">{t('layout.brand')}</span>
     </a>
     <div class="flex items-center gap-4">
       <button
@@ -99,18 +78,21 @@ const ogImage = new URL('/og-default.png', Astro.site).href;
         type="button"
         aria-expanded="false"
         aria-controls="svc-drawer"
+        aria-label={t('layout.aria.openServices')}
+        data-i18n-aria-label="layout.aria.openServices"
         class="lg:hidden inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-2 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
       >
         <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
           <path d="M2 4h12M2 8h12M2 12h12" stroke-linecap="round" />
         </svg>
-        服务
+        <span data-i18n="layout.servicesTitle">{t('layout.servicesTitle')}</span>
       </button>
       <div class="hidden sm:flex items-center gap-5">
-        <a href="https://wiki.autional.cn" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">API 知识库</a>
-        <a href="https://github.com/autional-cn/reference" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">GitHub</a>
-        <a href="https://www.autional.cn" class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">autional.cn &rarr;</a>
+        <a href={brotherUrl('wiki')} class="text-xs font-medium text-primary-500 hover:text-primary-700 transition" data-i18n="layout.chrome.wiki">{t('layout.chrome.wiki')}</a>
+        <a href={GITHUB_REPO_URL} class="text-xs font-medium text-primary-500 hover:text-primary-700 transition" data-i18n="layout.chrome.github">{t('layout.chrome.github')}</a>
+        <a href={brotherUrl('www')} class="text-xs font-medium text-primary-500 hover:text-primary-700 transition">{SITE_ROOT_DOMAIN} &rarr;</a>
       </div>
+      <button type="button" data-lang-switch data-lang-target={targetLang} title={targetLangLabel} aria-label={targetLangLabel} class="text-xs font-medium text-primary-500 hover:text-primary-700 transition border border-primary-100 rounded-lg px-2 py-1">{targetLang === 'en' ? 'EN' : '中文'}</button>
     </div>
   </header>
   <div class="flex h-[calc(100vh-48px)] overflow-hidden">
@@ -121,23 +103,23 @@ const ogImage = new URL('/og-default.png', Astro.site).href;
       class="w-60 shrink-0 -translate-x-full transition-transform fixed inset-y-0 left-0 z-[60] flex flex-col overflow-y-auto border-r border-neutral-100 bg-white shadow-brand lg:static lg:translate-x-0 lg:transition-none lg:z-auto lg:bg-neutral-50/50 lg:shadow-none"
     >
       <div class="px-4 py-2.5">
-        <span class="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary-500">服务</span>
+        <span class="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary-500" data-i18n="layout.servicesTitle">{t('layout.servicesTitle')}</span>
       </div>
       <nav class="flex-1 overflow-y-auto py-2">
-        {services.map(s => (
-          <a href={`/${s.name}/`} class={`block mx-2 my-0.5 rounded-lg px-3 py-3 text-sm font-medium transition ${
-            currentSvc === s.name
+        {SERVICES.map(name => (
+          <a href={`/${name}/`} class={`block mx-2 my-0.5 rounded-lg px-3 py-3 text-sm font-medium transition ${
+            currentSvc === name
               ? 'bg-primary-100 text-primary-800'
               : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
           }`}>
-            {s.title}
+            <span data-i18n={`services.${name}`}>{t(`services.${name}`)}</span>
           </a>
         ))}
       </nav>
       <div class="mt-auto border-t border-neutral-100 px-4 py-3 lg:hidden">
-        <a href="https://wiki.autional.cn" class="block py-2 text-xs font-medium text-primary-500">API 知识库</a>
-        <a href="https://github.com/autional-cn/reference" class="block py-2 text-xs font-medium text-primary-500">GitHub</a>
-        <a href="https://www.autional.cn" class="block py-2 text-xs font-medium text-primary-500">autional.cn &rarr;</a>
+        <a href={brotherUrl('wiki')} class="block py-2 text-xs font-medium text-primary-500" data-i18n="layout.chrome.wiki">{t('layout.chrome.wiki')}</a>
+        <a href={GITHUB_REPO_URL} class="block py-2 text-xs font-medium text-primary-500" data-i18n="layout.chrome.github">{t('layout.chrome.github')}</a>
+        <a href={brotherUrl('www')} class="block py-2 text-xs font-medium text-primary-500">{SITE_ROOT_DOMAIN} &rarr;</a>
       </div>
     </aside>
 
@@ -162,6 +144,52 @@ const ogImage = new URL('/og-default.png', Astro.site).href;
       drawer.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
       window.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
     })();
+  </script>
+  <script>
+    // 语言交换（B2 单源机制；与 B1 web / B2 docs/developer/wiki 同源约定）。
+    // 区域默认语言由构建期 env 注入（src/i18n envDefaultLang）；本脚本只做客户端重写：
+    // [data-i18n] 文本 / [data-i18n-<attr>] 属性；服务页的 {apiHost} 等占位由 GLOBAL_PARAMS 注入。
+    import { LANG_EVENT, currentLang, otherLang, restoreLang, setLang, translate } from '../i18n';
+    import { API_HOST } from '../lib/site-env';
+
+    const ATTRS = ['alt', 'aria-label', 'title'];
+    const GLOBAL_PARAMS = { apiHost: API_HOST };
+
+    const updateSwitch = () => {
+      const lang = currentLang();
+      const target = otherLang(lang);
+      document.querySelectorAll('[data-lang-switch]').forEach((el) => {
+        el.textContent = target === 'en' ? 'EN' : '中文';
+        const label = translate(lang, target === 'en' ? 'lang.switchToEn' : 'lang.switchToZh');
+        el.setAttribute('title', label);
+        el.setAttribute('aria-label', label);
+        el.setAttribute('data-lang-target', target);
+      });
+    };
+
+    const applyChrome = () => {
+      const lang = currentLang();
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.getAttribute('data-i18n');
+        if (key) el.textContent = translate(lang, key, GLOBAL_PARAMS);
+      });
+      for (const attr of ATTRS) {
+        document.querySelectorAll(`[data-i18n-${attr}]`).forEach((el) => {
+          const key = el.getAttribute(`data-i18n-${attr}`);
+          if (key) el.setAttribute(attr, translate(lang, key, GLOBAL_PARAMS));
+        });
+      }
+      updateSwitch();
+    };
+
+    document.querySelectorAll('[data-lang-switch]').forEach((el) => {
+      el.addEventListener('click', () => setLang(otherLang(currentLang())));
+    });
+
+    window.addEventListener(LANG_EVENT, applyChrome);
+    // 采纳已存偏好（若有）后统一重写一次；restoreLang 内部走 setLang → 事件，此处兜底无偏好路径。
+    restoreLang();
+    applyChrome();
   </script>
 </body>
 </html>
