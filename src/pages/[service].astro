@@ -1,112 +1,67 @@
 ---
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import RefLayout from '../layouts/RefLayout.astro';
+import { t } from '../i18n';
+import { SERVICES, GATEWAY_SHORT } from '../data/services';
+import { API_HOST } from '../lib/site-env';
+import { readSpec, specForService } from '../lib/specs';
 
 export async function getStaticPaths() {
-  const svcs = ["identity-service","profile-service","tenant-service","session-service","mfa-service","oauth-service","wallet-service","point-service","audit-service","notification-service","communication-service","storage-service","billing-service","compliance-service","status-service","secret-service","saml-service","pay-service","thirdparty-service","verification-service","rbac-service","gateway-service","hash-service-standard","hash-service-sm","captcha3d-service","config-service","stream-service"];
-  return svcs.map(n => ({ params: { service: n } }));
+  return SERVICES.map((n) => ({ params: { service: n } }));
 }
 
 const { service } = Astro.params;
 
-// 公开网关短名（与 scripts/sync-specs-zh.py GATEWAY_SHORT 同源）。
-// 路由真源：shared/service-gateway/configs/service/gateway-service.yaml。
-const GATEWAY_SHORT: Record<string, string> = {
-  'identity-service': 'identity',
-  'profile-service': 'profile',
-  'tenant-service': 'tenant',
-  'session-service': 'session',
-  'mfa-service': 'mfa',
-  'oauth-service': 'oauth',
-  'wallet-service': 'wallet',
-  'point-service': 'point',
-  'audit-service': 'audit',
-  'notification-service': 'notification',
-  'communication-service': 'communication',
-  'storage-service': 'storage',
-  'billing-service': 'billing',
-  'compliance-service': 'compliance',
-  'status-service': 'status',
-  'secret-service': 'secret',
-  'saml-service': 'saml',
-  'pay-service': 'pay',
-  'verification-service': 'verification',
-  'rbac-service': 'rbac',
-  'captcha3d-service': 'captcha3d',
-};
-
-// 无公网 /bff 入口的服务：顶栏尾段显示短标签，页内给出接入方式提示条。
-const ACCESS_LABEL: Record<string, string> = {
-  'config-service': '内网直连 · 无公网入口',
-  'thirdparty-service': '仅内网通道 · 无公网入口',
-  'hash-service-standard': 'gRPC-only · 无公网入口',
-  'hash-service-sm': 'gRPC-only · 无公网入口',
-  'stream-service': '经网关中继接入',
-  'gateway-service': '网关自注册端点',
-};
-
-const ACCESS_NOTES: Record<string, string> = {
-  'config-service':
-    '此服务为配置中心 / 内部调用通道，不经 API 网关，无公网 REST 入口；下方规范仅供内部集成参考，线上不可经 api.autional.cn 直接调用。',
-  'thirdparty-service':
-    '此服务仅经网关内网通道（/bff/thirdparty/api/v1/internal）供其他服务调用，不对公网开放；下方规范仅供内部集成参考。',
-  'hash-service-standard':
-    '此服务为 gRPC-only（Argon2id，无公网 REST 面），经内网 gRPC 调用，不经 API 网关；下方规范为能力说明，线上不可经 HTTP 直接调用。',
-  'hash-service-sm':
-    '此服务为 gRPC-only（PBKDF2-SM3 国密变体，无公网 REST 面），经内网 gRPC 调用，不经 API 网关；下方规范为能力说明，线上不可经 HTTP 直接调用。',
-  'stream-service':
-    '此服务无独立 REST 路由；实时事件流经网关 BFF 中继接入：POST /bff/gateway/api/v1/stream/ticket（JWT 换票）+ GET /bff/gateway/api/v1/stream/events（SSE 建流）。下方规范为内部端点定义。',
-  'gateway-service':
-    '网关自注册端点（/docs、/search、/developer、/sdk、/admin 等，多数需 JWT 或 admin 角色）在网关进程内注册，不经 /bff 前缀；下方规范为网关自身管理面端点。',
-};
+// 无公网 /bff 入口的六服务：顶栏尾段用 i18n 短标签，页内给出接入方式提示条
+// （键 = service.accessLabel.<svc> / service.accessNote.<svc>，后者含 {apiHost} 占位）。
+const NO_PUBLIC_ENTRY: readonly string[] = [
+  'config-service', 'thirdparty-service', 'hash-service-standard',
+  'hash-service-sm', 'stream-service', 'gateway-service',
+];
 
 const short = GATEWAY_SHORT[service];
-const accessLabel = short ? `https://api.autional.cn/bff/${short}/api/v1/` : (ACCESS_LABEL[service] ?? '');
-const accessNote = ACCESS_NOTES[service];
+const accessLabel = short
+  ? `https://${API_HOST}/bff/${short}/api/v1/`
+  : t(`service.accessLabel.${service}`);
+const accessNote = NO_PUBLIC_ENTRY.includes(service)
+  ? t(`service.accessNote.${service}`, { apiHost: API_HOST })
+  : '';
 
-let specTitle = `${service} API 参考 — Autional`;
-let specDescription = `${service} 的交互式 API 参考文档。`;
+// 规范按构建语言解析（en 缺源三服务回退 zh 原版 + 页内 fallbackNote 标注）。
+const { file: specFile, fallback } = specForService(service);
+const loaded = readSpec(specFile);
+
+let specTitle = t('service.meta.titleFallback', { service });
+let specDescription = t('service.meta.descriptionFallback', { service });
 let endpointCount = 0;
-
-try {
-  const specPath = join(process.cwd(), 'public/specs', `${service}.json`);
-  const spec = JSON.parse(readFileSync(specPath, 'utf-8'));
-  specTitle = `${spec.info.title} — Autional`;
-  specDescription = spec.info.description || `${service} 的交互式 API 参考文档，提供 Swagger 2.0 规范。`;
-
-  const paths = spec.paths || {};
-  for (const methods of Object.values(paths)) {
-    if (typeof methods === 'object' && methods !== null) {
-      endpointCount += Object.keys(methods).filter(k => k !== 'parameters').length;
-    }
-  }
-} catch {
-  // 回退到默认元信息
+if (loaded) {
+  specTitle = `${loaded.spec.info?.title ?? service} — Autional`;
+  specDescription = loaded.spec.info?.description || t('service.meta.descriptionGeneric', { service });
+  endpointCount = loaded.endpoints;
 }
 ---
 
-<RefLayout title={specTitle} description={specDescription} keywords={`Autional, API, ${service}, 接口参考, OpenAPI, Swagger`}>
+<RefLayout title={specTitle} description={specDescription} keywords={t('service.meta.keywords', { service })}>
   <div id="scalar-wrapper" class="flex-1 flex flex-col min-h-0" style="overflow:hidden">
     <div class="px-4 py-2 border-b border-neutral-100 bg-white flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
       <span class="font-mono font-bold text-primary-600">{service}</span>
       <span class="text-neutral-300">|</span>
-      <span class="whitespace-nowrap text-neutral-600">{endpointCount} 个端点</span>
+      <span class="whitespace-nowrap text-neutral-600">{endpointCount}<span data-i18n="service.endpointSuffix">{t('service.endpointSuffix')}</span></span>
       <span class="text-neutral-300">|</span>
       {short ? (
         <span class="break-all font-mono text-[11px] text-neutral-600" title={accessLabel}>{accessLabel}</span>
       ) : (
-        <span class="text-neutral-600">{accessLabel}</span>
+        <span class="text-neutral-600" data-i18n={`service.accessLabel.${service}`}>{accessLabel}</span>
       )}
     </div>
+    {fallback && (
+      <div class="border-b border-sky-100 bg-sky-50/70 px-4 py-2 text-xs leading-5 text-sky-900" data-i18n="service.fallbackNote">{t('service.fallbackNote')}</div>
+    )}
     {accessNote && (
-      <div class="border-b border-amber-100 bg-amber-50/70 px-4 py-2 text-xs leading-5 text-amber-900">
-        {accessNote}
-      </div>
+      <div class="border-b border-amber-100 bg-amber-50/70 px-4 py-2 text-xs leading-5 text-amber-900" data-i18n={`service.accessNote.${service}`}>{accessNote}</div>
     )}
     <div
       id="api-reference"
-      data-url={`/specs/${service}.json`}
+      data-url={`/specs/${specFile}`}
       data-theme="bluePlanet"
       data-layout="classic"
       data-show-side-bar="true"
