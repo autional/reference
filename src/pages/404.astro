@@ -1,14 +1,15 @@
 ---
 import RefLayout from '../layouts/RefLayout.astro';
+import { t } from '../i18n';
 ---
 
-<RefLayout title="页面不存在 — Autional API 参考" description="请求的页面不存在。请从服务列表中选择一个服务，或返回 API 参考首页。">
+<RefLayout title={t('notFound.meta.title')} description={t('notFound.meta.description')}>
   <div class="flex-1 flex items-center justify-center p-8">
     <div class="text-center max-w-md">
-      <p class="font-mono text-5xl font-extrabold text-primary-700">404</p>
-      <h1 class="mt-4 text-lg font-semibold text-neutral-900">页面不存在</h1>
-      <p class="mt-2 text-sm leading-6 text-neutral-600">你访问的路径不存在或已移动。可以从服务列表选择一个服务的 API 参考。</p>
-      <a href="/" class="mt-6 inline-block brand-button-secondary px-5 py-2.5 text-xs">返回 API 参考首页</a>
+      <p class="font-mono text-5xl font-extrabold text-primary-700" data-i18n="notFound.kicker">{t('notFound.kicker')}</p>
+      <h1 class="mt-4 text-lg font-semibold text-neutral-900" data-i18n="notFound.title">{t('notFound.title')}</h1>
+      <p class="mt-2 text-sm leading-6 text-neutral-600" data-i18n="notFound.lead">{t('notFound.lead')}</p>
+      <a href="/" class="mt-6 inline-block brand-button-secondary px-5 py-2.5 text-xs" data-i18n="notFound.back">{t('notFound.back')}</a>
     </div>
   </div>
 </RefLayout>
