@@ -47,6 +47,7 @@
   "service": {
     "endpointSuffix": " endpoints",
     "fallbackNote": "English spec pending — showing the Chinese original.",
+    "partialNote": "The English spec lags the Chinese original by {missing} of {total} endpoints; the Chinese reference is authoritative for the full set.",
     "meta": {
       "titleFallback": "{service} API Reference — Autional",
       "descriptionFallback": "Interactive API reference for {service}.",

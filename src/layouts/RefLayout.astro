@@ -171,7 +171,14 @@ const targetLangLabel = t(targetLang === 'en' ? 'lang.switchToEn' : 'lang.switch
       const lang = currentLang();
       document.querySelectorAll('[data-i18n]').forEach((el) => {
         const key = el.getAttribute('data-i18n');
-        if (key) el.textContent = translate(lang, key, GLOBAL_PARAMS);
+        if (!key) return;
+        // 元素级占位（如服务页 partialNote 的 {missing}/{total}）；缺省仅用全局占位。
+        let extra: Record<string, string> = {};
+        const raw = el.getAttribute('data-i18n-params');
+        if (raw) {
+          try { extra = JSON.parse(raw) as Record<string, string>; } catch { /* 忽略非法占位 */ }
+        }
+        el.textContent = translate(lang, key, { ...GLOBAL_PARAMS, ...extra });
       });
       for (const attr of ATTRS) {
         document.querySelectorAll(`[data-i18n-${attr}]`).forEach((el) => {

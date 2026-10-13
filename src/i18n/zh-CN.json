@@ -47,6 +47,7 @@
   "service": {
     "endpointSuffix": " 个端点",
     "fallbackNote": "英文版规范尚在准备中——当前显示中文原版。",
+    "partialNote": "英文版规范覆盖落后中文原版 {missing} 个端点（共 {total} 个）；完整端点以中文参考为准。",
     "meta": {
       "titleFallback": "{service} API 参考 — Autional",
       "descriptionFallback": "{service} 的交互式 API 参考文档。",

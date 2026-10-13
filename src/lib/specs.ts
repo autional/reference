@@ -55,3 +55,12 @@ export function readSpec(file: string): { spec: SpecShape; endpoints: number } |
     return null;
   }
 }
+
+/**
+ * zh 原版端点计数（en 覆盖核对用）：en 规范为人工英文快照，存在覆盖落后；
+ * 页面据此标注「落后 N 个端点」。无 zh 文件返回 0（不标注）。
+ */
+export function zhEndpointCount(service: string): number {
+  const loaded = readSpec(`${service}.json`);
+  return loaded ? loaded.endpoints : 0;
+}

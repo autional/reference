@@ -2,8 +2,8 @@
 import RefLayout from '../layouts/RefLayout.astro';
 import { t } from '../i18n';
 import { SERVICES, GATEWAY_SHORT } from '../data/services';
-import { API_HOST } from '../lib/site-env';
-import { readSpec, specForService } from '../lib/specs';
+import { API_HOST, SPEC_SUFFIX } from '../lib/site-env';
+import { readSpec, specForService, zhEndpointCount } from '../lib/specs';
 
 export async function getStaticPaths() {
   return SERVICES.map((n) => ({ params: { service: n } }));
@@ -38,6 +38,11 @@ if (loaded) {
   specDescription = loaded.spec.info?.description || t('service.meta.descriptionGeneric', { service });
   endpointCount = loaded.endpoints;
 }
+
+// en 覆盖核对：en 规范为人工英文快照，落后 zh 原版时给出页内标注（不静默）。
+const zhEndpoints = SPEC_SUFFIX ? zhEndpointCount(service) : 0;
+const missingFromEn = !fallback && zhEndpoints > endpointCount ? zhEndpoints - endpointCount : 0;
+const partialParams = { missing: String(missingFromEn), total: String(zhEndpoints) };
 ---
 
 <RefLayout title={specTitle} description={specDescription} keywords={t('service.meta.keywords', { service })}>
@@ -55,6 +60,13 @@ if (loaded) {
     </div>
     {fallback && (
       <div class="border-b border-sky-100 bg-sky-50/70 px-4 py-2 text-xs leading-5 text-sky-900" data-i18n="service.fallbackNote">{t('service.fallbackNote')}</div>
+    )}
+    {missingFromEn > 0 && (
+      <div
+        class="border-b border-amber-100 bg-amber-50/70 px-4 py-2 text-xs leading-5 text-amber-900"
+        data-i18n="service.partialNote"
+        data-i18n-params={JSON.stringify(partialParams)}
+      >{t('service.partialNote', partialParams)}</div>
     )}
     {accessNote && (
       <div class="border-b border-amber-100 bg-amber-50/70 px-4 py-2 text-xs leading-5 text-amber-900" data-i18n={`service.accessNote.${service}`}>{accessNote}</div>
