@@ -6459,7 +6459,7 @@
         },
         "qr_code_url": {
           "type": "string",
-          "example": "otpauth://totp/AuthMS:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=AuthMS"
+          "example": "otpauth://totp/Autional:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=Autional"
         },
         "secret": {
           "type": "string",

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "Payment processing service for AuthMS — handles payments, refunds, channels, webhooks, and reconciliation",
+    "description": "Payment processing service for Autional — handles payments, refunds, channels, webhooks, and reconciliation",
     "title": "Pay Service API",
     "contact": {},
     "version": "1.0"

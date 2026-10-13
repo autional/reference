@@ -1868,7 +1868,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "Binds the current user's AuthMS account to a third-party OAuth provider account. Requires JWT authentication; user_id in request body must match JWT subject.",
+        "description": "Binds the current user's Autional account to a third-party OAuth provider account. Requires JWT authentication; user_id in request body must match JWT subject.",
         "consumes": [
           "application/json"
         ],
@@ -2910,7 +2910,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "Delete the specified OAuth connection, unbinding the AuthMS user from the third-party OAuth provider. Requires JWT authentication.",
+        "description": "Delete the specified OAuth connection, unbinding the Autional user from the third-party OAuth provider. Requires JWT authentication.",
         "produces": [
           "application/json"
         ],
