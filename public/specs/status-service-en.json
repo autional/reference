@@ -191,7 +191,7 @@
           "200": {
             "description": "Event list",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentListResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentListResponse"
             }
           },
           "400": {
@@ -232,7 +232,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.CreateIncidentRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.CreateIncidentRequest"
             }
           }
         ],
@@ -240,7 +240,7 @@
           "201": {
             "description": "Event created successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentDataResponse"
             }
           },
           "400": {
@@ -302,7 +302,7 @@
           "200": {
             "description": "Event details",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentDataResponse"
             }
           },
           "400": {
@@ -350,7 +350,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.UpdateIncidentRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.UpdateIncidentRequest"
             }
           }
         ],
@@ -358,7 +358,7 @@
           "200": {
             "description": "Event updated successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentDataResponse"
             }
           },
           "400": {
@@ -417,7 +417,7 @@
           "200": {
             "description": "Event deleted successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MessageResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MessageResponse"
             }
           },
           "400": {
@@ -485,7 +485,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.AddIncidentUpdateRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.AddIncidentUpdateRequest"
             }
           }
         ],
@@ -493,7 +493,7 @@
           "201": {
             "description": "Progress update added successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentUpdateDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentUpdateDataResponse"
             }
           },
           "400": {
@@ -543,7 +543,7 @@
           "200": {
             "description": "System status data",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.JSONStatusDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.JSONStatusDataResponse"
             }
           },
           "400": {
@@ -600,7 +600,7 @@
           "200": {
             "description": "Maintenance list",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MaintenanceListResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MaintenanceListResponse"
             }
           },
           "400": {
@@ -641,7 +641,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.CreateMaintenanceRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.CreateMaintenanceRequest"
             }
           }
         ],
@@ -649,7 +649,7 @@
           "201": {
             "description": "Maintenance created successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MaintenanceDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MaintenanceDataResponse"
             }
           },
           "400": {
@@ -711,7 +711,7 @@
           "200": {
             "description": "Maintenance details",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MaintenanceDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MaintenanceDataResponse"
             }
           },
           "400": {
@@ -759,7 +759,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.UpdateMaintenanceRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.UpdateMaintenanceRequest"
             }
           }
         ],
@@ -767,7 +767,7 @@
           "200": {
             "description": "Maintenance updated successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MaintenanceDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MaintenanceDataResponse"
             }
           },
           "400": {
@@ -826,7 +826,7 @@
           "200": {
             "description": "Maintenance deleted successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MessageResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MessageResponse"
             }
           },
           "400": {
@@ -895,7 +895,7 @@
           "200": {
             "description": "Latency trend data",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.LatencyDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.LatencyDataResponse"
             }
           },
           "400": {
@@ -946,7 +946,7 @@
           "200": {
             "description": "Availability trend data",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.UptimeDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.UptimeDataResponse"
             }
           },
           "400": {
@@ -981,7 +981,7 @@
           "200": {
             "description": "System overview data",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.OverviewDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.OverviewDataResponse"
             }
           },
           "400": {
@@ -1045,7 +1045,7 @@
           "200": {
             "description": "Service catalog data",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceCatalogDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceCatalogDataResponse"
             }
           },
           "400": {
@@ -1107,7 +1107,7 @@
           "200": {
             "description": "Subscriber list",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionListResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionListResponse"
             }
           },
           "400": {
@@ -1161,7 +1161,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscribeRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscribeRequest"
             }
           }
         ],
@@ -1169,7 +1169,7 @@
           "201": {
             "description": "Subscription successful, please check your verification email",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscribeDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscribeDataResponse"
             }
           },
           "400": {
@@ -1205,7 +1205,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.UnsubscribeRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.UnsubscribeRequest"
             }
           }
         ],
@@ -1213,7 +1213,7 @@
           "200": {
             "description": "Unsubscribed successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MessageResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MessageResponse"
             }
           },
           "400": {
@@ -1257,7 +1257,7 @@
           "200": {
             "description": "Subscription preference data",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesDataResponse"
             }
           },
           "400": {
@@ -1293,7 +1293,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesRequest"
             }
           }
         ],
@@ -1301,7 +1301,7 @@
           "200": {
             "description": "Preferences updated successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesDataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesDataResponse"
             }
           },
           "400": {
@@ -1345,7 +1345,7 @@
           "200": {
             "description": "Email verified successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MessageResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MessageResponse"
             }
           },
           "400": {
@@ -1512,7 +1512,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_domain.IncidentSeverity": {
+    "gitee_com_autional_micro-services_status-service_internal_domain.IncidentSeverity": {
       "type": "string",
       "enum": [
         "critical",
@@ -1527,7 +1527,7 @@
         "IncidentSeverityMaintenance"
       ]
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_domain.IncidentStatus": {
+    "gitee_com_autional_micro-services_status-service_internal_domain.IncidentStatus": {
       "type": "string",
       "enum": [
         "investigating",
@@ -1544,7 +1544,7 @@
         "IncidentStatusDraft"
       ]
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_domain.MaintenanceStatus": {
+    "gitee_com_autional_micro-services_status-service_internal_domain.MaintenanceStatus": {
       "type": "string",
       "enum": [
         "scheduled",
@@ -1559,7 +1559,7 @@
         "MaintenanceStatusCancelled"
       ]
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.AddIncidentUpdateRequest": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.AddIncidentUpdateRequest": {
       "type": "object",
       "required": [
         "message",
@@ -1573,14 +1573,14 @@
         "status": {
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_domain.IncidentStatus"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_domain.IncidentStatus"
             }
           ],
           "example": "identified"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.CreateIncidentRequest": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.CreateIncidentRequest": {
       "type": "object",
       "required": [
         "severity",
@@ -1605,7 +1605,7 @@
         "severity": {
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_domain.IncidentSeverity"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_domain.IncidentSeverity"
             }
           ],
           "example": "major"
@@ -1613,7 +1613,7 @@
         "status": {
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_domain.IncidentStatus"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_domain.IncidentStatus"
             }
           ],
           "example": "investigating"
@@ -1624,7 +1624,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.CreateMaintenanceRequest": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.CreateMaintenanceRequest": {
       "type": "object",
       "required": [
         "scheduled_end_at",
@@ -1659,21 +1659,21 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentDataResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentResponse"
         },
         "message": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentListResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentListResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -1683,7 +1683,7 @@
           "description": "Use items uniformly",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentResponse"
           }
         },
         "message": {
@@ -1706,7 +1706,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentResponse": {
       "type": "object",
       "properties": {
         "affected_services": {
@@ -1736,7 +1736,7 @@
         "severity": {
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_domain.IncidentSeverity"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_domain.IncidentSeverity"
             }
           ],
           "example": "major"
@@ -1744,7 +1744,7 @@
         "status": {
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_domain.IncidentStatus"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_domain.IncidentStatus"
             }
           ],
           "example": "investigating"
@@ -1760,26 +1760,26 @@
         "updates": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentUpdateResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentUpdateResponse"
           }
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentUpdateDataResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentUpdateDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentUpdateResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentUpdateResponse"
         },
         "message": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.IncidentUpdateResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.IncidentUpdateResponse": {
       "type": "object",
       "properties": {
         "created_at": {
@@ -1797,28 +1797,28 @@
         "status": {
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_domain.IncidentStatus"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_domain.IncidentStatus"
             }
           ],
           "example": "identified"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.JSONStatusDataResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.JSONStatusDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.JSONStatusResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.JSONStatusResponse"
         },
         "message": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.JSONStatusResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.JSONStatusResponse": {
       "type": "object",
       "properties": {
         "active_incidents": {
@@ -1833,7 +1833,7 @@
         "services": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceStatusItem"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceStatusItem"
           }
         },
         "uptime": {
@@ -1841,27 +1841,27 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.LatencyDataResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.LatencyDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.LatencyMetricsResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.LatencyMetricsResponse"
         },
         "message": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.LatencyMetricsResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.LatencyMetricsResponse": {
       "type": "object",
       "properties": {
         "points": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MetricsDataPoint"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MetricsDataPoint"
           }
         },
         "range": {
@@ -1874,21 +1874,21 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MaintenanceDataResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.MaintenanceDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MaintenanceResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MaintenanceResponse"
         },
         "message": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MaintenanceListResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.MaintenanceListResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -1898,7 +1898,7 @@
           "description": "Use items uniformly",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MaintenanceResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MaintenanceResponse"
           }
         },
         "message": {
@@ -1921,7 +1921,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MaintenanceResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.MaintenanceResponse": {
       "type": "object",
       "properties": {
         "affected_services": {
@@ -1956,7 +1956,7 @@
         "status": {
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_domain.MaintenanceStatus"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_domain.MaintenanceStatus"
             }
           ],
           "example": "scheduled"
@@ -1971,7 +1971,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MessageResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.MessageResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -1982,7 +1982,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MetricsDataPoint": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.MetricsDataPoint": {
       "type": "object",
       "properties": {
         "timestamp": {
@@ -1995,21 +1995,21 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.OverviewDataResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.OverviewDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.OverviewResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.OverviewResponse"
         },
         "message": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.OverviewResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.OverviewResponse": {
       "type": "object",
       "properties": {
         "active_incidents": {
@@ -2034,21 +2034,21 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceCatalogDataResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceCatalogDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceCatalogResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceCatalogResponse"
         },
         "message": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceCatalogItem": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceCatalogItem": {
       "type": "object",
       "properties": {
         "category": {
@@ -2068,19 +2068,19 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceCatalogResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceCatalogResponse": {
       "type": "object",
       "properties": {
         "all_services": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceCatalogItem"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceCatalogItem"
           }
         },
         "groups": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceGroupItem"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceGroupItem"
           }
         },
         "last_updated": {
@@ -2091,7 +2091,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceGroupItem": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceGroupItem": {
       "type": "object",
       "properties": {
         "description": {
@@ -2106,12 +2106,12 @@
         "services": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceCatalogItem"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceCatalogItem"
           }
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.ServiceStatusItem": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.ServiceStatusItem": {
       "type": "object",
       "properties": {
         "id": {
@@ -2131,21 +2131,21 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscribeDataResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscribeDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscribeResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscribeResponse"
         },
         "message": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscribeRequest": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscribeRequest": {
       "type": "object",
       "required": [
         "email"
@@ -2173,7 +2173,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscribeResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscribeResponse": {
       "type": "object",
       "properties": {
         "email": {
@@ -2190,7 +2190,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionListItem": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionListItem": {
       "type": "object",
       "properties": {
         "categories": {
@@ -2225,7 +2225,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionListResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionListResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -2235,7 +2235,7 @@
           "description": "Use items uniformly",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionListItem"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionListItem"
           }
         },
         "message": {
@@ -2258,21 +2258,21 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesDataResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesResponse"
         },
         "message": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesRequest": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesRequest": {
       "type": "object",
       "required": [
         "email",
@@ -2306,7 +2306,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.SubscriptionPreferencesResponse": {
       "type": "object",
       "properties": {
         "categories": {
@@ -2341,7 +2341,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.UnsubscribeRequest": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.UnsubscribeRequest": {
       "type": "object",
       "required": [
         "token"
@@ -2352,7 +2352,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.UpdateIncidentRequest": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.UpdateIncidentRequest": {
       "type": "object",
       "properties": {
         "affected_services": {
@@ -2368,17 +2368,17 @@
           "type": "string"
         },
         "severity": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_domain.IncidentSeverity"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_domain.IncidentSeverity"
         },
         "status": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_domain.IncidentStatus"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_domain.IncidentStatus"
         },
         "title": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.UpdateMaintenanceRequest": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.UpdateMaintenanceRequest": {
       "type": "object",
       "properties": {
         "affected_services": {
@@ -2397,34 +2397,34 @@
           "type": "string"
         },
         "status": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_domain.MaintenanceStatus"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_domain.MaintenanceStatus"
         },
         "title": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.UptimeDataResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.UptimeDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.UptimeMetricsResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.UptimeMetricsResponse"
         },
         "message": {
           "type": "string"
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.UptimeMetricsResponse": {
+    "gitee_com_autional_micro-services_status-service_internal_handler_dto.UptimeMetricsResponse": {
       "type": "object",
       "properties": {
         "points": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_status-service_internal_handler_dto.MetricsDataPoint"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_status-service_internal_handler_dto.MetricsDataPoint"
           }
         },
         "range": {

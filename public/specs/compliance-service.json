@@ -9075,7 +9075,7 @@
       "properties": {
         "auditor": {
           "type": "string",
-          "example": "Ernst & Young"
+          "example": "Example Assurance Ltd"
         },
         "certificate_url": {
           "type": "string",
@@ -11469,7 +11469,7 @@
       "properties": {
         "auditor": {
           "type": "string",
-          "example": "Ernst & Young"
+          "example": "Example Assurance Ltd"
         },
         "certificate_url": {
           "type": "string",

@@ -45,7 +45,7 @@
           "200": {
             "description": "List of approval requests",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_ApprovalRequestResponse"
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_ApprovalRequestResponse"
             }
           },
           "400": {
@@ -106,7 +106,7 @@
             "name": "request",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ApproveRejectRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ApproveRejectRequest"
             }
           }
         ],
@@ -194,7 +194,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ApproveRejectRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ApproveRejectRequest"
             }
           }
         ],
@@ -306,7 +306,7 @@
           "200": {
             "description": "List of permissions",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
             }
           },
           "400": {
@@ -359,7 +359,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CreatePermissionRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CreatePermissionRequest"
             }
           }
         ],
@@ -367,7 +367,7 @@
           "201": {
             "description": "Permission created successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
             }
           },
           "400": {
@@ -428,7 +428,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.SimulatePermissionRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.SimulatePermissionRequest"
             }
           }
         ],
@@ -497,7 +497,7 @@
           "200": {
             "description": "Permission details",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
             }
           },
           "400": {
@@ -557,7 +557,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.UpdatePermissionRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.UpdatePermissionRequest"
             }
           }
         ],
@@ -565,7 +565,7 @@
           "200": {
             "description": "Permission updated successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
             }
           },
           "400": {
@@ -688,7 +688,7 @@
           "200": {
             "description": "List of roles with this permission",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse"
             }
           },
           "400": {
@@ -749,7 +749,7 @@
           "200": {
             "description": "List of user IDs with this permission",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_UserIDsResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_UserIDsResponse"
             }
           },
           "400": {
@@ -835,7 +835,7 @@
           "200": {
             "description": "List of roles",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse"
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse"
             }
           },
           "400": {
@@ -888,7 +888,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CreateRoleRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CreateRoleRequest"
             }
           }
         ],
@@ -896,7 +896,7 @@
           "201": {
             "description": "Role created successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse"
             }
           },
           "400": {
@@ -957,7 +957,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BatchAssignPermissionsRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BatchAssignPermissionsRequest"
             }
           }
         ],
@@ -1024,7 +1024,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BatchRevokePermissionsRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BatchRevokePermissionsRequest"
             }
           }
         ],
@@ -1078,7 +1078,7 @@
           "200": {
             "description": "List of conflict pairs",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_ConflictPairResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_ConflictPairResponse"
             }
           },
           "400": {
@@ -1131,7 +1131,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CreateConflictPairRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CreateConflictPairRequest"
             }
           }
         ],
@@ -1139,7 +1139,7 @@
           "201": {
             "description": "Conflict pair created successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_ConflictPairResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_ConflictPairResponse"
             }
           },
           "400": {
@@ -1258,7 +1258,7 @@
           "200": {
             "description": "List of default roles",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_DefaultRoleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_DefaultRoleResponse"
             }
           },
           "400": {
@@ -1311,7 +1311,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.AddDefaultRoleRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.AddDefaultRoleRequest"
             }
           }
         ],
@@ -1441,7 +1441,7 @@
           "200": {
             "description": "Role details",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse"
             }
           },
           "400": {
@@ -1501,7 +1501,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.UpdateRoleRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.UpdateRoleRequest"
             }
           }
         ],
@@ -1509,7 +1509,7 @@
           "200": {
             "description": "Role updated successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse"
             }
           },
           "400": {
@@ -1639,7 +1639,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RequestApprovalRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RequestApprovalRequest"
             }
           }
         ],
@@ -1647,7 +1647,7 @@
           "201": {
             "description": "Approval request created successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_ApprovalRequestResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_ApprovalRequestResponse"
             }
           },
           "400": {
@@ -1714,7 +1714,7 @@
           "200": {
             "description": "List of child roles",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse"
             }
           },
           "400": {
@@ -1780,7 +1780,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.AddRoleChildRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.AddRoleChildRequest"
             }
           }
         ],
@@ -1930,7 +1930,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CloneRoleRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CloneRoleRequest"
             }
           }
         ],
@@ -1938,7 +1938,7 @@
           "201": {
             "description": "Clone successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse"
             }
           },
           "400": {
@@ -2005,7 +2005,7 @@
           "200": {
             "description": "List of effective permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
             }
           },
           "400": {
@@ -2066,7 +2066,7 @@
           "200": {
             "description": "List of ancestor role chain",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse"
             }
           },
           "400": {
@@ -2127,7 +2127,7 @@
           "200": {
             "description": "List of role permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
             }
           },
           "400": {
@@ -2187,7 +2187,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.AssignPermissionsRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.AssignPermissionsRequest"
             }
           }
         ],
@@ -2255,7 +2255,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RevokePermissionsRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RevokePermissionsRequest"
             }
           }
         ],
@@ -2324,7 +2324,7 @@
           "200": {
             "description": "List of user IDs with this role",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_UserIDsResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_UserIDsResponse"
             }
           },
           "400": {
@@ -2385,7 +2385,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BatchAssignRolesRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BatchAssignRolesRequest"
             }
           }
         ],
@@ -2446,7 +2446,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BatchRemoveRolesRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BatchRemoveRolesRequest"
             }
           }
         ],
@@ -2509,7 +2509,7 @@
           "200": {
             "description": "List of user permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionResponse"
             }
           },
           "400": {
@@ -2575,7 +2575,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.AssignDirectPermissionsRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.AssignDirectPermissionsRequest"
             }
           }
         ],
@@ -2649,7 +2649,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RevokeDirectPermissionsRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RevokeDirectPermissionsRequest"
             }
           }
         ],
@@ -2718,7 +2718,7 @@
           "200": {
             "description": "User role list",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse"
             }
           },
           "400": {
@@ -2778,7 +2778,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.AssignRolesRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.AssignRolesRequest"
             }
           }
         ],
@@ -2852,7 +2852,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RemoveRolesRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RemoveRolesRequest"
             }
           }
         ],
@@ -2921,7 +2921,7 @@
           "200": {
             "description": "SoD validation result",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_ValidateUserRolesResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_ValidateUserRolesResponse"
             }
           },
           "400": {
@@ -2976,7 +2976,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CheckPermissionRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CheckPermissionRequest"
             }
           }
         ],
@@ -2984,7 +2984,7 @@
           "200": {
             "description": "Permission check result",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionCheckResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionCheckResponse"
             }
           },
           "400": {
@@ -3027,7 +3027,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CheckRoleRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CheckRoleRequest"
             }
           }
         ],
@@ -3035,7 +3035,7 @@
           "200": {
             "description": "Role check result",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleCheckResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleCheckResponse"
             }
           },
           "400": {
@@ -3079,7 +3079,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BootstrapAdminRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BootstrapAdminRequest"
             }
           }
         ],
@@ -3087,7 +3087,7 @@
           "200": {
             "description": "Bootstrap successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_BootstrapAdminResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_BootstrapAdminResponse"
             }
           },
           "400": {
@@ -3131,7 +3131,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CheckPermissionInternalRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CheckPermissionInternalRequest"
             }
           }
         ],
@@ -3139,7 +3139,7 @@
           "200": {
             "description": "Permission check result",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionCheckDetailResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionCheckDetailResponse"
             }
           },
           "400": {
@@ -3231,7 +3231,7 @@
         }
       }
     },
-    "dto.ListResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_ApprovalRequestResponse": {
+    "dto.ListResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_ApprovalRequestResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -3241,7 +3241,7 @@
           "description": "Use items uniformly",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ApprovalRequestResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ApprovalRequestResponse"
           }
         },
         "message": {
@@ -3264,7 +3264,7 @@
         }
       }
     },
-    "dto.ListResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionResponse": {
+    "dto.ListResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -3274,7 +3274,7 @@
           "description": "Use items uniformly",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.PermissionResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.PermissionResponse"
           }
         },
         "message": {
@@ -3297,7 +3297,7 @@
         }
       }
     },
-    "dto.ListResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse": {
+    "dto.ListResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -3307,7 +3307,7 @@
           "description": "Use items uniformly",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RoleResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RoleResponse"
           }
         },
         "message": {
@@ -3442,7 +3442,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_ConflictPairResponse": {
+    "gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_ConflictPairResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -3451,7 +3451,7 @@
         "data": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ConflictPairResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ConflictPairResponse"
           }
         },
         "message": {
@@ -3462,7 +3462,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_DefaultRoleResponse": {
+    "gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_DefaultRoleResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -3471,7 +3471,7 @@
         "data": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.DefaultRoleResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.DefaultRoleResponse"
           }
         },
         "message": {
@@ -3482,7 +3482,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionResponse": {
+    "gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -3491,7 +3491,7 @@
         "data": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.PermissionResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.PermissionResponse"
           }
         },
         "message": {
@@ -3502,7 +3502,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-array_gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse": {
+    "gitee_com_autional_base_dto.DataResponse-array_gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -3511,7 +3511,7 @@
         "data": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RoleResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RoleResponse"
           }
         },
         "message": {
@@ -3522,14 +3522,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_ApprovalRequestResponse": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_ApprovalRequestResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ApprovalRequestResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ApprovalRequestResponse"
         },
         "message": {
           "type": "string"
@@ -3539,14 +3539,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_BootstrapAdminResponse": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_BootstrapAdminResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BootstrapAdminResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BootstrapAdminResponse"
         },
         "message": {
           "type": "string"
@@ -3556,14 +3556,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_ConflictPairResponse": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_ConflictPairResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ConflictPairResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ConflictPairResponse"
         },
         "message": {
           "type": "string"
@@ -3573,14 +3573,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionCheckDetailResponse": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionCheckDetailResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.PermissionCheckDetailResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.PermissionCheckDetailResponse"
         },
         "message": {
           "type": "string"
@@ -3590,14 +3590,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionCheckResponse": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionCheckResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.PermissionCheckResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.PermissionCheckResponse"
         },
         "message": {
           "type": "string"
@@ -3607,14 +3607,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_PermissionResponse": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_PermissionResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.PermissionResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.PermissionResponse"
         },
         "message": {
           "type": "string"
@@ -3624,14 +3624,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleCheckResponse": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleCheckResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RoleCheckResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RoleCheckResponse"
         },
         "message": {
           "type": "string"
@@ -3641,14 +3641,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_RoleResponse": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_RoleResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RoleResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RoleResponse"
         },
         "message": {
           "type": "string"
@@ -3658,14 +3658,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_UserIDsResponse": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_UserIDsResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.UserIDsResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.UserIDsResponse"
         },
         "message": {
           "type": "string"
@@ -3675,14 +3675,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto_ValidateUserRolesResponse": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_rbac-service_internal_handler_dto_ValidateUserRolesResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ValidateUserRolesResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ValidateUserRolesResponse"
         },
         "message": {
           "type": "string"
@@ -3692,7 +3692,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_domain_rbac.SimulatePermissionCheck": {
+    "gitee_com_autional_micro-services_rbac-service_internal_domain_rbac.SimulatePermissionCheck": {
       "type": "object",
       "properties": {
         "action": {
@@ -3703,7 +3703,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.AddDefaultRoleRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.AddDefaultRoleRequest": {
       "type": "object",
       "required": [
         "role_id"
@@ -3715,7 +3715,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.AddRoleChildRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.AddRoleChildRequest": {
       "type": "object",
       "required": [
         "child_id"
@@ -3727,7 +3727,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ApprovalRequestResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ApprovalRequestResponse": {
       "type": "object",
       "properties": {
         "action": {
@@ -3776,7 +3776,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ApproveRejectRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ApproveRejectRequest": {
       "type": "object",
       "properties": {
         "reason": {
@@ -3785,7 +3785,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.AssignDirectPermissionsRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.AssignDirectPermissionsRequest": {
       "type": "object",
       "required": [
         "permission_ids"
@@ -3800,7 +3800,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.AssignPermissionsRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.AssignPermissionsRequest": {
       "type": "object",
       "required": [
         "permission_ids"
@@ -3815,7 +3815,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.AssignRolesRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.AssignRolesRequest": {
       "type": "object",
       "required": [
         "role_ids"
@@ -3842,7 +3842,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BatchAssignPermissionsRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BatchAssignPermissionsRequest": {
       "type": "object",
       "required": [
         "permission_ids",
@@ -3867,7 +3867,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BatchAssignRolesRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BatchAssignRolesRequest": {
       "type": "object",
       "required": [
         "role_ids",
@@ -3893,7 +3893,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BatchRemoveRolesRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BatchRemoveRolesRequest": {
       "type": "object",
       "required": [
         "role_ids",
@@ -3917,7 +3917,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BatchRevokePermissionsRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BatchRevokePermissionsRequest": {
       "type": "object",
       "required": [
         "permission_ids",
@@ -3940,7 +3940,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BootstrapAdminRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BootstrapAdminRequest": {
       "type": "object",
       "required": [
         "user_id"
@@ -3951,7 +3951,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.BootstrapAdminResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.BootstrapAdminResponse": {
       "type": "object",
       "properties": {
         "message": {
@@ -3964,7 +3964,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CheckPermissionInternalRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CheckPermissionInternalRequest": {
       "type": "object",
       "required": [
         "action",
@@ -3986,7 +3986,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CheckPermissionRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CheckPermissionRequest": {
       "type": "object",
       "required": [
         "action",
@@ -4003,7 +4003,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CheckRoleRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CheckRoleRequest": {
       "type": "object",
       "required": [
         "role_code"
@@ -4015,7 +4015,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CloneRoleRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CloneRoleRequest": {
       "type": "object",
       "required": [
         "code",
@@ -4032,7 +4032,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ConflictPairResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ConflictPairResponse": {
       "type": "object",
       "properties": {
         "created_at": {
@@ -4062,7 +4062,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CreateConflictPairRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CreateConflictPairRequest": {
       "type": "object",
       "required": [
         "role_id_a",
@@ -4083,7 +4083,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CreatePermissionRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CreatePermissionRequest": {
       "type": "object",
       "required": [
         "action",
@@ -4130,7 +4130,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.CreateRoleRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.CreateRoleRequest": {
       "type": "object",
       "required": [
         "code",
@@ -4159,7 +4159,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.DefaultRoleResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.DefaultRoleResponse": {
       "type": "object",
       "properties": {
         "created_at": {
@@ -4184,7 +4184,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.PermissionCheckDetailResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.PermissionCheckDetailResponse": {
       "type": "object",
       "properties": {
         "action": {
@@ -4205,7 +4205,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.PermissionCheckResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.PermissionCheckResponse": {
       "type": "object",
       "properties": {
         "allowed": {
@@ -4214,7 +4214,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.PermissionResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.PermissionResponse": {
       "type": "object",
       "properties": {
         "action": {
@@ -4283,7 +4283,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RemoveRolesRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RemoveRolesRequest": {
       "type": "object",
       "properties": {
         "role_ids": {
@@ -4295,7 +4295,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RequestApprovalRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RequestApprovalRequest": {
       "type": "object",
       "required": [
         "action",
@@ -4320,7 +4320,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RevokeDirectPermissionsRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RevokeDirectPermissionsRequest": {
       "type": "object",
       "required": [
         "permission_ids"
@@ -4335,7 +4335,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RevokePermissionsRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RevokePermissionsRequest": {
       "type": "object",
       "required": [
         "permission_ids"
@@ -4350,7 +4350,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RoleCheckResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RoleCheckResponse": {
       "type": "object",
       "properties": {
         "has_role": {
@@ -4359,7 +4359,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.RoleResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.RoleResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -4414,7 +4414,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.SimulatePermissionRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.SimulatePermissionRequest": {
       "type": "object",
       "required": [
         "checks",
@@ -4426,7 +4426,7 @@
           "maxItems": 50,
           "minItems": 1,
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_domain_rbac.SimulatePermissionCheck"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_domain_rbac.SimulatePermissionCheck"
           }
         },
         "user_id": {
@@ -4434,7 +4434,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.UpdatePermissionRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.UpdatePermissionRequest": {
       "type": "object",
       "properties": {
         "category": {
@@ -4455,7 +4455,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.UpdateRoleRequest": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.UpdateRoleRequest": {
       "type": "object",
       "properties": {
         "data_scope": {
@@ -4476,7 +4476,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.UserIDsResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.UserIDsResponse": {
       "type": "object",
       "properties": {
         "user_ids": {
@@ -4490,13 +4490,13 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ValidateUserRolesResponse": {
+    "gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ValidateUserRolesResponse": {
       "type": "object",
       "properties": {
         "conflicts": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_rbac-service_internal_handler_dto.ConflictPairResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_rbac-service_internal_handler_dto.ConflictPairResponse"
           }
         },
         "has_conflict": {

@@ -5882,7 +5882,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -6207,7 +6207,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -6299,7 +6299,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -6847,7 +6847,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -7002,7 +7002,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -7369,7 +7369,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -7700,7 +7700,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -7974,7 +7974,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -8194,7 +8194,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.PageInfo": {
+    "gitee_com_autional_base_dto.PageInfo": {
       "type": "object",
       "properties": {
         "has_next": {

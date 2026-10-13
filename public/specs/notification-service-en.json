@@ -47,31 +47,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -123,31 +123,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -182,37 +182,37 @@
           "200": {
             "description": "Deleted successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_notification-service_internal_handler_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_notification-service_internal_handler_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -255,31 +255,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -322,31 +322,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -422,25 +422,25 @@
           "400": {
             "description": "Missing user_id parameter",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -485,31 +485,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -554,31 +554,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -630,31 +630,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -689,7 +689,7 @@
           "200": {
             "description": "Deleted successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_notification-service_internal_handler_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_notification-service_internal_handler_dto.SimpleResponse"
             }
           }
         }
@@ -734,31 +734,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -810,31 +810,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -869,7 +869,7 @@
           "200": {
             "description": "Deleted successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_notification-service_internal_handler_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_notification-service_internal_handler_dto.SimpleResponse"
             }
           }
         }
@@ -903,31 +903,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -979,25 +979,25 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1042,31 +1042,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1118,31 +1118,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1177,37 +1177,37 @@
           "200": {
             "description": "Deleted successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_notification-service_internal_handler_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_notification-service_internal_handler_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1259,31 +1259,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1345,31 +1345,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1412,31 +1412,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1479,31 +1479,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1550,19 +1550,19 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1603,25 +1603,25 @@
           "200": {
             "description": "Erased successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "No valid X-API-Key provided",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1668,25 +1668,25 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "No valid X-API-Key provided",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "429": {
             "description": "Rate limit exceeded",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1733,19 +1733,19 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1785,19 +1785,19 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "No valid X-API-Key provided",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1817,19 +1817,19 @@
           "200": {
             "description": "Runtime information",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "No valid X-API-Key provided",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Health check service unavailable",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1883,31 +1883,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1950,31 +1950,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2147,31 +2147,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2221,31 +2221,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2281,25 +2281,25 @@
           "200": {
             "description": "Confirmed successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Missing email or token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "429": {
             "description": "Rate limit exceeded",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2339,13 +2339,13 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2385,13 +2385,13 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2419,37 +2419,37 @@
           "200": {
             "description": "All marked successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_notification-service_internal_handler_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_notification-service_internal_handler_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2483,31 +2483,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2552,31 +2552,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2621,31 +2621,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2690,31 +2690,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2748,31 +2748,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2812,31 +2812,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2896,31 +2896,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2954,31 +2954,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3021,31 +3021,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3090,31 +3090,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3184,31 +3184,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3242,31 +3242,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3309,31 +3309,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3383,31 +3383,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3450,31 +3450,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3511,37 +3511,37 @@
           "200": {
             "description": "Marked successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_notification-service_internal_handler_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_notification-service_internal_handler_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3575,31 +3575,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3642,31 +3642,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3701,37 +3701,37 @@
           "200": {
             "description": "Deleted successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3774,31 +3774,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Resource not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3827,13 +3827,13 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3878,7 +3878,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -3998,7 +3998,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -4562,7 +4562,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -4666,7 +4666,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -4779,7 +4779,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -4862,7 +4862,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -5183,7 +5183,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -5546,7 +5546,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -5703,7 +5703,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -5861,7 +5861,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.PageInfo": {
+    "gitee_com_autional_base_dto.PageInfo": {
       "type": "object",
       "properties": {
         "has_next": {
@@ -5890,7 +5890,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.SimpleResponse": {
+    "gitee_com_autional_base_dto.SimpleResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -5904,7 +5904,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_notification-service_internal_handler_dto.SimpleResponse": {
+    "gitee_com_autional_micro-services_notification-service_internal_handler_dto.SimpleResponse": {
       "type": "object",
       "properties": {
         "code": {

@@ -61,25 +61,25 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -122,25 +122,25 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -180,31 +180,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -254,31 +254,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -316,31 +316,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found or does not belong to the current tenant",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -394,31 +394,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found or does not belong to the current tenant",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -458,31 +458,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found or does not belong to the current tenant",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -522,31 +522,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found or does not belong to the current tenant",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -586,31 +586,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found or does not belong to the current tenant",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -648,37 +648,37 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found or does not belong to the current tenant",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "409": {
             "description": "Conflict: maximum number of secrets reached (max 2)",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -725,31 +725,31 @@
           "400": {
             "description": "Invalid request parameters: cannot delete the last secret",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client or secret not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -796,31 +796,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client or secret not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -860,31 +860,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found or does not belong to the current tenant",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -938,31 +938,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found or does not belong to the current tenant",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1006,31 +1006,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Client not found or does not belong to the current tenant",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1089,25 +1089,25 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1141,37 +1141,37 @@
           "200": {
             "description": "Revocation successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Device authorization not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1202,19 +1202,19 @@
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1257,31 +1257,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "409": {
             "description": "Conflict: provider name already exists",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1333,31 +1333,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Provider not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1389,31 +1389,31 @@
           "200": {
             "description": "Deletion successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Provider not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1459,37 +1459,37 @@
           "200": {
             "description": "Operation successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Provider not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1529,25 +1529,25 @@
           "400": {
             "description": "Invalid request parameters: missing user_id",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions: administrator role required",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1587,19 +1587,19 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "No valid X-API-Key provided",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1639,13 +1639,13 @@
           "400": {
             "description": "Invalid request parameters: missing token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1685,13 +1685,13 @@
           "400": {
             "description": "Invalid request parameters: missing user_id",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1900,31 +1900,31 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "user_id does not match JWT",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "409": {
             "description": "Already bound to this provider",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -1959,13 +1959,13 @@
           "404": {
             "description": "Client not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2005,19 +2005,19 @@
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "No permission to access this user's connections",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2048,13 +2048,13 @@
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2088,25 +2088,25 @@
           "200": {
             "description": "Revocation successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Consent record not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2191,31 +2191,31 @@
           "200": {
             "description": "Authorization result (device authorized or device authorization denied)",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters: user_code invalid/expired/already processed",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "user_code not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error: failed to update device authorization status",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2247,7 +2247,7 @@
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2317,7 +2317,7 @@
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2697,19 +2697,19 @@
           "400": {
             "description": "Invalid request parameters: missing client_id",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated: provide a valid Bearer Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2931,25 +2931,25 @@
           "200": {
             "description": "Unbind successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Connection not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3025,13 +3025,13 @@
           "404": {
             "description": "Unsupported provider",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3080,19 +3080,19 @@
           "400": {
             "description": "Missing code or invalid state",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Unsupported provider",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Failed to exchange authorization code or fetch user info",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3491,7 +3491,7 @@
         "registration_client_uri": {
           "description": "Registration management URI",
           "type": "string",
-          "example": "https://authms.example.com/api/v1/oauth/register/app-123"
+          "example": "https://api.example.com/api/v1/oauth/register/app-123"
         },
         "scope": {
           "description": "Scopes",
@@ -4216,7 +4216,7 @@
         },
         "verification_uri": {
           "type": "string",
-          "example": "https://authms.example.com/device"
+          "example": "https://api.example.com/device"
         }
       }
     },
@@ -4277,7 +4277,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -4354,7 +4354,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -4547,7 +4547,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -4849,7 +4849,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -5311,7 +5311,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.PageInfo": {
+    "gitee_com_autional_base_dto.PageInfo": {
       "type": "object",
       "properties": {
         "has_next": {
@@ -5340,7 +5340,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.SimpleResponse": {
+    "gitee_com_autional_base_dto.SimpleResponse": {
       "type": "object",
       "properties": {
         "code": {

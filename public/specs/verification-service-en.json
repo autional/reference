@@ -62,7 +62,7 @@
           "200": {
             "description": "Authentication list with masked information",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_VerificationListItem"
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_VerificationListItem"
             }
           },
           "400": {
@@ -206,7 +206,7 @@
           "200": {
             "description": "List of guardian relationships",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
             }
           },
           "400": {
@@ -265,7 +265,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.RemoveGuardianRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.RemoveGuardianRequest"
             }
           }
         ],
@@ -357,7 +357,7 @@
           "200": {
             "description": "Provider configuration list",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse"
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse"
             }
           },
           "400": {
@@ -410,7 +410,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.CreateProviderConfigRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.CreateProviderConfigRequest"
             }
           }
         ],
@@ -418,7 +418,7 @@
           "201": {
             "description": "Configuration created successfully",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse"
             }
           },
           "400": {
@@ -485,7 +485,7 @@
           "200": {
             "description": "Provider configuration details",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse"
             }
           },
           "400": {
@@ -551,7 +551,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.UpdateProviderConfigRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.UpdateProviderConfigRequest"
             }
           }
         ],
@@ -559,7 +559,7 @@
           "200": {
             "description": "Updated configuration information",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse"
             }
           },
           "400": {
@@ -682,7 +682,7 @@
           "200": {
             "description": "Authentication statistics summary",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_StatsResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_StatsResponse"
             }
           },
           "400": {
@@ -743,7 +743,7 @@
           "200": {
             "description": "Authentication details with masked information and override records",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_AdminVerificationDetail"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_AdminVerificationDetail"
             }
           },
           "400": {
@@ -811,7 +811,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.ManualReviewRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.ManualReviewRequest"
             }
           }
         ],
@@ -819,7 +819,7 @@
           "200": {
             "description": "Moved to manual review successfully",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_AdminVerificationDetail"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_AdminVerificationDetail"
             }
           },
           "400": {
@@ -887,7 +887,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.OverrideRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.OverrideRequest"
             }
           }
         ],
@@ -895,7 +895,7 @@
           "200": {
             "description": "Authentication details after override",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_AdminVerificationDetail"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_AdminVerificationDetail"
             }
           },
           "400": {
@@ -962,7 +962,7 @@
           "200": {
             "description": "Authentication status after reset",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_VerificationStatusResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_VerificationStatusResponse"
             }
           },
           "400": {
@@ -1030,7 +1030,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.ResolveReviewRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.ResolveReviewRequest"
             }
           }
         ],
@@ -1038,7 +1038,7 @@
           "200": {
             "description": "Review resolved successfully",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_AdminVerificationDetail"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_AdminVerificationDetail"
             }
           },
           "400": {
@@ -1100,7 +1100,7 @@
           "200": {
             "description": "Authentication status and age group information",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_VerificationStatusResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_VerificationStatusResponse"
             }
           },
           "400": {
@@ -1144,7 +1144,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.EraseUserInternalRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.EraseUserInternalRequest"
             }
           }
         ],
@@ -1202,7 +1202,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.GrantConsentRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.GrantConsentRequest"
             }
           }
         ],
@@ -1259,7 +1259,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.CreateGuardianRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.CreateGuardianRequest"
             }
           }
         ],
@@ -1267,7 +1267,7 @@
           "200": {
             "description": "Guardian relationship created successfully",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
             }
           },
           "400": {
@@ -1314,7 +1314,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.RemoveGuardianRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.RemoveGuardianRequest"
             }
           }
         ],
@@ -1378,7 +1378,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.UpdateGuardianRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.UpdateGuardianRequest"
             }
           }
         ],
@@ -1386,7 +1386,7 @@
           "200": {
             "description": "Update successful",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
             }
           },
           "400": {
@@ -1447,7 +1447,7 @@
             "name": "request",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.GuardianConsentRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.GuardianConsentRequest"
             }
           }
         ],
@@ -1455,7 +1455,7 @@
           "200": {
             "description": "Guardian consent successful",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
             }
           },
           "400": {
@@ -1516,7 +1516,7 @@
           "200": {
             "description": "Guardian identity verification successful",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
             }
           },
           "400": {
@@ -1568,7 +1568,7 @@
           "200": {
             "description": "Wards list with protection settings information",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_MinorProfileResponse"
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_MinorProfileResponse"
             }
           },
           "400": {
@@ -1617,7 +1617,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.BeginLivenessRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.BeginLivenessRequest"
             }
           }
         ],
@@ -1625,7 +1625,7 @@
           "200": {
             "description": "Liveness detection session token and action sequence",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_BeginLivenessResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_BeginLivenessResponse"
             }
           },
           "400": {
@@ -1674,7 +1674,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.CompleteLivenessRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.CompleteLivenessRequest"
             }
           }
         ],
@@ -1682,7 +1682,7 @@
           "200": {
             "description": "Liveness detection result with score and pass status",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_LivenessResultResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_LivenessResultResponse"
             }
           },
           "400": {
@@ -1728,7 +1728,7 @@
           "200": {
             "description": "Authentication status information",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_VerificationStatusResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_VerificationStatusResponse"
             }
           },
           "400": {
@@ -1774,7 +1774,7 @@
           "200": {
             "description": "Authentication details with liveness score and rejection reason",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_VerificationDetailResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_VerificationDetailResponse"
             }
           },
           "400": {
@@ -1829,7 +1829,7 @@
           "200": {
             "description": "Guardian list with relationship type and authorization status",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
             }
           },
           "400": {
@@ -1878,7 +1878,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.SetMinorProtectionRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.SetMinorProtectionRequest"
             }
           }
         ],
@@ -1886,7 +1886,7 @@
           "200": {
             "description": "Protection configuration set successfully",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse"
             }
           },
           "400": {
@@ -1941,7 +1941,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.SubmitOCRRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.SubmitOCRRequest"
             }
           }
         ],
@@ -1949,7 +1949,7 @@
           "200": {
             "description": "Recognition successful, returns name, ID number, and authentication status",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_SubmitOCRResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_SubmitOCRResponse"
             }
           },
           "400": {
@@ -2005,7 +2005,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.SubmitVerificationRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.SubmitVerificationRequest"
             }
           }
         ],
@@ -2013,7 +2013,7 @@
           "200": {
             "description": "Verification result with authentication status, method, age group, and expiration time",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_VerificationStatusResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_VerificationStatusResponse"
             }
           },
           "400": {
@@ -2039,14 +2039,14 @@
     }
   },
   "definitions": {
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_AdminVerificationDetail": {
+    "dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_AdminVerificationDetail": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.AdminVerificationDetail"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.AdminVerificationDetail"
         },
         "message": {
           "type": "string"
@@ -2056,14 +2056,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_BeginLivenessResponse": {
+    "dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_BeginLivenessResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.BeginLivenessResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.BeginLivenessResponse"
         },
         "message": {
           "type": "string"
@@ -2073,14 +2073,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse": {
+    "dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.GuardianRelationshipResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.GuardianRelationshipResponse"
         },
         "message": {
           "type": "string"
@@ -2090,14 +2090,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_LivenessResultResponse": {
+    "dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_LivenessResultResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.LivenessResultResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.LivenessResultResponse"
         },
         "message": {
           "type": "string"
@@ -2107,14 +2107,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse": {
+    "dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.ProviderConfigResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.ProviderConfigResponse"
         },
         "message": {
           "type": "string"
@@ -2124,14 +2124,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_StatsResponse": {
+    "dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_StatsResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.StatsResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.StatsResponse"
         },
         "message": {
           "type": "string"
@@ -2141,14 +2141,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_SubmitOCRResponse": {
+    "dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_SubmitOCRResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.SubmitOCRResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.SubmitOCRResponse"
         },
         "message": {
           "type": "string"
@@ -2158,14 +2158,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_VerificationDetailResponse": {
+    "dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_VerificationDetailResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.VerificationDetailResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.VerificationDetailResponse"
         },
         "message": {
           "type": "string"
@@ -2175,14 +2175,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_VerificationStatusResponse": {
+    "dto.DataResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_VerificationStatusResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.VerificationStatusResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.VerificationStatusResponse"
         },
         "message": {
           "type": "string"
@@ -2212,7 +2212,7 @@
         }
       }
     },
-    "dto.ListResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse": {
+    "dto.ListResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_GuardianRelationshipResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -2222,7 +2222,7 @@
           "description": "Uniformly use items",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.GuardianRelationshipResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.GuardianRelationshipResponse"
           }
         },
         "message": {
@@ -2245,7 +2245,7 @@
         }
       }
     },
-    "dto.ListResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_MinorProfileResponse": {
+    "dto.ListResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_MinorProfileResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -2255,7 +2255,7 @@
           "description": "Uniformly use items",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.MinorProfileResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.MinorProfileResponse"
           }
         },
         "message": {
@@ -2278,7 +2278,7 @@
         }
       }
     },
-    "dto.ListResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse": {
+    "dto.ListResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_ProviderConfigResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -2288,7 +2288,7 @@
           "description": "Uniformly use items",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.ProviderConfigResponse"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.ProviderConfigResponse"
           }
         },
         "message": {
@@ -2311,7 +2311,7 @@
         }
       }
     },
-    "dto.ListResponse-gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto_VerificationListItem": {
+    "dto.ListResponse-gitee_com_autional_micro-services_verification-service_internal_handler_dto_VerificationListItem": {
       "type": "object",
       "properties": {
         "code": {
@@ -2321,7 +2321,7 @@
           "description": "Uniformly use items",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.VerificationListItem"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_verification-service_internal_handler_dto.VerificationListItem"
           }
         },
         "message": {
@@ -2456,7 +2456,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.AdminVerificationDetail": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.AdminVerificationDetail": {
       "type": "object",
       "properties": {
         "age_group": {
@@ -2530,7 +2530,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.BeginLivenessRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.BeginLivenessRequest": {
       "type": "object",
       "required": [
         "verification_id"
@@ -2541,7 +2541,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.BeginLivenessResponse": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.BeginLivenessResponse": {
       "type": "object",
       "properties": {
         "action_sequence": {
@@ -2555,7 +2555,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.CompleteLivenessRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.CompleteLivenessRequest": {
       "type": "object",
       "required": [
         "session_token"
@@ -2569,7 +2569,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.CreateGuardianRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.CreateGuardianRequest": {
       "type": "object",
       "required": [
         "guardian_user_id",
@@ -2588,7 +2588,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.CreateProviderConfigRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.CreateProviderConfigRequest": {
       "type": "object",
       "required": [
         "channel",
@@ -2615,7 +2615,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.EraseUserInternalRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.EraseUserInternalRequest": {
       "type": "object",
       "required": [
         "tenant_id",
@@ -2630,7 +2630,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.GrantConsentRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.GrantConsentRequest": {
       "type": "object",
       "required": [
         "consent_items"
@@ -2644,7 +2644,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.GuardianConsentRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.GuardianConsentRequest": {
       "type": "object",
       "properties": {
         "consent_scope": {
@@ -2652,7 +2652,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.GuardianRelationshipResponse": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.GuardianRelationshipResponse": {
       "type": "object",
       "properties": {
         "consent_at": {
@@ -2687,7 +2687,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.LivenessResultResponse": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.LivenessResultResponse": {
       "type": "object",
       "properties": {
         "passed": {
@@ -2698,7 +2698,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.ManualReviewRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.ManualReviewRequest": {
       "type": "object",
       "required": [
         "reason"
@@ -2709,7 +2709,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.MinorProfileResponse": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.MinorProfileResponse": {
       "type": "object",
       "properties": {
         "age_group": {
@@ -2744,7 +2744,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.OverrideRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.OverrideRequest": {
       "type": "object",
       "required": [
         "reason",
@@ -2759,7 +2759,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.ProviderConfigResponse": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.ProviderConfigResponse": {
       "type": "object",
       "properties": {
         "app_id": {
@@ -2791,7 +2791,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.RemoveGuardianRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.RemoveGuardianRequest": {
       "type": "object",
       "required": [
         "guardian_user_id",
@@ -2806,7 +2806,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.ResolveReviewRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.ResolveReviewRequest": {
       "type": "object",
       "required": [
         "reason",
@@ -2825,7 +2825,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.SetMinorProtectionRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.SetMinorProtectionRequest": {
       "type": "object",
       "required": [
         "minor_user_id"
@@ -2851,7 +2851,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.StatsResponse": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.StatsResponse": {
       "type": "object",
       "properties": {
         "expired": {
@@ -2877,7 +2877,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.SubmitOCRRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.SubmitOCRRequest": {
       "type": "object",
       "required": [
         "back_image",
@@ -2892,7 +2892,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.SubmitOCRResponse": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.SubmitOCRResponse": {
       "type": "object",
       "properties": {
         "ocr_confidence": {
@@ -2912,7 +2912,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.SubmitVerificationRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.SubmitVerificationRequest": {
       "type": "object",
       "required": [
         "method"
@@ -2929,7 +2929,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.UpdateGuardianRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.UpdateGuardianRequest": {
       "type": "object",
       "properties": {
         "consent_scope": {
@@ -2940,7 +2940,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.UpdateProviderConfigRequest": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.UpdateProviderConfigRequest": {
       "type": "object",
       "properties": {
         "config": {
@@ -2954,7 +2954,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.VerificationDetailResponse": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.VerificationDetailResponse": {
       "type": "object",
       "properties": {
         "age_group": {
@@ -2995,7 +2995,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.VerificationListItem": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.VerificationListItem": {
       "type": "object",
       "properties": {
         "age_group": {
@@ -3039,7 +3039,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_verification-service_internal_handler_dto.VerificationStatusResponse": {
+    "gitee_com_autional_micro-services_verification-service_internal_handler_dto.VerificationStatusResponse": {
       "type": "object",
       "properties": {
         "age_group": {

@@ -105,7 +105,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto.CaptchaVerifyRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_thirdparty-service_internal_dto.CaptchaVerifyRequest"
             }
           }
         ],
@@ -113,7 +113,7 @@
           "200": {
             "description": "Verification completed, returns pass/fail, score, and error code",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto_CaptchaVerifyResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_thirdparty-service_internal_dto_CaptchaVerifyResponse"
             }
           },
           "400": {
@@ -157,7 +157,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto.ExportUserDataRequest"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_thirdparty-service_internal_dto.ExportUserDataRequest"
             }
           }
         ],
@@ -165,7 +165,7 @@
           "200": {
             "description": "User data export result",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto_ExportUserDataResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_micro-services_thirdparty-service_internal_dto_ExportUserDataResponse"
             }
           },
           "400": {
@@ -273,14 +273,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto_CaptchaVerifyResponse": {
+    "dto.DataResponse-gitee_com_autional_micro-services_thirdparty-service_internal_dto_CaptchaVerifyResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto.CaptchaVerifyResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_thirdparty-service_internal_dto.CaptchaVerifyResponse"
         },
         "message": {
           "type": "string"
@@ -290,14 +290,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto_ExportUserDataResponse": {
+    "dto.DataResponse-gitee_com_autional_micro-services_thirdparty-service_internal_dto_ExportUserDataResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto.ExportUserDataResponse"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_thirdparty-service_internal_dto.ExportUserDataResponse"
         },
         "message": {
           "type": "string"
@@ -338,7 +338,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto.CaptchaVerifyRequest": {
+    "gitee_com_autional_micro-services_thirdparty-service_internal_dto.CaptchaVerifyRequest": {
       "type": "object",
       "required": [
         "provider",
@@ -362,7 +362,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto.CaptchaVerifyResponse": {
+    "gitee_com_autional_micro-services_thirdparty-service_internal_dto.CaptchaVerifyResponse": {
       "type": "object",
       "properties": {
         "action": {
@@ -385,7 +385,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto.ExportUserDataRequest": {
+    "gitee_com_autional_micro-services_thirdparty-service_internal_dto.ExportUserDataRequest": {
       "type": "object",
       "required": [
         "user_id"
@@ -396,7 +396,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_thirdparty-service_internal_dto.ExportUserDataResponse": {
+    "gitee_com_autional_micro-services_thirdparty-service_internal_dto.ExportUserDataResponse": {
       "type": "object",
       "properties": {
         "captcha_logs": {

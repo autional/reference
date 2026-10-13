@@ -83,7 +83,7 @@
           "201": {
             "description": "Created successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_ABACPolicyResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_ABACPolicyResponse"
             }
           }
         }
@@ -114,7 +114,7 @@
           "200": {
             "description": "Policy details",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_ABACPolicyResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_ABACPolicyResponse"
             }
           }
         }
@@ -152,7 +152,7 @@
           "200": {
             "description": "Updated successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_ABACPolicyResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_ABACPolicyResponse"
             }
           }
         }
@@ -278,7 +278,7 @@
           "201": {
             "description": "Created Agent",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_AgentInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_AgentInfo"
             }
           }
         }
@@ -315,7 +315,7 @@
           "200": {
             "description": "Agent details",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_AgentInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_AgentInfo"
             }
           }
         }
@@ -359,7 +359,7 @@
           "200": {
             "description": "Updated Agent",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_AgentInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_AgentInfo"
             }
           }
         }
@@ -394,7 +394,7 @@
           "200": {
             "description": "Revoked successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -475,7 +475,7 @@
           "201": {
             "description": "Created credential (with one-time API Key)",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_CreateAgentCredentialResult"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_CreateAgentCredentialResult"
             }
           }
         }
@@ -519,7 +519,7 @@
           "200": {
             "description": "Credential details",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_AgentCredentialInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_AgentCredentialInfo"
             }
           }
         }
@@ -561,7 +561,7 @@
           "200": {
             "description": "Revoked successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -605,7 +605,7 @@
           "200": {
             "description": "New credential after rotation (with one-time API Key)",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_CreateAgentCredentialResult"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_CreateAgentCredentialResult"
             }
           }
         }
@@ -736,7 +736,7 @@
           "200": {
             "description": "Deleted successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -822,7 +822,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -876,7 +876,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -917,7 +917,7 @@
           "200": {
             "description": "Cleanup result",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -986,7 +986,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -1112,7 +1112,7 @@
           "201": {
             "description": "Created successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_DelegationGrantResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_DelegationGrantResponse"
             }
           },
           "400": {
@@ -1167,7 +1167,7 @@
           "200": {
             "description": "Query successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_DelegationGrantResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_DelegationGrantResponse"
             }
           },
           "400": {
@@ -1226,7 +1226,7 @@
           "200": {
             "description": "Revoked successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
@@ -2569,7 +2569,7 @@
           "200": {
             "description": "IoT Device list",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain_DeviceInfo"
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_micro-services_identity-service_internal_device_domain_DeviceInfo"
             }
           }
         }
@@ -2606,7 +2606,7 @@
           "201": {
             "description": "Created Device",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain_DeviceInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_identity-service_internal_device_domain_DeviceInfo"
             }
           }
         }
@@ -2643,7 +2643,7 @@
           "200": {
             "description": "Device details",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain_DeviceInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_identity-service_internal_device_domain_DeviceInfo"
             }
           }
         }
@@ -2678,7 +2678,7 @@
           "200": {
             "description": "Revoked successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -2698,7 +2698,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_dto_LdapHealthResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_dto_LdapHealthResponse"
             }
           }
         }
@@ -2732,7 +2732,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_LdapTestConnectionResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_LdapTestConnectionResponse"
             }
           }
         }
@@ -2757,7 +2757,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_LdapGroupRoleMappingResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_LdapGroupRoleMappingResponse"
             }
           }
         }
@@ -2789,7 +2789,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_LdapGroupRoleMappingResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_LdapGroupRoleMappingResponse"
             }
           }
         }
@@ -2882,7 +2882,7 @@
           "200": {
             "description": "Deleted successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-string"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-string"
             }
           }
         }
@@ -2986,7 +2986,7 @@
           "200": {
             "description": "Check result",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-handler_rebacCheckResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-handler_rebacCheckResponse"
             }
           },
           "400": {
@@ -3049,7 +3049,7 @@
           "200": {
             "description": "Relationship expansion tree",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-any"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-any"
             }
           },
           "400": {
@@ -3154,7 +3154,7 @@
           "201": {
             "description": "Created Robot",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_RobotInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_RobotInfo"
             }
           }
         }
@@ -3190,7 +3190,7 @@
           "200": {
             "description": "Robot details",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_RobotInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_RobotInfo"
             }
           }
         }
@@ -3233,7 +3233,7 @@
           "200": {
             "description": "Updated Robot",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_RobotInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_RobotInfo"
             }
           }
         }
@@ -3267,7 +3267,7 @@
           "200": {
             "description": "Deleted",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3303,7 +3303,7 @@
           "200": {
             "description": "Commissioned Robot",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_RobotInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_RobotInfo"
             }
           }
         }
@@ -3339,7 +3339,7 @@
           "200": {
             "description": "Decommissioned Robot",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-domain_RobotInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-domain_RobotInfo"
             }
           }
         }
@@ -3384,7 +3384,7 @@
           "200": {
             "description": "Intent Token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-handler_IssueIntentTokenResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-handler_IssueIntentTokenResponse"
             }
           }
         }
@@ -3429,7 +3429,7 @@
           "200": {
             "description": "Revoked",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3522,7 +3522,7 @@
           "200": {
             "description": "Approved successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
@@ -3574,7 +3574,7 @@
           "200": {
             "description": "Revoked successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
@@ -3642,7 +3642,7 @@
           "200": {
             "description": "Updated successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -3667,7 +3667,7 @@
           "200": {
             "description": "Password policy",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -3729,7 +3729,7 @@
           "200": {
             "description": "Password statistics",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-any"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-any"
             }
           }
         }
@@ -3757,7 +3757,7 @@
           "200": {
             "description": "Risk configuration",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-handler_riskConfigResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-handler_riskConfigResponse"
             }
           }
         }
@@ -3794,7 +3794,7 @@
           "200": {
             "description": "Updated configuration",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-handler_riskConfigResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-handler_riskConfigResponse"
             }
           }
         }
@@ -3822,7 +3822,7 @@
           "200": {
             "description": "Default configuration",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-handler_riskConfigResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-handler_riskConfigResponse"
             }
           }
         }
@@ -3850,19 +3850,19 @@
           "200": {
             "description": "Risk dashboard",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-handler_riskDashboardResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-handler_riskDashboardResponse"
             }
           },
           "401": {
             "description": "Unauthenticated",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "Insufficient permissions",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -4076,7 +4076,7 @@
           "200": {
             "description": "Batch create result",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -4154,7 +4154,7 @@
           "200": {
             "description": "Merge result",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -4620,7 +4620,7 @@
           "200": {
             "description": "Impersonation successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_ImpersonateResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_ImpersonateResponse"
             }
           }
         }
@@ -4882,7 +4882,7 @@
           "200": {
             "description": "Update successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -4922,13 +4922,13 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -5029,7 +5029,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -5063,7 +5063,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -5169,7 +5169,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -5203,7 +5203,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -5243,7 +5243,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -5294,7 +5294,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -5345,7 +5345,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -5379,7 +5379,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+                  "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
                 },
                 {
                   "type": "object",
@@ -5411,7 +5411,7 @@
           "200": {
             "description": "Daily usage statistics",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -5444,19 +5444,19 @@
           "200": {
             "description": "CAPTCHA challenge data",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-any"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-any"
             }
           },
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "CAPTCHA service unavailable or internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -5496,13 +5496,13 @@
           "400": {
             "description": "Invalid request parameters or user does not exist",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -5547,19 +5547,19 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated or invalid token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -5635,13 +5635,13 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_LdapLoginResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_LdapLoginResponse"
             }
           },
           "401": {
             "description": "LDAP authentication failed",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -5681,13 +5681,13 @@
           "400": {
             "description": "Invalid request parameters or incorrect credentials",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -5789,19 +5789,19 @@
           "200": {
             "description": "Request received",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Request parameter error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "429": {
             "description": "Request too frequent",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -5884,7 +5884,7 @@
           "400": {
             "description": "Token invalid or expired",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -5918,19 +5918,19 @@
           "200": {
             "description": "Request received",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Request parameter error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "429": {
             "description": "Request too frequent",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -5964,19 +5964,19 @@
           "401": {
             "description": "Unauthenticated or invalid token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "User does not exist",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -6019,19 +6019,19 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated or invalid token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -6228,7 +6228,7 @@
           "200": {
             "description": "Backup deleted",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -6291,7 +6291,7 @@
           "200": {
             "description": "Device removed",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -6730,19 +6730,19 @@
           "400": {
             "description": "Invalid request parameters or old password verification failed",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated or invalid token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -6815,13 +6815,13 @@
           "401": {
             "description": "Unauthenticated or invalid token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -7057,7 +7057,7 @@
           "200": {
             "description": "Role activation list",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_dto_ActivationResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_dto_ActivationResponse"
             }
           }
         }
@@ -7094,7 +7094,7 @@
           "201": {
             "description": "Role activation successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_ActivationResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_ActivationResponse"
             }
           },
           "400": {
@@ -7159,7 +7159,7 @@
           "200": {
             "description": "Operation successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -7381,7 +7381,7 @@
           "200": {
             "description": "Ended successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_StopImpersonationResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_StopImpersonationResponse"
             }
           }
         }
@@ -7426,25 +7426,25 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated or invalid token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "403": {
             "description": "No target tenant membership or cross-tenant switching disabled",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -7478,13 +7478,13 @@
           "401": {
             "description": "Unauthenticated or invalid token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -7616,13 +7616,13 @@
           "400": {
             "description": "Invalid challenge token or verification code",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "MFA service unavailable or internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -7650,7 +7650,7 @@
           "200": {
             "description": "Account list",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -7689,7 +7689,7 @@
           "200": {
             "description": "Linked successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -7712,7 +7712,7 @@
           "200": {
             "description": "Provider list",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -7751,7 +7751,7 @@
           "200": {
             "description": "Unlinked successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -7860,7 +7860,7 @@
           "200": {
             "description": "Logout successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
@@ -7909,7 +7909,7 @@
           "200": {
             "description": "Logout successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "302": {
@@ -7974,7 +7974,7 @@
           "200": {
             "description": "Cancelled successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
@@ -8019,7 +8019,7 @@
           "200": {
             "description": "Confirmed successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
@@ -8048,7 +8048,7 @@
           "200": {
             "description": "QR code login session created",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_QrLoginInitiateResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_QrLoginInitiateResponse"
             }
           },
           "429": {
@@ -8093,7 +8093,7 @@
           "200": {
             "description": "Scanned successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
@@ -8131,7 +8131,7 @@
           "200": {
             "description": "Session status",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_QrLoginStatusResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_QrLoginStatusResponse"
             }
           },
           "400": {
@@ -8216,13 +8216,13 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8262,13 +8262,13 @@
           "400": {
             "description": "Invalid request parameters or expired verification code",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8308,13 +8308,13 @@
           "400": {
             "description": "Invalid request parameters or expired recovery token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8354,13 +8354,13 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8394,19 +8394,19 @@
           "200": {
             "description": "Recovery verification code validated successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters or expired recovery code",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8446,13 +8446,13 @@
           "400": {
             "description": "Invalid request parameters or malformed token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8492,13 +8492,13 @@
           "400": {
             "description": "Invalid request parameters or username already exists",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8543,13 +8543,13 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8592,13 +8592,13 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8643,13 +8643,13 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8692,13 +8692,13 @@
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8738,13 +8738,13 @@
           "400": {
             "description": "Invalid request parameters or incorrect verification code",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8784,13 +8784,13 @@
           "400": {
             "description": "Invalid request parameters or expired invitation code",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8830,13 +8830,13 @@
           "400": {
             "description": "Invalid request parameters or expired pending_token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8876,13 +8876,13 @@
           "400": {
             "description": "Invalid request parameters or incorrect verification code",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -8922,13 +8922,13 @@
           "400": {
             "description": "Invalid request parameters or user not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -9036,13 +9036,13 @@
           "400": {
             "description": "Invalid request parameters or expired verification code",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -9076,7 +9076,7 @@
           "200": {
             "description": "Sent successfully",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_SendLoginCodeResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_SendLoginCodeResponse"
             }
           },
           "400": {
@@ -9243,19 +9243,19 @@
           "400": {
             "description": "Invalid request parameters or unsupported SSO provider",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "401": {
             "description": "Unauthenticated or invalid token",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -9295,13 +9295,13 @@
           "400": {
             "description": "Invalid or expired ticket",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -9403,19 +9403,19 @@
           "200": {
             "description": "Verification code is valid",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "400": {
             "description": "Invalid request parameters or expired verification code",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -9449,7 +9449,7 @@
           "200": {
             "description": "Verification result",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_Web3VerifyResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_Web3VerifyResponse"
             }
           }
         }
@@ -9529,7 +9529,7 @@
           "200": {
             "description": "Login successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           },
           "400": {
@@ -9973,7 +9973,7 @@
           "200": {
             "description": "Deletion successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -10112,7 +10112,7 @@
           "200": {
             "description": "Cleanup successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_CleanupExpiredResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_CleanupExpiredResponse"
             }
           },
           "400": {
@@ -10152,7 +10152,7 @@
           "200": {
             "description": "Record result",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse"
+              "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse"
             }
           }
         }
@@ -10237,7 +10237,7 @@
           "200": {
             "description": "IoT Device list",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain_DeviceInfo"
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_micro-services_identity-service_internal_device_domain_DeviceInfo"
             }
           }
         }
@@ -10271,7 +10271,7 @@
           "200": {
             "description": "Paired Device",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain_DeviceInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_identity-service_internal_device_domain_DeviceInfo"
             }
           }
         }
@@ -10303,7 +10303,7 @@
           "200": {
             "description": "Unpairing successful",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -10344,7 +10344,7 @@
           "200": {
             "description": "Transferred Device",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain_DeviceInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_identity-service_internal_device_domain_DeviceInfo"
             }
           }
         }
@@ -10373,25 +10373,25 @@
           "200": {
             "description": "Tenant authentication configuration",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_PublicAuthConfigResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_PublicAuthConfigResponse"
             }
           },
           "400": {
             "description": "Invalid domain parameter",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "404": {
             "description": "Tenant not found",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -10420,7 +10420,7 @@
           "200": {
             "description": "Authentication configuration",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_PublicAuthConfigResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_PublicAuthConfigResponse"
             }
           }
         }
@@ -10449,7 +10449,7 @@
           "200": {
             "description": "Authentication configuration",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_PublicAuthConfigResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_PublicAuthConfigResponse"
             }
           }
         }
@@ -10469,7 +10469,7 @@
           "200": {
             "description": "Key exchange parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_KeyExchangeResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_KeyExchangeResponse"
             }
           }
         }
@@ -10503,7 +10503,7 @@
           "200": {
             "description": "Password strength",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-dto_PasswordStrengthResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-dto_PasswordStrengthResponse"
             }
           }
         }
@@ -10523,19 +10523,19 @@
           "200": {
             "description": "Discoverable tenant list",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.DataResponse-array_dto_DiscoverTenantInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.DataResponse-array_dto_DiscoverTenantInfo"
             }
           },
           "400": {
             "description": "Invalid request parameters",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           },
           "500": {
             "description": "Internal server error",
             "schema": {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.SimpleResponse"
             }
           }
         }
@@ -12119,7 +12119,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -12189,7 +12189,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -12320,7 +12320,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -12641,7 +12641,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -12869,7 +12869,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -13514,7 +13514,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -13943,7 +13943,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14329,7 +14329,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14362,7 +14362,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14395,7 +14395,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14428,7 +14428,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14461,7 +14461,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14494,7 +14494,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14527,7 +14527,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14560,7 +14560,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14573,7 +14573,7 @@
         }
       }
     },
-    "dto.ListResponse-gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain_DeviceInfo": {
+    "dto.ListResponse-gitee_com_autional_micro-services_identity-service_internal_device_domain_DeviceInfo": {
       "type": "object",
       "properties": {
         "code": {
@@ -14583,7 +14583,7 @@
           "description": "Use items uniformly",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain.DeviceInfo"
+            "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_device_domain.DeviceInfo"
           }
         },
         "message": {
@@ -14593,7 +14593,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14626,7 +14626,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -14734,7 +14734,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -15124,7 +15124,7 @@
           "description": "Pagination info (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -16147,7 +16147,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -16582,7 +16582,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -16775,7 +16775,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -17058,7 +17058,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -17918,7 +17918,7 @@
           "description": "Pagination information (nested object)",
           "allOf": [
             {
-              "$ref": "#/definitions/gitee_com_linmes_authms_base_dto.PageInfo"
+              "$ref": "#/definitions/gitee_com_autional_base_dto.PageInfo"
             }
           ]
         },
@@ -18397,7 +18397,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-any": {
+    "gitee_com_autional_base_dto.DataResponse-any": {
       "type": "object",
       "properties": {
         "code": {
@@ -18412,7 +18412,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-array_dto_ActivationResponse": {
+    "gitee_com_autional_base_dto.DataResponse-array_dto_ActivationResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18432,7 +18432,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-array_dto_DiscoverTenantInfo": {
+    "gitee_com_autional_base_dto.DataResponse-array_dto_DiscoverTenantInfo": {
       "type": "object",
       "properties": {
         "code": {
@@ -18452,7 +18452,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-array_dto_LdapHealthResponse": {
+    "gitee_com_autional_base_dto.DataResponse-array_dto_LdapHealthResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18472,7 +18472,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-domain_AgentCredentialInfo": {
+    "gitee_com_autional_base_dto.DataResponse-domain_AgentCredentialInfo": {
       "type": "object",
       "properties": {
         "code": {
@@ -18489,7 +18489,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-domain_AgentInfo": {
+    "gitee_com_autional_base_dto.DataResponse-domain_AgentInfo": {
       "type": "object",
       "properties": {
         "code": {
@@ -18506,7 +18506,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-domain_CreateAgentCredentialResult": {
+    "gitee_com_autional_base_dto.DataResponse-domain_CreateAgentCredentialResult": {
       "type": "object",
       "properties": {
         "code": {
@@ -18523,7 +18523,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-domain_RobotInfo": {
+    "gitee_com_autional_base_dto.DataResponse-domain_RobotInfo": {
       "type": "object",
       "properties": {
         "code": {
@@ -18540,7 +18540,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_ABACPolicyResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_ABACPolicyResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18557,7 +18557,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_ActivationResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_ActivationResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18574,7 +18574,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_CleanupExpiredResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_CleanupExpiredResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18591,7 +18591,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_DelegationGrantResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_DelegationGrantResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18608,7 +18608,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_ImpersonateResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_ImpersonateResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18625,7 +18625,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_KeyExchangeResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_KeyExchangeResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18642,7 +18642,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_LdapGroupRoleMappingResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_LdapGroupRoleMappingResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18659,7 +18659,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_LdapLoginResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_LdapLoginResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18676,7 +18676,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_LdapTestConnectionResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_LdapTestConnectionResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18693,7 +18693,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_PasswordStrengthResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_PasswordStrengthResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18710,7 +18710,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_PublicAuthConfigResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_PublicAuthConfigResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18727,7 +18727,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_QrLoginInitiateResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_QrLoginInitiateResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18744,7 +18744,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_QrLoginStatusResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_QrLoginStatusResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18761,7 +18761,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_SendLoginCodeResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_SendLoginCodeResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18778,7 +18778,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_StopImpersonationResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_StopImpersonationResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18795,7 +18795,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-dto_Web3VerifyResponse": {
+    "gitee_com_autional_base_dto.DataResponse-dto_Web3VerifyResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18812,14 +18812,14 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain_DeviceInfo": {
+    "gitee_com_autional_base_dto.DataResponse-gitee_com_autional_micro-services_identity-service_internal_device_domain_DeviceInfo": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain.DeviceInfo"
+          "$ref": "#/definitions/gitee_com_autional_micro-services_identity-service_internal_device_domain.DeviceInfo"
         },
         "message": {
           "type": "string"
@@ -18829,7 +18829,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-handler_IssueIntentTokenResponse": {
+    "gitee_com_autional_base_dto.DataResponse-handler_IssueIntentTokenResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18846,7 +18846,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-handler_rebacCheckResponse": {
+    "gitee_com_autional_base_dto.DataResponse-handler_rebacCheckResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18863,7 +18863,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-handler_riskConfigResponse": {
+    "gitee_com_autional_base_dto.DataResponse-handler_riskConfigResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18880,7 +18880,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-handler_riskDashboardResponse": {
+    "gitee_com_autional_base_dto.DataResponse-handler_riskDashboardResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18897,7 +18897,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.DataResponse-string": {
+    "gitee_com_autional_base_dto.DataResponse-string": {
       "type": "object",
       "properties": {
         "code": {
@@ -18914,7 +18914,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.PageInfo": {
+    "gitee_com_autional_base_dto.PageInfo": {
       "type": "object",
       "properties": {
         "has_next": {
@@ -18943,7 +18943,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_base_dto.SimpleResponse": {
+    "gitee_com_autional_base_dto.SimpleResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -18957,7 +18957,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_identity-service_internal_device_domain.DeviceInfo": {
+    "gitee_com_autional_micro-services_identity-service_internal_device_domain.DeviceInfo": {
       "type": "object",
       "properties": {
         "created_at": {
@@ -18995,7 +18995,7 @@
         }
       }
     },
-    "gitee_com_linmes_authms_micro-services_identity-service_internal_handler_dto.DataResponse": {
+    "gitee_com_autional_micro-services_identity-service_internal_handler_dto.DataResponse": {
       "type": "object",
       "properties": {
         "code": {
