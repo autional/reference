@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/status-service/api/v1",
+  "basePath": "/bff/status/api/v1",
   "paths": {
     "/internal/schedulers": {
       "get": {

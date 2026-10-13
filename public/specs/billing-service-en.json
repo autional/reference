@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/billing-service/api/v1",
+  "basePath": "/bff/billing/api/v1",
   "paths": {
     "/admin/billing/credit-note/{number}": {
       "get": {

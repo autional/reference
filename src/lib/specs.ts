@@ -4,10 +4,10 @@
  * public/specs 双源并存：
  * - zh 侧 = `<svc>.json`（27 个；scripts/sync-specs-zh.py 自 monorepo 同步，路由真源
  *   shared/service-gateway/configs/service/gateway-service.yaml）；
- * - en 侧 = `<svc>-en.json`（24 个；com 存量保留为 en 权威，en 侧唯三缺源 =
- *   captcha3d / config / stream，源与跟版口径见 README 与 B2 执行报告）。
+ * - en 侧 = `<svc>-en.json`（com 存量保留为 en 权威；en 侧缺源 =
+ *   captcha3d / config / saml / stream，源与跟版口径见 README 与 B2 执行报告）。
  *
- * 页面按构建语言取规（SPEC_SUFFIX 由 DEFAULT_LANG 推导）：en 侧唯三缺源服务
+ * 页面按构建语言取规（SPEC_SUFFIX 由 DEFAULT_LANG 推导）：en 侧缺源服务
  * 回退读 zh 原版 `X.json`，由页面 fallbackNote 可见标注（产品裁定见执行报告）。
  */
 import { existsSync, readFileSync } from 'node:fs';

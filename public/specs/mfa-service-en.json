@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/mfa-service/api/v1",
+  "basePath": "/bff/mfa/api/v1",
   "paths": {
     "/admin/mfa/backup-codes": {
       "get": {

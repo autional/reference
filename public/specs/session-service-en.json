@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/session-service/api/v1",
+  "basePath": "/bff/session/api/v1",
   "paths": {
     "/admin/devices/{device_id}/risk": {
       "get": {

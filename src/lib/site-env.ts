@@ -45,6 +45,6 @@ export const LOCALE: string = DEFAULT_LANG === 'zh' ? 'zh-CN' : 'en-US';
 
 /**
  * specs 语言后缀（B2 执行卡 §5）：27 个 zh 规范 = `X.json`（无后缀）；en 规范 = `X-en.json`。
- * en 侧缺 captcha3d/config/stream 三个（源侧无 -en 导出，见执行报告登记）→ 该语言下回退读 zh 原版并页面标注。
+ * en 侧缺 captcha3d/config/saml/stream 四个（源侧无 -en 导出，见执行报告登记）→ 该语言下回退读 zh 原版并页面标注。
  */
 export const SPEC_SUFFIX: string = DEFAULT_LANG === 'en' ? '-en' : '';

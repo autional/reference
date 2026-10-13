@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/audit-service/api/v1",
+  "basePath": "/bff/audit/api/v1",
   "paths": {
     "/admin/audit/alerts": {
       "get": {

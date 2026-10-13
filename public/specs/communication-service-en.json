@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/communication-service/api/v1",
+  "basePath": "/bff/communication/api/v1",
   "paths": {
     "/admin/communication/logs": {
       "get": {

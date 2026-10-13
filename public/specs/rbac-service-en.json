@@ -4534,5 +4534,5 @@
   "schemes": [
     "https"
   ],
-  "basePath": "/bff/rbac-service/api/v1"
+  "basePath": "/bff/rbac/api/v1"
 }

@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/notification-service/api/v1",
+  "basePath": "/bff/notification/api/v1",
   "paths": {
     "/admin/announcements": {
       "post": {

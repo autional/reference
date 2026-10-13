@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/wallet-service/api/v1",
+  "basePath": "/bff/wallet/api/v1",
   "paths": {
     "/admin/wallets": {
       "get": {

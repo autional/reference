@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0"
   },
-  "basePath": "/bff/pay-service/api/v1",
+  "basePath": "/bff/pay/api/v1",
   "paths": {
     "/admin/pay/integrity/{pay_id}": {
       "get": {

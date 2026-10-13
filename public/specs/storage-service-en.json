@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/storage-service/api/v1",
+  "basePath": "/bff/storage/api/v1",
   "paths": {
     "/admin/storage/buckets": {
       "get": {

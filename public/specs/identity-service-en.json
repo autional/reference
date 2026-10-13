@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/identity-service/api/v1",
+  "basePath": "/bff/identity/api/v1",
   "paths": {
     "/admin/abac-policies": {
       "get": {

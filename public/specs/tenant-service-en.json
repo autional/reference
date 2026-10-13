@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/tenant-service/api/v1",
+  "basePath": "/bff/tenant/api/v1",
   "paths": {
     "/admin/tenants": {
       "get": {

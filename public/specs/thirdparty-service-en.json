@@ -6,7 +6,7 @@
     "contact": {},
     "version": "1.0.0"
   },
-  "basePath": "/bff/thirdparty-service/api/v1",
+  "basePath": "/api/v1",
   "paths": {
     "/internal/thirdparty/captcha/challenge": {
       "get": {
