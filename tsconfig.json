@@ -1,4 +1,5 @@
 {
   "extends": "astro/tsconfigs/base",
-  "compilerOptions": { "strict": true }
+  "compilerOptions": { "strict": true },
+  "exclude": ["public", "dist"]
 }
