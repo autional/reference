@@ -15,7 +15,8 @@
     "brand": "API 参考",
     "chrome": {
       "wiki": "API 知识库",
-      "github": "GitHub"
+      "github": "GitHub",
+      "signIn": "登录"
     },
     "servicesTitle": "服务",
     "aria": {

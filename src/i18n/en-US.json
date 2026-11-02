@@ -15,7 +15,8 @@
     "brand": "API Reference",
     "chrome": {
       "wiki": "API Wiki",
-      "github": "GitHub"
+      "github": "GitHub",
+      "signIn": "Sign in"
     },
     "servicesTitle": "Services",
     "aria": {
