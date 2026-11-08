@@ -192,7 +192,7 @@
           "200": {
             "description": "success",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.AIDecisionItemResponse"
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
             }
           },
           "400": {
@@ -1099,7 +1099,7 @@
           "201": {
             "description": "created",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.CleanupRecordResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_CleanupRecordResponse"
             }
           },
           "400": {
@@ -3160,7 +3160,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "分页查询协议文档（管理端可见全部状态 draft/published/archived），支持 doc_type 筛选",
+        "description": "分页查询协议文档（管理端可见全部状态 draft/published/archived），支持 doc_type 筛选。include_content=false 时列表项不返回 content 键（瘦载荷）；缺省 true（与历史行为一致）。",
         "consumes": [
           "application/json"
         ],
@@ -3188,6 +3188,12 @@
             "type": "integer",
             "description": "page size",
             "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "include legal document content in list items (default true)",
+            "name": "include_content",
             "in": "query"
           }
         ],
@@ -4270,6 +4276,38 @@
       }
     },
     "/admin/compliance/profile": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取当前租户的合规配置信息（DPO、保留策略、已启用框架等）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "合规管理 - Trust Center"
+        ],
+        "summary": "获取合规配置信息",
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_ComplianceProfileResponse"
+            }
+          },
+          "404": {
+            "description": "not found",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ErrorResponse"
+            }
+          }
+        }
+      },
       "put": {
         "security": [
           {
@@ -4302,7 +4340,7 @@
           "200": {
             "description": "success",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ComplianceProfileResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_ComplianceProfileResponse"
             }
           },
           "400": {
@@ -4982,7 +5020,7 @@
           "200": {
             "description": "success",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.SoDCheckResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_SoDCheckResponse"
             }
           },
           "400": {
@@ -5535,7 +5573,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.StandardDetailResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_StandardDetailResponse"
             }
           },
           "401": {
@@ -5910,7 +5948,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.OverrideListResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_OverrideListResponse"
             }
           },
           "401": {
@@ -6308,7 +6346,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.GapReportResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_GapReportResponse"
             }
           },
           "400": {
@@ -6369,7 +6407,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ResolvedPolicyResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_ResolvedPolicyResponse"
             }
           },
           "401": {
@@ -6445,7 +6483,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ReadinessReportResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_ReadinessReportResponse"
             }
           },
           "400": {
@@ -6506,7 +6544,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ComplianceScoreResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_ComplianceScoreResponse"
             }
           },
           "401": {
@@ -7093,7 +7131,7 @@
           "200": {
             "description": "success",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ComplianceProfileResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_ComplianceProfileResponse"
             }
           },
           "404": {
@@ -7447,7 +7485,7 @@
           "200": {
             "description": "证据列表",
             "schema": {
-              "$ref": "#/definitions/dto.ListResponse-compliance_Evidence"
+              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.PublicEvidenceListResponse"
             }
           },
           "400": {
@@ -7602,7 +7640,7 @@
           "200": {
             "description": "协议文档",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.PublicLegalDocument"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_PublicLegalDocument"
             }
           },
           "400": {
@@ -8103,7 +8141,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ResolvedPolicyResponse"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_ResolvedPolicyResponse"
             }
           },
           "500": {
@@ -8117,55 +8155,6 @@
     }
   },
   "definitions": {
-    "compliance.Evidence": {
-      "type": "object",
-      "properties": {
-        "app_id": {
-          "type": "string"
-        },
-        "collected_at": {
-          "type": "string"
-        },
-        "collector_id": {
-          "type": "string"
-        },
-        "control_id": {
-          "type": "string"
-        },
-        "control_type": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "string"
-        },
-        "deleted_at": {
-          "description": "DeletedAt 不带 `index` tag：单列 deleted_at 属低选择性列（DB-DESIGN-GUIDELINES §1.5）。\n移除后 AutoMigrate 不再派生 `idx_<table>_deleted_at`；存量索引由各库 S10 DROP 迁移清理\n（slug: db-design-remediation-20260921 · AC-303 · W3-S10 登记 §2）。",
-          "allOf": [
-            {
-              "$ref": "#/definitions/gorm.DeletedAt"
-            }
-          ]
-        },
-        "description": {
-          "type": "string"
-        },
-        "file_url": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "tenant_id": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
-        },
-        "updated_at": {
-          "type": "string"
-        }
-      }
-    },
     "dto.DataResponse-array_gitee_com_autional_service-compliance_internal_handler_dto_ScoreSnapshotItem": {
       "type": "object",
       "properties": {
@@ -8177,6 +8166,23 @@
           "items": {
             "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ScoreSnapshotItem"
           }
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_CleanupRecordResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.CleanupRecordResponse"
         },
         "message": {
           "type": "string"
@@ -8203,36 +8209,139 @@
         }
       }
     },
-    "dto.ListResponse-compliance_Evidence": {
+    "dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_ComplianceScoreResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
-        "items": {
-          "description": "统一使用 items",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/compliance.Evidence"
-          }
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ComplianceScoreResponse"
         },
         "message": {
           "type": "string"
         },
-        "pagination": {
-          "description": "分页信息（嵌套对象）",
-          "allOf": [
-            {
-              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
-            }
-          ]
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_GapReportResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.GapReportResponse"
+        },
+        "message": {
+          "type": "string"
         },
         "timestamp": {
           "type": "string"
-        },
-        "total": {
-          "description": "总条数（平铺，便于直接读取）",
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_OverrideListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
           "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.OverrideListResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_PublicLegalDocument": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.PublicLegalDocument"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_ReadinessReportResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ReadinessReportResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_ResolvedPolicyResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ResolvedPolicyResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_SoDCheckResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.SoDCheckResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "dto.DataResponse-gitee_com_autional_service-compliance_internal_handler_dto_StandardDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.StandardDetailResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
         }
       }
     },
@@ -12075,6 +12184,64 @@
         }
       }
     },
+    "gitee_com_autional_service-compliance_internal_handler_dto.PublicEvidenceItem": {
+      "type": "object",
+      "properties": {
+        "collected_at": {
+          "type": "string",
+          "example": "2026-05-01T10:00:00Z"
+        },
+        "control_id": {
+          "type": "string",
+          "example": "01JQ..."
+        },
+        "control_type": {
+          "type": "string",
+          "example": "iso27001"
+        },
+        "description": {
+          "type": "string",
+          "example": "Annual approval record for A.9.1.2"
+        },
+        "title": {
+          "type": "string",
+          "example": "Access Control Policy Approval"
+        }
+      }
+    },
+    "gitee_com_autional_service-compliance_internal_handler_dto.PublicEvidenceListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.PublicEvidenceItem"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
     "gitee_com_autional_service-compliance_internal_handler_dto.PublicHIPAAAListResponse": {
       "type": "object",
       "properties": {
@@ -14441,15 +14608,17 @@
         }
       }
     },
-    "gorm.DeletedAt": {
+    "gitee_com_autional_service-core_base_dto.SimpleResponse": {
       "type": "object",
       "properties": {
-        "time": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
           "type": "string"
         },
-        "valid": {
-          "description": "Valid is true if Time is not NULL",
-          "type": "boolean"
+        "timestamp": {
+          "type": "string"
         }
       }
     }

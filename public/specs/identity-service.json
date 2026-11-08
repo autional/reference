@@ -6045,6 +6045,32 @@
             }
           }
         }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除当前用户全部云端备份（对象 + 元数据），返回删除数量",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "删除全部Authenticator备份",
+        "responses": {
+          "200": {
+            "description": "已删除数量（data.deleted）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
       }
     },
     "/auth/me/authenticator/backup/{backup_id}": {
@@ -10303,6 +10329,100 @@
         }
       }
     },
+    "/internal/identity/tenant-rbac": {
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "供平台 provisioning 使用：按 X-Tenant-ID 播种默认角色（super_admin/admin/member…）并分配权限。幂等。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "身份认证 - 内部接口"
+        ],
+        "summary": "内部租户 RBAC 初始化",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部 API 密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "目标租户 ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "初始化成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/internal/identity/users": {
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "供平台 provisioning 使用：租户取自 X-Tenant-ID（strict header），RLS 由调用方中间件提权。幂等：同 email 已存在则返回现有用户。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "身份认证 - 内部接口"
+        ],
+        "summary": "内部创建用户",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部 API 密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "目标租户 ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "创建用户请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-identity_internal_handler_dto.HTTPUserCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "创建成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-identity_internal_handler_dto.CreateUserResponse"
+            }
+          }
+        }
+      }
+    },
     "/internal/identity/users/{user_id}": {
       "get": {
         "description": "内部API：验证用户是否存在于指定租户，供其他服务内部调用。需InternalAPIKeyAuth认证。",
@@ -10328,6 +10448,49 @@
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-identity_internal_handler_dto_AuthUserResponse"
             }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "供平台 provisioning 使用：按 X-Tenant-ID 硬删除指定用户（含身份/绑定）。幂等：不存在视为成功。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "身份认证 - 内部接口"
+        ],
+        "summary": "内部删除用户",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部 API 密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "目标租户 ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "用户 ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "删除成功"
           }
         }
       }
@@ -10369,6 +10532,62 @@
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-identity_internal_handler_dto_AuthUserResponse"
             }
+          }
+        }
+      }
+    },
+    "/internal/identity/users/{user_id}/roles": {
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "身份认证 - 内部接口"
+        ],
+        "summary": "内部授角色",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "内部 API 密钥",
+            "name": "X-API-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "目标租户 ID",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "用户 ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "{\\",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "授权成功"
           }
         }
       }

@@ -738,7 +738,7 @@
     },
     "/status/json": {
       "get": {
-        "description": "返回所有注册服务的健康状态JSON（基于服务注册表），供外部监控和服务发现使用",
+        "description": "返回所有注册服务的健康状态（数据源 = Prometheus up 指标，与 /overview 同一次查询派生）。\n词表：healthy / unhealthy / unknown。健康源不可得或服务无探针时一律 unknown，**不会**默认 healthy。\noverall_status 由逐服务状态聚合（任一 unhealthy → degraded；全部 healthy → healthy；其余 → unknown），\n与 active_incidents 解耦——无事件不代表服务健康。",
         "produces": [
           "application/json"
         ],
@@ -1216,6 +1216,14 @@
           "状态页"
         ],
         "summary": "RSS事件与维护订阅源",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "频道语言覆盖（en 输出英文；省略时按区域默认：.cn 中文 / .com 英文）",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "RSS 2.0 XML",
