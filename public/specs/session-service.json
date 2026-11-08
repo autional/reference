@@ -165,7 +165,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "管理员获取当前租户的活跃会话数量。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
+        "description": "管理员获取当前租户的在线（活跃）会话数量，口径为 presence（last_active_at + Redis TTL/heartbeat）：\nTTL 窗口内活跃的会话计入，TTL 过期后不计入；presence 不可用/冷启动时回落 last_active_at 兜底。\n端点与响应形状 `{count}` 不变（ADR-009 单一出口）。\n参考：RFC 7519 (JWT)、NIST SP 800-63B §4 (Session Management)。",
         "consumes": [
           "application/json"
         ],
@@ -2222,6 +2222,43 @@
           },
           "500": {
             "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
+    "/sessions/me/activity": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "由 token 自带的 sid 定位会话：只刷新 last_active_at 并按租户策略滑动 expires_at，\n不会突破绝对上限。session id 不入 URL，避免被访问日志/Referer 记录。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "会话管理"
+        ],
+        "summary": "当前会话活动心跳",
+        "responses": {
+          "200": {
+            "description": "心跳成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "会话不存在",
             "schema": {
               "$ref": "#/definitions/dto.Problem"
             }

@@ -1982,7 +1982,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "列出用户所有的设备同步记录，返回解密后的TOTP设备数据。参考：RFC 6238 (TOTP)、OWASP ASVS V2.8.3。",
+        "description": "列出用户登记的设备；仅 e2ee_v1 回传密文，历史行不再解密（needs_resync）。",
         "produces": [
           "application/json"
         ],
@@ -4651,8 +4651,7 @@
     "gitee_com_autional_service-mfa_internal_handler_dto.DeviceSyncRequest": {
       "type": "object",
       "required": [
-        "device_name",
-        "totp_devices"
+        "device_name"
       ],
       "properties": {
         "device_fingerprint": {
@@ -4663,9 +4662,14 @@
           "type": "string",
           "example": "iPhone 15"
         },
-        "totp_devices": {
+        "scheme": {
           "type": "string",
-          "example": "[{\"secret\":\"JBSWY3DPEHPK3PXP\"}]"
+          "example": "e2ee_v1"
+        },
+        "totp_devices": {
+          "description": "TOTPDevices 仅接受 v2 端到端加密信封（`v2:<base64 salt>:<base64 iv>:<base64 ciphertext>`，≤64KiB）；\n明文一律不落库（按 metadata_v1 处理）。",
+          "type": "string",
+          "example": "v2:c2FsdA==:aXY=:Y2lwaGVy"
         }
       }
     },
@@ -4692,9 +4696,22 @@
           "type": "string",
           "example": "2026-05-21T12:00:00Z"
         },
-        "totp_devices": {
+        "needs_resync": {
+          "description": "NeedsResync 历史行（服务端可解密形态）已停止回传，客户端需重新同步。",
+          "type": "boolean"
+        },
+        "payload_dropped": {
+          "description": "PayloadDropped 旧客户端明文载荷已被丢弃（不落库）；仅同步响应返回。",
+          "type": "boolean"
+        },
+        "scheme": {
           "type": "string",
-          "example": "[{\"secret\":\"JBSWY3DPEHPK3PXP\"}]"
+          "example": "metadata_v1"
+        },
+        "totp_devices": {
+          "description": "TOTPDevices 仅回传 e2ee_v1 密文；旧行一律为空（不回传、不解密）。",
+          "type": "string",
+          "example": "v2:c2FsdA==:aXY=:Y2lwaGVy"
         }
       }
     },

@@ -1030,6 +1030,64 @@
         }
       }
     },
+    "/admin/billing/feature-gates/overrides/{gate_key}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "删除当前租户指定 gate_key 的功能开关覆盖，功能恢复为套餐默认权益。幂等：覆盖不存在时同样返回成功与当前覆盖列表。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "计费服务 - 特性开关"
+        ],
+        "summary": "清除功能开关覆盖",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "功能开关键（gate key）",
+            "name": "gate_key",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "功能开关覆盖已清除，返回当前所有覆盖",
+            "schema": {
+              "$ref": "#/definitions/handler.overrideResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未授权",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "无权限",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
     "/admin/billing/integrity/{subscription_id}": {
       "get": {
         "security": [
@@ -6930,6 +6988,10 @@
           "type": "string",
           "example": "app_001"
         },
+        "billing_cycle": {
+          "type": "string",
+          "example": "monthly"
+        },
         "created_at": {
           "type": "string",
           "example": "2026-04-01T00:00:00Z"
@@ -6951,6 +7013,10 @@
           "items": {
             "$ref": "#/definitions/gitee_com_autional_service-billing_internal_handler_dto.InvoiceLineItemResponse"
           }
+        },
+        "plan": {
+          "type": "string",
+          "example": "pro"
         },
         "record_id": {
           "type": "string",
@@ -7795,6 +7861,10 @@
           "type": "string",
           "example": "app_001"
         },
+        "billing_cycle": {
+          "type": "string",
+          "example": "monthly"
+        },
         "currency": {
           "type": "string",
           "example": "CNY"
@@ -7820,6 +7890,10 @@
         "paid_at": {
           "type": "string",
           "example": "2026-04-10T15:00:00Z"
+        },
+        "plan": {
+          "type": "string",
+          "example": "pro"
         },
         "status": {
           "type": "string",
@@ -8667,6 +8741,7 @@
           "example": "tnt_xyz789"
         },
         "total_spend": {
+          "description": "UP-53：「未实现」与「真实 0」在契约上必须可区分——指针 + omitempty，\n服务层未提供时字段整体省略（消费方渲染「暂不可用」），杜绝假 0 序列化。",
           "type": "number",
           "example": 1188
         }

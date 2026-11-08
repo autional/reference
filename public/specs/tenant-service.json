@@ -46,6 +46,18 @@
             "in": "query"
           },
           {
+            "type": "string",
+            "description": "排序字段: name/created_at",
+            "name": "sort_by",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "排序方向: asc/desc",
+            "name": "sort_order",
+            "in": "query"
+          },
+          {
             "type": "integer",
             "description": "页码",
             "name": "page",
@@ -3377,6 +3389,227 @@
           },
           "404": {
             "description": "租户不存在",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tenants/{tenant_id}/invitation-codes": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "获取指定租户的邀请码列表（含码明文，供管理端分发），支持 status 过滤与分页",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "租户服务"
+        ],
+        "summary": "列出租户邀请码",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "状态过滤（active/expired/exhausted/revoked，缺省=全部）",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码（默认 1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页数量（默认 20，最大 100）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "邀请码列表",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-tenant_internal_handler_dto_InvitationCodeResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "为指定租户批量铸造邀请码（单次 1-100 枚），用于试用租户注册（POST /tenant/public/tenants 的 invitation_code 字段）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "租户服务"
+        ],
+        "summary": "批量铸造邀请码",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "铸造请求",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-tenant_internal_handler_dto.MintInvitationCodesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "邀请码铸造成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-tenant_internal_handler_dto_MintInvitationCodesResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tenants/{tenant_id}/invitation-codes/{code_id}/revoke": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "撤销指定邀请码使其立即失效（幂等：已撤销/已用尽/已过期返回成功）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "租户服务"
+        ],
+        "summary": "撤销邀请码",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户ID",
+            "name": "tenant_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "邀请码记录ID",
+            "name": "code_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "schema": {
+              "$ref": "#/definitions/dto.DataResponse-string"
+            }
+          },
+          "400": {
+            "description": "请求参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "邀请码未找到",
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
             }
@@ -7505,6 +7738,55 @@
         }
       }
     },
+    "/tenant/public/tenants/branding": {
+      "get": {
+        "description": "一次返回多个租户的公开品牌字段，供品牌选择页首屏使用。featured=true 并入运营精选（≤24）；slugs 并入任意租户（去重后 ≤50）；两者都给时取并集。查不到或已停用的 slug 直接跳过（不整体 404）。响应带 Cache-Control（max-age=300, stale-while-revalidate=600）与 ETag，可被浏览器/边缘缓存。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "租户服务"
+        ],
+        "summary": "公开租户品牌批量查询",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "精选模式（=true 时并入运营精选租户）",
+            "name": "featured",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "租户 slug 列表（逗号分隔，去重后上限 50）",
+            "name": "slugs",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "品牌列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-tenant_internal_handler_dto.PublicTenantBrandingListResponse"
+            }
+          },
+          "400": {
+            "description": "featured 与 slugs 均缺，或 slugs 超限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
     "/tenant/public/tenants/{slug}": {
       "get": {
         "description": "返回租户的公开配置（基本信息、品牌定制、认证策略、安全策略），用于登录页初始化，无需认证",
@@ -7996,6 +8278,23 @@
         }
       }
     },
+    "dto.DataResponse-gitee_com_autional_service-tenant_internal_handler_dto_MintInvitationCodesResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-tenant_internal_handler_dto.MintInvitationCodesResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
     "dto.DataResponse-gitee_com_autional_service-tenant_internal_handler_dto_OAuthClientWriteResponse": {
       "type": "object",
       "properties": {
@@ -8172,6 +8471,39 @@
         }
       }
     },
+    "dto.ListResponse-gitee_com_autional_service-tenant_internal_handler_dto_InvitationCodeResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-tenant_internal_handler_dto.InvitationCodeResponse"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
+        }
+      }
+    },
     "dto.Problem": {
       "type": "object",
       "properties": {
@@ -8308,6 +8640,11 @@
         "user_id"
       ],
       "properties": {
+        "tenant_id": {
+          "description": "TenantID 可选：非空时校验与邀请租户一致（AUTH-11/A7）",
+          "type": "string",
+          "example": "tnt_abc123"
+        },
         "user_id": {
           "type": "string",
           "example": "usr_xyz789"
@@ -9824,6 +10161,47 @@
         }
       }
     },
+    "gitee_com_autional_service-tenant_internal_handler_dto.InvitationCodeResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "AUT-K7MP-2QWX-Y4TZ"
+        },
+        "created_at": {
+          "type": "string",
+          "example": "2026-10-15T10:00:00Z"
+        },
+        "created_by": {
+          "type": "string",
+          "example": "01KSQCBNVMS6SX64PJS937CE33"
+        },
+        "expires_at": {
+          "type": "string",
+          "example": "2027-01-01T00:00:00Z"
+        },
+        "id": {
+          "type": "string",
+          "example": "01KSQCBNVMS6SX64PJS937CE33"
+        },
+        "max_uses": {
+          "type": "integer",
+          "example": 1
+        },
+        "status": {
+          "type": "string",
+          "example": "active"
+        },
+        "tenant_id": {
+          "type": "string",
+          "example": "01KSQCBNVMS6SX64PJS937CE33"
+        },
+        "used_count": {
+          "type": "integer",
+          "example": 0
+        }
+      }
+    },
     "gitee_com_autional_service-tenant_internal_handler_dto.InvitationConfigDetailResponse": {
       "type": "object",
       "properties": {
@@ -10133,6 +10511,50 @@
         }
       }
     },
+    "gitee_com_autional_service-tenant_internal_handler_dto.MintInvitationCodesRequest": {
+      "type": "object",
+      "required": [
+        "count"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "maximum": 100,
+          "minimum": 1,
+          "example": 10
+        },
+        "expires_at": {
+          "description": "缺省/null = 永不过期",
+          "type": "string",
+          "example": "2027-01-01T00:00:00Z"
+        },
+        "max_uses": {
+          "type": "integer",
+          "maximum": 100,
+          "minimum": 1,
+          "example": 1
+        }
+      }
+    },
+    "gitee_com_autional_service-tenant_internal_handler_dto.MintInvitationCodesResponse": {
+      "type": "object",
+      "properties": {
+        "codes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-tenant_internal_handler_dto.InvitationCodeResponse"
+          }
+        },
+        "count": {
+          "type": "integer",
+          "example": 10
+        },
+        "message": {
+          "type": "string",
+          "example": "邀请码已生成，请妥善分发给注册用户"
+        }
+      }
+    },
     "gitee_com_autional_service-tenant_internal_handler_dto.OAuthClientWriteRequest": {
       "type": "object",
       "required": [
@@ -10366,6 +10788,59 @@
         },
         "unicode_allowed": {
           "type": "boolean"
+        }
+      }
+    },
+    "gitee_com_autional_service-tenant_internal_handler_dto.PublicTenantBranding": {
+      "type": "object",
+      "properties": {
+        "company_name": {
+          "type": "string"
+        },
+        "logo_url": {
+          "type": "string"
+        },
+        "primary_color": {
+          "type": "string"
+        },
+        "secondary_color": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-tenant_internal_handler_dto.PublicTenantBrandingListResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "items": {
+          "description": "统一使用 items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-tenant_internal_handler_dto.PublicTenantBranding"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "pagination": {
+          "description": "分页信息（嵌套对象）",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.PageInfo"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "total": {
+          "description": "总条数（平铺，便于直接读取）",
+          "type": "integer"
         }
       }
     },
@@ -10951,6 +11426,15 @@
           "description": "状态",
           "type": "string",
           "example": "active"
+        },
+        "trial": {
+          "description": "是否试用租户",
+          "type": "boolean"
+        },
+        "trial_expires_at": {
+          "description": "试用到期时间（RFC3339；非试用省略）",
+          "type": "string",
+          "example": "2026-10-22T00:00:00Z"
         },
         "updated_at": {
           "description": "更新时间",

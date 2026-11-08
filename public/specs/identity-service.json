@@ -2401,13 +2401,69 @@
           }
         }
       },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "更新指定 Non-Human Identity (NHI) IoT Device 的可编辑属性（名称/硬件 ID/固件版本/厂商）",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Admin/IoTs"
+        ],
+        "summary": "Update Device",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "设备 ID",
+            "name": "iot_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "更新设备请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/device_domain.UpdateDeviceRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的 Device",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-device_domain_DeviceInfo"
+            }
+          },
+          "400": {
+            "description": "参数错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "404": {
+            "description": "设备不存在",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      },
       "delete": {
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "description": "撤销指定的 Non-Human Identity (NHI) IoT Device（软删除，状态变为 revoked）",
+        "description": "撤销（硬删除）指定的 Non-Human Identity (NHI) IoT Device：记录被物理删除，撤销后不可再查询或恢复",
         "consumes": [
           "application/json"
         ],
@@ -3449,6 +3505,12 @@
               "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-handler_riskDashboardResponse"
             }
           },
+          "400": {
+            "description": "缺少租户上下文",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
           "401": {
             "description": "未认证",
             "schema": {
@@ -3457,6 +3519,12 @@
           },
           "403": {
             "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "聚合查询失败",
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
             }
@@ -5377,7 +5445,7 @@
     },
     "/auth/id-token/signin": {
       "post": {
-        "description": "使用外部OIDC Provider签发的ID Token进行跨系统SSO登录，验证id_token后返回本地JWT令牌",
+        "description": "外部 OIDC Provider 的 id_token 验签基础设施（JWKS/issuer）尚未配置，端点恒返回 503（fail-closed），不解析 id_token、不签发令牌。",
         "consumes": [
           "application/json"
         ],
@@ -5387,7 +5455,7 @@
         "tags": [
           "身份认证"
         ],
-        "summary": "ID Token登录",
+        "summary": "ID Token登录（未启用）",
         "parameters": [
           {
             "description": "ID Token登录请求",
@@ -5408,10 +5476,10 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "登录成功",
+          "503": {
+            "description": "端点禁用：id_token 签名验证未配置",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-identity_internal_handler_dto.LoginResponse"
+              "type": "string"
             }
           }
         }
@@ -7601,6 +7669,58 @@
         }
       }
     },
+    "/auth/mfa/send-code": {
+      "post": {
+        "description": "用 challenge_token 触发 sms/email 验证码投递；仅限本次挑战允许的方法。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "多因素认证"
+        ],
+        "summary": "发送MFA挑战验证码",
+        "parameters": [
+          {
+            "description": "发送请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-identity_internal_handler_dto.SendMFAChallengeCodeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "发送成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-identity_internal_handler_dto_MFAChallengeCodeSentResponse"
+            }
+          },
+          "400": {
+            "description": "挑战令牌无效 / 方法不允许",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "429": {
+            "description": "发送过于频繁",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "MFA服务不可用或投递失败",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
     "/auth/mfa/verify-challenge": {
       "post": {
         "description": "使用challenge_token和MFA验证码（TOTP/SMS/Email）完成多因素认证，验证成功后返回真实JWT令牌，替换临时的挑战令牌。参考：RFC 6238 (TOTP)、RFC 4226 (HOTP)、NIST SP 800-63B §5.1、OWASP ASVS V2.8。",
@@ -7755,34 +7875,6 @@
             "description": "提供者健康状态",
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-identity_internal_handler_dto.OAuthProviderHealthResponse"
-            }
-          }
-        }
-      }
-    },
-    "/auth/oauth/stats": {
-      "get": {
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "description": "获取当前租户下 OAuth 绑定数量（按 provider 分组统计）",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "身份认证"
-        ],
-        "summary": "获取OAuth绑定统计",
-        "responses": {
-          "200": {
-            "description": "绑定统计",
-            "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-identity_internal_handler_dto.OAuthBindingStatsResponse"
             }
           }
         }
@@ -8114,6 +8206,16 @@
           "会话管理"
         ],
         "summary": "发起二维码登录",
+        "parameters": [
+          {
+            "description": "发起请求（可选，空 body 保持旧行为）",
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-identity_internal_handler_dto.QrLoginInitiateRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "二维码登录会话已创建",
@@ -8695,6 +8797,12 @@
             "in": "query"
           },
           {
+            "type": "string",
+            "description": "目标租户（地址栏租户优先）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
             "description": "用户名（POST方式）",
             "name": "request",
             "in": "body",
@@ -8741,6 +8849,12 @@
             "type": "string",
             "description": "用户名（GET方式）",
             "name": "username",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "目标租户（地址栏租户优先）",
+            "name": "tenant_id",
             "in": "query"
           },
           {
@@ -11020,7 +11134,12 @@
         },
         "workload_subtype": {
           "description": "default: agent",
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "agent",
+            "service_account",
+            "automation"
+          ]
         }
       }
     },
@@ -11033,8 +11152,26 @@
         "description": {
           "type": "string"
         },
+        "jit_ttl": {
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": 60
+        },
         "name": {
           "type": "string"
+        },
+        "rotation_days": {
+          "type": "integer",
+          "maximum": 3650,
+          "minimum": 1
+        },
+        "workload_subtype": {
+          "type": "string",
+          "enum": [
+            "agent",
+            "service_account",
+            "automation"
+          ]
         }
       }
     },
@@ -11179,6 +11316,23 @@
       "type": "object",
       "properties": {
         "new_owner_id": {
+          "type": "string"
+        }
+      }
+    },
+    "device_domain.UpdateDeviceRequest": {
+      "type": "object",
+      "properties": {
+        "firmware_ver": {
+          "type": "string"
+        },
+        "hardware_id": {
+          "type": "string"
+        },
+        "manufacturer": {
+          "type": "string"
+        },
+        "name": {
           "type": "string"
         }
       }
@@ -12657,6 +12811,23 @@
         }
       }
     },
+    "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-identity_internal_handler_dto_MFAChallengeCodeSentResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-identity_internal_handler_dto.MFAChallengeCodeSentResponse"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
     "gitee_com_autional_service-core_base_dto.DataResponse-gitee_com_autional_service-identity_internal_handler_dto_PasswordStrengthResponse": {
       "type": "object",
       "properties": {
@@ -13365,6 +13536,10 @@
           "items": {
             "$ref": "#/definitions/gitee_com_autional_service-identity_internal_handler_dto.ipRestrictionDTO"
           }
+        },
+        "key_prefix": {
+          "type": "string",
+          "example": "ak_live_ab12****"
         },
         "last_used_at": {
           "type": "string",
@@ -14116,6 +14291,10 @@
           "description": "Email",
           "type": "string",
           "example": "user@example.com"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-09）。",
+          "type": "string"
         }
       }
     },
@@ -14201,6 +14380,10 @@
         "username"
       ],
       "properties": {
+        "tenant_id": {
+          "description": "目标租户（地址栏租户优先）",
+          "type": "string"
+        },
         "username": {
           "description": "Username",
           "type": "string",
@@ -14314,6 +14497,10 @@
         },
         "recovery_token": {
           "description": "恢复令牌",
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）。非空时必须与令牌租户一致；空 = 令牌权威。",
           "type": "string"
         }
       }
@@ -14888,6 +15075,10 @@
         "identity": {
           "description": "Email or phone",
           "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-04/09）。",
+          "type": "string"
         }
       }
     },
@@ -14908,17 +15099,14 @@
     "gitee_com_autional_service-identity_internal_handler_dto.GenerateTicketInput": {
       "description": "生成一次性票据请求参数",
       "type": "object",
-      "required": [
-        "user_id"
-      ],
       "properties": {
         "tenant_id": {
-          "description": "租户ID",
+          "description": "租户ID（空 → 默认 JWT 租户）",
           "type": "string",
           "example": "tnt_xyz789"
         },
         "user_id": {
-          "description": "用户ID",
+          "description": "用户ID（空 → 默认 JWT actor）",
           "type": "string",
           "example": "usr_abc123"
         }
@@ -15507,12 +15695,12 @@
     "gitee_com_autional_service-identity_internal_handler_dto.LinkSAMLUserRequest": {
       "type": "object",
       "required": [
-        "email",
         "name_id",
         "provider_id"
       ],
       "properties": {
         "email": {
+          "description": "Email 与 UserID 至少一个（AUTH-12：SAML 已链接路径按 user_id 解析）。",
           "type": "string"
         },
         "name": {
@@ -15523,6 +15711,13 @@
         },
         "provider_id": {
           "type": "string"
+        },
+        "tenant_id": {
+          "description": "显式租户；空 → X-Tenant-ID",
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
         }
       }
     },
@@ -15531,6 +15726,14 @@
       "properties": {
         "is_new": {
           "type": "boolean"
+        },
+        "status": {
+          "description": "AUTH-12：active/pending/...；saml-service 据此拒绝非 active",
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "解析所用租户（调用方校验与 provider 租户一致）",
+          "type": "string"
         },
         "user_id": {
           "type": "string"
@@ -15548,6 +15751,11 @@
         },
         "is_new_user": {
           "type": "boolean"
+        },
+        "membership_status": {
+          "description": "MembershipStatus 新注册待审批（WS-A A3）；pending 时不返回 token。",
+          "type": "string",
+          "example": "pending"
         },
         "refresh_token": {
           "type": "string"
@@ -15583,10 +15791,20 @@
         "email": {
           "type": "string"
         },
+        "password": {
+          "type": "string"
+        },
+        "password_transmission": {
+          "type": "string"
+        },
         "register_if_new": {
           "type": "boolean"
         },
         "tenant_id": {
+          "type": "string"
+        },
+        "username": {
+          "description": "仅 register_if_new 且用户不存在时使用；不参与已存在用户的 code 登录。",
           "type": "string"
         }
       }
@@ -15607,6 +15825,12 @@
         "code": {
           "type": "string"
         },
+        "password": {
+          "type": "string"
+        },
+        "password_transmission": {
+          "type": "string"
+        },
         "phone": {
           "type": "string"
         },
@@ -15614,6 +15838,10 @@
           "type": "boolean"
         },
         "tenant_id": {
+          "type": "string"
+        },
+        "username": {
+          "description": "仅 register_if_new 且用户不存在时使用；不参与已存在用户的 code 登录。",
           "type": "string"
         }
       }
@@ -15795,10 +16023,22 @@
           "type": "string",
           "example": "chg_abc123..."
         },
+        "enrolled_mfa_methods": {
+          "description": "用户已开通的 MFA 方法（挑战页仅展示这些）",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "expires_in": {
           "description": "Expiration time",
           "type": "integer",
           "example": 1800
+        },
+        "membership_status": {
+          "description": "MembershipStatus 新注册待审批（WS-A A3）；pending 时不返回 token。",
+          "type": "string",
+          "example": "pending"
         },
         "mfa_check_reason": {
           "description": "MFA触发原因描述",
@@ -15910,6 +16150,15 @@
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-identity_internal_handler_dto.MFAChallengeCodeSentResponse": {
+      "type": "object",
+      "properties": {
+        "sent": {
+          "type": "boolean",
+          "example": true
         }
       }
     },
@@ -16176,20 +16425,6 @@
         }
       }
     },
-    "gitee_com_autional_service-identity_internal_handler_dto.OAuthBindingStatsResponse": {
-      "type": "object",
-      "properties": {
-        "by_provider": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "integer"
-          }
-        },
-        "tenant_id": {
-          "type": "string"
-        }
-      }
-    },
     "gitee_com_autional_service-identity_internal_handler_dto.OAuthCallbackResponse": {
       "description": "OAuth/SSO回调响应",
       "type": "object",
@@ -16204,6 +16439,13 @@
           "type": "string",
           "example": "chg_abc123..."
         },
+        "enrolled_mfa_methods": {
+          "description": "User's enrolled MFA methods",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "expires_in": {
           "description": "Expiration time",
           "type": "integer",
@@ -16213,6 +16455,16 @@
           "description": "Is new user",
           "type": "boolean",
           "example": false
+        },
+        "link_required": {
+          "description": "LinkRequired 现有账号与本次第三方身份未绑定：需登录本地账号后显式绑定。\n为 true 时不携带任何令牌。",
+          "type": "boolean",
+          "example": false
+        },
+        "membership_status": {
+          "description": "MembershipStatus 新注册待审批（WS-A A4）；pending 时不携带令牌。",
+          "type": "string",
+          "example": "pending"
         },
         "mfa_check_reason": {
           "description": "MFA check reason",
@@ -16289,6 +16541,10 @@
           "$ref": "#/definitions/gitee_com_autional_service-identity_internal_infrastructure_webauthn.AuthenticationResponse"
         },
         "email": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "公开路由无租户 ctx，子租户登录须显式传入",
           "type": "string"
         }
       }
@@ -16637,6 +16893,11 @@
         "ip_threshold": {
           "type": "integer"
         },
+        "issuer": {
+          "description": "OIDC issuer（按根域+租户 slug 派生；18 §0）",
+          "type": "string",
+          "example": "https://api.autional.cn/acme"
+        },
         "login_methods": {
           "type": "array",
           "items": {
@@ -16653,6 +16914,7 @@
           "type": "string"
         },
         "oauth_client_id": {
+          "description": "OAuthClientID 租户**门户**客户端的 client_id（kind=portal）。\n\n兼容保留：历史接入文档/SDK 曾把它当作「应用 appId」读取，导致应用回调必然登记失败\n（门户客户端只登记平台门户域）。语义清晰的新名字见 PortalOAuthClientID，两者同值。",
           "type": "string",
           "example": "app-01KV1ZCSJ5ZJ8G78B4TDG398NK"
         },
@@ -16670,6 +16932,11 @@
         },
         "pepper_enabled": {
           "type": "boolean"
+        },
+        "portal_oauth_client_id": {
+          "description": "PortalOAuthClientID 与 OAuthClientID 同值，仅用于表达「这是门户客户端，不是应用 appId」。\n第三方应用应使用自有 OAuth 客户端（管理后台 oauth-clients 页登记后签发的 client_id）。",
+          "type": "string",
+          "example": "app-01KV1ZCSJ5ZJ8G78B4TDG398NK"
         },
         "silent_challenge_enabled": {
           "type": "boolean"
@@ -16720,6 +16987,15 @@
       ],
       "properties": {
         "token": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-identity_internal_handler_dto.QrLoginInitiateRequest": {
+      "type": "object",
+      "properties": {
+        "tenant_id": {
+          "description": "Explicit tenant from the address bar",
           "type": "string"
         }
       }
@@ -16779,6 +17055,10 @@
         "password"
       ],
       "properties": {
+        "audience": {
+          "description": "Audience 目标资源（step-up token 的 aud）；空 = 使用当前配置 audience。",
+          "type": "string"
+        },
         "mfa_code": {
           "description": "MFA验证码",
           "type": "string"
@@ -16827,6 +17107,10 @@
         },
         "reason": {
           "description": "申请理由",
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "目标租户（地址栏租户优先）",
           "type": "string"
         }
       }
@@ -16944,6 +17228,10 @@
       "properties": {
         "identity": {
           "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-04/09）。",
+          "type": "string"
         }
       }
     },
@@ -16966,6 +17254,10 @@
         },
         "password_transmission": {
           "description": "plain|hash|symmetric|asymmetric",
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-04/09）。",
           "type": "string"
         }
       }
@@ -17079,7 +17371,8 @@
       "type": "object",
       "required": [
         "code",
-        "email"
+        "email",
+        "password"
       ],
       "properties": {
         "code": {
@@ -17088,11 +17381,21 @@
         "email": {
           "type": "string"
         },
+        "password": {
+          "type": "string",
+          "maxLength": 256,
+          "minLength": 8
+        },
+        "password_transmission": {
+          "type": "string"
+        },
         "tenant_id": {
           "type": "string"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "maxLength": 32,
+          "minLength": 3
         }
       }
     },
@@ -17101,7 +17404,8 @@
       "type": "object",
       "required": [
         "invitation_code",
-        "password"
+        "password",
+        "username"
       ],
       "properties": {
         "invitation_code": {
@@ -17109,8 +17413,15 @@
         },
         "password": {
           "type": "string",
-          "maxLength": 128,
+          "maxLength": 256,
           "minLength": 8
+        },
+        "password_transmission": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 可选：仅用于邀请一致性校验（body 显式租户）；不参与租户解析。",
+          "type": "string"
         },
         "username": {
           "type": "string",
@@ -17133,8 +17444,11 @@
         },
         "password": {
           "type": "string",
-          "maxLength": 128,
+          "maxLength": 256,
           "minLength": 8
+        },
+        "password_transmission": {
+          "type": "string"
         },
         "pending_token": {
           "type": "string"
@@ -17170,10 +17484,19 @@
       "type": "object",
       "required": [
         "code",
+        "password",
         "phone"
       ],
       "properties": {
         "code": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string",
+          "maxLength": 256,
+          "minLength": 8
+        },
+        "password_transmission": {
           "type": "string"
         },
         "phone": {
@@ -17183,7 +17506,9 @@
           "type": "string"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "maxLength": 32,
+          "minLength": 3
         }
       }
     },
@@ -17204,6 +17529,10 @@
         },
         "email": {
           "description": "Email",
+          "type": "string"
+        },
+        "initial_role": {
+          "description": "InitialRole 开通链初始角色（super_admin|admin|member）。仅当 X-API-Key 命中内部 key 时生效，\n其余场景静默忽略（fail-closed，防公开注册提权）。试用/建租户链由 service-tenant 内部调用设置。",
           "type": "string"
         },
         "invitation_code": {
@@ -17284,6 +17613,10 @@
             "trusted_device",
             "sms"
           ]
+        },
+        "tenant_id": {
+          "description": "TenantID 公开面无 JWT：显式 body 租户优先于 X-Tenant-ID / 默认租户。",
+          "type": "string"
         }
       }
     },
@@ -17342,6 +17675,10 @@
       "properties": {
         "phone": {
           "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-04）。",
+          "type": "string"
         }
       }
     },
@@ -17352,6 +17689,10 @@
       ],
       "properties": {
         "email": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-04）。",
           "type": "string"
         }
       }
@@ -17378,6 +17719,10 @@
         },
         "password_transmission": {
           "description": "plain|hash|symmetric|asymmetric",
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-04/09）。",
           "type": "string"
         }
       }
@@ -17530,97 +17875,6 @@
         "name": {
           "type": "string",
           "example": "Rotated SAML Signing Cert"
-        }
-      }
-    },
-    "gitee_com_autional_service-identity_internal_handler_dto.SSOCallbackRequest": {
-      "description": "SSO回调请求",
-      "type": "object",
-      "required": [
-        "code",
-        "provider",
-        "state"
-      ],
-      "properties": {
-        "code": {
-          "description": "Code",
-          "type": "string",
-          "example": "saml-response-base64"
-        },
-        "provider": {
-          "description": "Provider",
-          "type": "string",
-          "example": "saml"
-        },
-        "state": {
-          "description": "State",
-          "type": "string",
-          "example": "random-state"
-        }
-      }
-    },
-    "gitee_com_autional_service-identity_internal_handler_dto.SSOCallbackResponse": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer"
-        },
-        "data": {
-          "type": "object",
-          "additionalProperties": true
-        },
-        "message": {
-          "type": "string"
-        }
-      }
-    },
-    "gitee_com_autional_service-identity_internal_handler_dto.SSOInitiateRequest": {
-      "description": "SSO登录启动请求",
-      "type": "object",
-      "required": [
-        "provider"
-      ],
-      "properties": {
-        "provider": {
-          "description": "Provider",
-          "type": "string",
-          "example": "saml"
-        },
-        "return_url": {
-          "description": "Return URL",
-          "type": "string",
-          "example": "https://app.example.com/callback"
-        },
-        "tenant_id": {
-          "description": "Tenant ID",
-          "type": "string",
-          "example": "tenant-001"
-        }
-      }
-    },
-    "gitee_com_autional_service-identity_internal_handler_dto.SSOInitiateResponse": {
-      "description": "SSO登录启动响应",
-      "type": "object",
-      "properties": {
-        "auth_url": {
-          "description": "Authorization URL",
-          "type": "string"
-        },
-        "provider": {
-          "description": "Provider",
-          "type": "string"
-        },
-        "return_url": {
-          "description": "Return URL",
-          "type": "string"
-        },
-        "state": {
-          "description": "State parameter",
-          "type": "string"
-        },
-        "tenant_id": {
-          "description": "Tenant ID",
-          "type": "string"
         }
       }
     },
@@ -17793,6 +18047,22 @@
         }
       }
     },
+    "gitee_com_autional_service-identity_internal_handler_dto.SendMFAChallengeCodeRequest": {
+      "type": "object",
+      "required": [
+        "challenge_token",
+        "mfa_method"
+      ],
+      "properties": {
+        "challenge_token": {
+          "type": "string"
+        },
+        "mfa_method": {
+          "description": "sms/email",
+          "type": "string"
+        }
+      }
+    },
     "gitee_com_autional_service-identity_internal_handler_dto.SendSMSCodeRequest": {
       "type": "object",
       "required": [
@@ -17800,6 +18070,10 @@
       ],
       "properties": {
         "phone": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-04）。",
           "type": "string"
         }
       }
@@ -17811,6 +18085,10 @@
       ],
       "properties": {
         "email": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-04）。",
           "type": "string"
         }
       }
@@ -18449,6 +18727,16 @@
           "type": "string",
           "example": "2026-07-20T08:00:00Z"
         },
+        "metadata": {
+          "description": "AUTH-44：metadata 仅 /auth/me 回传（portal 偏好等）；其余构造点省略。",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "mfa_enabled": {
+          "description": "AUTH-44：指针 + omitempty —— 仅权威构造点（/auth/me）填充；其余构造点省略该键，\n避免登录响应等处误报 mfa_enabled=false（零值不等于\"未启用\"）。",
+          "type": "boolean",
+          "example": true
+        },
         "must_change_password": {
           "description": "Password must be changed",
           "type": "boolean",
@@ -18679,6 +18967,10 @@
         "recovery_token": {
           "description": "恢复令牌",
           "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）。非空时必须与令牌租户一致；空 = 令牌权威。",
+          "type": "string"
         }
       }
     },
@@ -18706,6 +18998,10 @@
           "type": "string"
         },
         "email": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏或邮件链接）：body > query > X-Tenant-ID；空即 400（AUTH-04）。",
           "type": "string"
         }
       }
@@ -18787,6 +19083,10 @@
         },
         "phone": {
           "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-04）。",
+          "type": "string"
         }
       }
     },
@@ -18816,6 +19116,10 @@
         },
         "identity": {
           "description": "Email or phone",
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "TenantID 显式租户（地址栏）：body > query > X-Tenant-ID；空即 400（AUTH-04/09）。",
           "type": "string"
         }
       }
@@ -19475,6 +19779,9 @@
           "type": "string"
         },
         "location": {
+          "type": "string"
+        },
+        "model": {
           "type": "string"
         },
         "name": {

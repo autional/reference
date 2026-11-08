@@ -1683,6 +1683,82 @@
         }
       }
     },
+    "/admin/profiles/{user_id}/avatar": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "U422 / ADR-B5-02：admin 平面头像写路径 —— 与用户面 /profiles/{user_id}/avatar",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "更新指定用户头像（管理端）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "头像URL请求",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.UpdateAvatarRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "头像更新成功",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效或头像URL格式错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "无管理员权限",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
     "/admin/profiles/{user_id}/export": {
       "get": {
         "security": [
@@ -2167,6 +2243,60 @@
           },
           "404": {
             "description": "用户资料不存在",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "用户资料"
+        ],
+        "summary": "更新我的头像",
+        "parameters": [
+          {
+            "description": "头像 URL",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.UpdateAvatarRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "更新后的资料",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-profile_internal_handler_dto.ProfileDetailResponse"
+            }
+          },
+          "400": {
+            "description": "请求参数无效",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "401": {
+            "description": "未认证或令牌已过期",
             "schema": {
               "$ref": "#/definitions/dto.Problem"
             }

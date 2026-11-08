@@ -4100,6 +4100,59 @@
         }
       }
     },
+    "/storage/public/files/{file_id}/content": {
+      "get": {
+        "description": "按文件ID读取公开文件内容（无需认证），供头像、品牌 Logo 等长期引用的浏览器侧展示使用。\n仅 `is_public=true` 的文件可读；不存在与非公开一律返回 404（不做存在性区分）。参考：GDPR Art 32 (Security of Processing)。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/octet-stream",
+          "image/jpeg",
+          "image/png",
+          "application/json"
+        ],
+        "tags": [
+          "存储服务"
+        ],
+        "summary": "公开：读取公开文件内容",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "公开文件ID",
+            "name": "file_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件内容，Cache-Control: public, max-age=86400（栅格图 inline，其余 attachment）",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "400": {
+            "description": "文件ID为空",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "404": {
+            "description": "文件不存在或非公开",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          }
+        }
+      }
+    },
     "/storage/public/reports": {
       "get": {
         "description": "Trust Center：获取公开可下载的合规报告列表（无需认证），支持分页。仅返回公开文件。参考：GDPR Art 32 (Security of Processing)。",

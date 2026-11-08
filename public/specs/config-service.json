@@ -8,6 +8,2039 @@
   },
   "basePath": "/api/v1",
   "paths": {
+    "/admin/config/changes": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "跨键变更流（新→旧，created_at DESC, id DESC）：支持 服务/域/组/键前缀/操作人/时间闭区间 过滤与分页。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·全局变更记录",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户 ID（仅一致性校验；与认证租户不一致 → 403）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "应用 ID（空 = 认证应用/平台应用）",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "服务名精确过滤（空 = 全部服务 + 基座）",
+            "name": "service_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置域过滤（服务端 taxonomy 推导结果）",
+            "name": "domain",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置组过滤（显式 group_name 优先，兼容 group_name 别名）",
+            "name": "group",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "键前缀过滤（字面量前缀）",
+            "name": "key_prefix",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "操作人精确过滤（如 ns/role）",
+            "name": "created_by",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "起始时间（RFC3339，闭区间下界；非法 → 400。带 +08:00 类时区偏移时 `+` 须 URL 编码为 %2B）",
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束时间（RFC3339，闭区间上界；非法 → 400。带 +08:00 类时区偏移时 `+` 须 URL 编码为 %2B）",
+            "name": "to",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码（默认 1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页数量（默认 20，上限 100；非法值 400）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "变更记录（items 空结果为 []）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/store.Version"
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "page_size": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "from/to 非 RFC3339、分页参数非法、key_prefix/created_by 超长",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:read 权限 / 跨租户请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配或存储能力不可用",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/consumers": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "返回可能读取该键的服务名集合。数据源 = 白名单文件（allowlist-seed.json，可用 CONFIG_ALLOWLIST_SEED 覆盖）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·影响面（某键被哪些服务读取）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户 ID（仅一致性校验）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "应用 ID（空 = 认证应用/平台应用）",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置项键",
+            "name": "key",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "影响面（source=allowlist|unavailable）",
+            "schema": {
+              "$ref": "#/definitions/service.ConsumersView"
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:read 权限 / 跨租户请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配或存储能力不可用",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/editors": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "按 (domain, group) 读取定制编辑器 schema；不存在 → 404（前端回退默认表单）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·组编辑器 schema",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户 ID（仅一致性校验）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "应用 ID（空 = 认证应用/平台应用）",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置域",
+            "name": "domain",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "配置组（兼容 group_name 别名）",
+            "name": "group",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "编辑器 schema",
+            "schema": {
+              "$ref": "#/definitions/store.Editor"
+            }
+          },
+          "400": {
+            "description": "domain/group 缺失",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:read 权限 / 跨租户请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "该组无编辑器 schema",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配或存储能力不可用",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/effective": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "返回某服务合并后的生效项：source=base（查询即基座）/inherit（服务未定义，值来自基座）/override（服务覆盖）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·生效配置（基座 ⊕ 服务）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户 ID（仅一致性校验）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "应用 ID（空 = 认证应用/平台应用）",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "服务名（空 = 只看平台基座，全部 source=base）",
+            "name": "service_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置域过滤",
+            "name": "domain",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置组过滤",
+            "name": "group",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "键前缀过滤",
+            "name": "key_prefix",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "生效配置视图",
+            "schema": {
+              "$ref": "#/definitions/service.EffectiveView"
+            }
+          },
+          "400": {
+            "description": "参数非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:read 权限 / 跨租户请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配或存储能力不可用",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/export": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "导出该 (tenant,app) 下全部未删除配置项，下载即文件（Content-Disposition，Cache-Control: no-store）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "application/yaml"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·全量导出",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户 ID（仅一致性校验）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "应用 ID（空 = 认证应用/平台应用）",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "导出格式（json|yaml，默认 json；非法 400）",
+            "name": "format",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "导出文件体（json 为 JSON 结构；yaml 为同结构 YAML）",
+            "schema": {
+              "$ref": "#/definitions/service.ExportView"
+            }
+          },
+          "400": {
+            "description": "format 非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:read 权限 / 跨租户请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配或存储能力不可用",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/groups": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "按域 → 组聚合条目数、基座数、服务条目数与不同服务数；排序确定（count 降序，并列按名称升序）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·域/组清单",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户 ID（仅一致性校验）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "应用 ID（空 = 认证应用/平台应用）",
+            "name": "app_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "域 → 组统计",
+            "schema": {
+              "$ref": "#/definitions/service.GroupsView"
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:read 权限 / 跨租户请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配或存储能力不可用",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/history": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "分页查询指定配置项的 append-only 版本历史（含 reason/created_by）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·版本历史",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户 ID（仅一致性校验）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "应用 ID（空 = 认证应用/平台应用）",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "服务名（空 = 平台基座）",
+            "name": "service_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置项键",
+            "name": "key",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "页码（默认 1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页数量（默认 20，上限 100）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "版本历史",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/store.Version"
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "page_size": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "key 缺失/分页参数非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:read 权限 / 跨租户请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配或存储能力不可用",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/import": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "先全量校验，任一失败整批不写（原子）；遮罩占位条目按 skipped 处理。逐条返回结果与计数。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·批量导入",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "导入批次（entries 非空，reason 必填）",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "app_id": {
+                  "type": "string"
+                },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "service_name": {
+                        "type": "string"
+                      },
+                      "validation": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "value_type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "replace_existing": {
+                  "type": "boolean"
+                },
+                "tenant_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "逐条结果",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "applied": {
+                  "type": "integer"
+                },
+                "rejected": {
+                  "type": "integer"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/store.Outcome"
+                  }
+                },
+                "skipped": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "body 非法 / entries 为空 / 条目非法 / validation 不通过",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:write 权限 / 跨租户(应用)请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配 / 存储能力不可用 / 审计不可用（fail-closed）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/import/preview": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "**只读**：计算逐条 action（create|update|unchanged|invalid|skipped）+ 计数 + writable（存在 invalid 即 false）。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·导入预检（差异预览）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "导入批次（entries 非空）",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "app_id": {
+                  "type": "string"
+                },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "service_name": {
+                        "type": "string"
+                      },
+                      "validation": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "value_type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "replace_existing": {
+                  "type": "boolean"
+                },
+                "tenant_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "差异预览",
+            "schema": {
+              "$ref": "#/definitions/service.ImportPreviewView"
+            }
+          },
+          "400": {
+            "description": "body 非法 / entries 为空",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:write 权限 / 跨租户(应用)请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配或存储能力不可用",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/item": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "精确 (tenant,app,service_name,key) 命中 → source=exact；服务非空但未命中时回退平台基座 → source=inherit。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·读取单条配置",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户 ID（仅一致性校验）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "应用 ID（空 = 认证应用/平台应用）",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "服务名（空 = 平台基座）",
+            "name": "service_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置项键",
+            "name": "key",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "配置项（含 domain/group/source）",
+            "schema": {
+              "$ref": "#/definitions/service.AdminItemView"
+            }
+          },
+          "400": {
+            "description": "key 缺失/非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:read 权限 / 跨租户请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "配置项不存在",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配或存储能力不可用",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "同值 upsert 不产生新 revision（changed=false）；值需过明文密钥门禁与 validation 规则。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·新增/修改配置项",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "配置项（reason 必填 1–200 字）",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "app_id": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "service_name": {
+                  "type": "string"
+                },
+                "tenant_id": {
+                  "type": "string"
+                },
+                "validation": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "value_type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "写入结果",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "changed": {
+                  "type": "boolean"
+                },
+                "item": {
+                  "$ref": "#/definitions/store.Item"
+                },
+                "revision": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "body 非法 / key 非法 / validation 规则不通过",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:write 权限 / 跨租户(应用)请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配 / 存储能力不可用 / 审计不可用（fail-closed）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "软删条目，版本历史保留（append-only）；不物理删除数据。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·删除配置项（软删）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "删除请求（reason 必填 1–200 字）",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "app_id": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "service_name": {
+                  "type": "string"
+                },
+                "tenant_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "已软删",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deleted": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "body 非法 / reason 缺失",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:write 权限 / 跨租户(应用)请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "配置项不存在",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配 / 存储能力不可用 / 审计不可用（fail-closed）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/items": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "列出当前 (tenant,app) 作用域下的配置条目（跨服务 + 平台基座），支持 service/域/组/键前缀过滤与分页。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·列出配置项",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户 ID（仅一致性校验；与认证租户不一致 → 403）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "应用 ID（空 = 认证应用/平台应用）",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "服务名过滤（空 = 全部服务 + 基座）",
+            "name": "service_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置域过滤（服务端 taxonomy 推导结果）",
+            "name": "domain",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "配置组过滤（group_name 优先，兼容 group_name 别名）",
+            "name": "group",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "键前缀过滤",
+            "name": "key_prefix",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "页码（默认 1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页数量（默认 50，上限 100；非法值 400）",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "是否包含软删条目（默认 false）",
+            "name": "include_deleted",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "配置条目列表",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/service.AdminItem"
+                  }
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "page_size": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "参数非法（分页/include_deleted/key_prefix）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:read 权限 / 跨租户请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配（JWT/权限检查器缺失）或存储能力不可用",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/reveal": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "显式查看单条配置的明文值（读面被遮罩的密钥项只能经此取得）。要求 config:write。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·查看配置明文",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "租户 ID（仅一致性校验；与认证租户不一致 → 403）",
+            "name": "tenant_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "应用 ID（空 = 认证应用/平台应用）",
+            "name": "app_id",
+            "in": "query"
+          },
+          {
+            "description": "查看请求（key/reason 必填）",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "service_name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "明文值（value）+ 来源（source=exact|inherit）+ masked",
+            "schema": {
+              "$ref": "#/definitions/service.RevealView"
+            }
+          },
+          "400": {
+            "description": "body 非法 / key 缺失 / reason 缺失或超长",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:write 权限 / 跨租户请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "配置项不存在（含基座回退后仍未命中）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配 / 存储能力不可用 / 审计不可用（fail-closed）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/config/rollback": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "取目标 revision 的值**追加**一条新 revision（不改写历史）；要求 config:publish。",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置中心管理面"
+        ],
+        "summary": "管理面·回滚到指定版本",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "租户 ID（必须与 JWT 租户一致）",
+            "name": "X-Tenant-ID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "回滚请求（revision 必填，reason 必填）",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "app_id": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "revision": {
+                  "type": "integer"
+                },
+                "service_name": {
+                  "type": "string"
+                },
+                "tenant_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "回滚后的新条目",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "item": {
+                  "$ref": "#/definitions/store.Item"
+                },
+                "revision": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "body 非法 / revision 非法",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少/无效 JWT，或令牌无租户",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "无 config:publish 权限 / 跨租户(应用)请求",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "配置项或目标版本不存在",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "管理面未装配 / 存储能力不可用 / 审计不可用（fail-closed）",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/config": {
       "get": {
         "security": [
@@ -533,7 +2566,7 @@
           },
           {
             "type": "integer",
-            "description": "每页数量（默认 20，上限 500；P1-2 服务端归一）",
+            "description": "每页数量（默认 20，上限 100；非法值 400）",
             "name": "page_size",
             "in": "query"
           }
@@ -557,7 +2590,7 @@
             }
           },
           "400": {
-            "description": "namespace 非法",
+            "description": "namespace 非法 / 分页参数非法",
             "schema": {
               "type": "object",
               "properties": {
@@ -748,6 +2781,53 @@
           },
           "500": {
             "description": "服务内部错误",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/instance": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "返回本中心 center_id 与调用方 key 反解出的 namespace；供 CI 门 [41] 与独立台账比对（防误连中心/锚漂移）。只回调用方自己的 ns，不回集合。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "配置服务"
+        ],
+        "summary": "中心身份自报（G-B 锚漂移机检）",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "caller_ns": {
+                  "type": "string"
+                },
+                "center_id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "缺少或无效的 X-API-Key",
             "schema": {
               "type": "object",
               "properties": {
@@ -1174,7 +3254,7 @@
           },
           {
             "type": "integer",
-            "description": "每页数量（默认 100，上限 500）",
+            "description": "每页数量（默认 20，上限 100；非法值 400）",
             "name": "page_size",
             "in": "query"
           }
@@ -1198,7 +3278,7 @@
             }
           },
           "400": {
-            "description": "namespace 非法",
+            "description": "namespace 非法 / 分页参数非法",
             "schema": {
               "type": "object",
               "properties": {
@@ -1258,7 +3338,641 @@
     }
   },
   "definitions": {
+    "service.AdminItem": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "deleted_at": {
+          "type": "string"
+        },
+        "description": {
+          "description": "管理面元数据（CC-05 / API.md §5，000012 增量列）。Publish/Import 的写路径**不覆盖**这些列\n（元数据由管理面单独维护，见 gorm.casUpdateItemTx 列集），故对既有行为保持兼容。",
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "group_name": {
+          "description": "配置组名（域内分组，API /groups 数据源）",
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "masked": {
+          "type": "boolean"
+        },
+        "md5": {
+          "type": "string"
+        },
+        "owner": {
+          "description": "责任人/团队",
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "sensitive": {
+          "description": "敏感标记（**不代表**存明文密钥；门禁另行）",
+          "type": "boolean"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "tags": {
+          "description": "标签（DB jsonb；nil = null）",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "updated_by": {
+          "type": "string"
+        },
+        "validation": {
+          "description": "写口校验规则（如正则/枚举白名单），读面只存不执行",
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "value_type": {
+          "type": "string"
+        }
+      }
+    },
+    "service.AdminItemView": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "deleted_at": {
+          "type": "string"
+        },
+        "description": {
+          "description": "管理面元数据（CC-05 / API.md §5，000012 增量列）。Publish/Import 的写路径**不覆盖**这些列\n（元数据由管理面单独维护，见 gorm.casUpdateItemTx 列集），故对既有行为保持兼容。",
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "group_name": {
+          "description": "配置组名（域内分组，API /groups 数据源）",
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "masked": {
+          "type": "boolean"
+        },
+        "md5": {
+          "type": "string"
+        },
+        "owner": {
+          "description": "责任人/团队",
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "sensitive": {
+          "description": "敏感标记（**不代表**存明文密钥；门禁另行）",
+          "type": "boolean"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "source": {
+          "description": "exact|inherit",
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "tags": {
+          "description": "标签（DB jsonb；nil = null）",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "updated_by": {
+          "type": "string"
+        },
+        "validation": {
+          "description": "写口校验规则（如正则/枚举白名单），读面只存不执行",
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "value_type": {
+          "type": "string"
+        }
+      }
+    },
+    "service.ConsumersView": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "service.DomainStat": {
+      "type": "object",
+      "properties": {
+        "base": {
+          "type": "integer"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/service.GroupStat"
+          }
+        },
+        "svc": {
+          "type": "integer"
+        }
+      }
+    },
+    "service.EffectiveItem": {
+      "type": "object",
+      "properties": {
+        "base_value": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "masked": {
+          "description": "Masked=true 表示 Value 已替换为遮罩占位（真实值不随读面出网）；BaseValue 同理按基座行自身判定遮罩。",
+          "type": "boolean"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "sensitive": {
+          "type": "boolean"
+        },
+        "source": {
+          "description": "base|inherit|override",
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "value_type": {
+          "type": "string"
+        }
+      }
+    },
+    "service.EffectiveView": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/service.EffectiveItem"
+          }
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "service_name": {
+          "type": "string"
+        }
+      }
+    },
+    "service.ExportItem": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "masked": {
+          "description": "Masked=true 表示 value 是遮罩占位（真实值未导出），回灌时该条应跳过。",
+          "type": "boolean"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "sensitive": {
+          "type": "boolean"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validation": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "value_type": {
+          "type": "string"
+        }
+      }
+    },
+    "service.ExportView": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "exported_at": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/service.ExportItem"
+          }
+        },
+        "masked_count": {
+          "description": "MaskedCount 是本次导出被遮罩的条目数（0 = 没有密钥类值）。",
+          "type": "integer"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "service.GroupStat": {
+      "type": "object",
+      "properties": {
+        "base": {
+          "type": "integer"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "group": {
+          "type": "string"
+        },
+        "services": {
+          "type": "integer"
+        },
+        "svc": {
+          "type": "integer"
+        }
+      }
+    },
+    "service.GroupsView": {
+      "type": "object",
+      "properties": {
+        "domains": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/service.DomainStat"
+          }
+        }
+      }
+    },
     "service.ImportOutcome": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "ok": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "skipped": {
+          "type": "boolean"
+        },
+        "tenant_id": {
+          "type": "string"
+        }
+      }
+    },
+    "service.ImportPreviewCounts": {
+      "type": "object",
+      "properties": {
+        "create": {
+          "type": "integer"
+        },
+        "invalid": {
+          "type": "integer"
+        },
+        "skipped": {
+          "type": "integer"
+        },
+        "unchanged": {
+          "type": "integer"
+        },
+        "update": {
+          "type": "integer"
+        }
+      }
+    },
+    "service.ImportPreviewItem": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "current_value": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "value_type": {
+          "type": "string"
+        }
+      }
+    },
+    "service.ImportPreviewView": {
+      "type": "object",
+      "properties": {
+        "counts": {
+          "$ref": "#/definitions/service.ImportPreviewCounts"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/service.ImportPreviewItem"
+          }
+        },
+        "writable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "service.RevealView": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "masked": {
+          "description": "Masked = 该条目在常规读面是否被遮罩（true = 本条正是「读面看不到、必须显式查看」的项）。\n非遮罩项显式查看时为 false（不撒谎：它本来就能在列表里看到）。",
+          "type": "boolean"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "service_name": {
+          "description": "ServiceName = 请求的服务作用域（与 /effective 的 EffectiveView.ServiceName 同口径；\nsource=inherit 时值来自平台基座，基座行自身 service_name 为空，这里仍回显请求作用域）。",
+          "type": "string"
+        },
+        "source": {
+          "description": "exact|inherit（与 GET /item 同口径）",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value 是**明文**：只出现在本响应里，不落库、不缓存、不进审计 metadata。",
+          "type": "string"
+        },
+        "value_type": {
+          "type": "string"
+        }
+      }
+    },
+    "store.Editor": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "group_name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "updated_by": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "store.Item": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "deleted_at": {
+          "type": "string"
+        },
+        "description": {
+          "description": "管理面元数据（CC-05 / API.md §5，000012 增量列）。Publish/Import 的写路径**不覆盖**这些列\n（元数据由管理面单独维护，见 gorm.casUpdateItemTx 列集），故对既有行为保持兼容。",
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "group_name": {
+          "description": "配置组名（域内分组，API /groups 数据源）",
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "md5": {
+          "type": "string"
+        },
+        "owner": {
+          "description": "责任人/团队",
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "sensitive": {
+          "description": "敏感标记（**不代表**存明文密钥；门禁另行）",
+          "type": "boolean"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "tags": {
+          "description": "标签（DB jsonb；nil = null）",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "updated_by": {
+          "type": "string"
+        },
+        "validation": {
+          "description": "写口校验规则（如正则/枚举白名单），读面只存不执行",
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "value_type": {
+          "type": "string"
+        }
+      }
+    },
+    "store.Outcome": {
       "type": "object",
       "properties": {
         "app_id": {
@@ -1284,67 +3998,13 @@
         }
       }
     },
-    "store.Item": {
-      "type": "object",
-      "properties": {
-        "app_id": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "string"
-        },
-        "created_by": {
-          "type": "string"
-        },
-        "deleted_at": {
-          "type": "string"
-        },
-        "environment": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        },
-        "md5": {
-          "type": "string"
-        },
-        "revision": {
-          "type": "integer"
-        },
-        "service_name": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "tenant_id": {
-          "type": "string"
-        },
-        "updated_at": {
-          "type": "string"
-        },
-        "updated_by": {
-          "type": "string"
-        },
-        "validation": {
-          "description": "写口校验规则（如正则/枚举白名单），读面只存不执行",
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        },
-        "value_type": {
-          "type": "string"
-        }
-      }
-    },
     "store.Version": {
       "type": "object",
       "properties": {
         "app_id": {
+          "type": "string"
+        },
+        "changeset_id": {
           "type": "string"
         },
         "created_at": {
@@ -1363,6 +4023,10 @@
           "type": "string"
         },
         "key": {
+          "type": "string"
+        },
+        "reason": {
+          "description": "变更审计（000012 增量列）。Reason 由 Publish 的 reason 入参落库（历史读面 API §2 需要）；\nChangesetID 由 CC-04 变更单流程回填，当前恒空。",
           "type": "string"
         },
         "revision": {
@@ -1387,6 +4051,12 @@
     "ApiKeyAuth": {
       "type": "apiKey",
       "name": "X-API-Key",
+      "in": "header"
+    },
+    "BearerAuth": {
+      "description": "管理面鉴权：Authorization: Bearer <JWT>（JWT 必须含 tenant_id），并必带 X-Tenant-ID 头且与 JWT 租户一致；授权按 rbac 权限点 config:read|write|publish。",
+      "type": "apiKey",
+      "name": "Authorization",
       "in": "header"
     }
   }

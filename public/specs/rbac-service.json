@@ -3354,6 +3354,31 @@
           }
         }
       }
+    },
+    "/internal/rbac/users/direct-permissions": {
+      "get": {
+        "tags": [
+          "RBAC - 内部接口"
+        ],
+        "summary": "查询用户直赋权限（内部）",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "用户ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "直赋权限列表",
+            "schema": {
+              "$ref": "#/definitions/dto.ListResponse-gitee_com_autional_service-rbac_internal_handler_dto_PermissionResponse"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {

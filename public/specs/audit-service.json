@@ -334,6 +334,12 @@
           },
           {
             "type": "string",
+            "description": "用户ID筛选",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
             "description": "时间范围: 1h/24h/7d/30d",
             "name": "time_range",
             "in": "query"
@@ -2115,7 +2121,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "查询当前租户的所有职责分离规则，用于防止利益冲突和权限滥用。参考：ISO 27001:2022 Annex A.12.4 (Event Logging)、PCI DSS v4.0 Req 10 (Log & Monitor)。",
+        "description": "分页查询当前租户的职责分离规则，用于防止利益冲突和权限滥用。参考：ISO 27001:2022 Annex A.12.4 (Event Logging)、PCI DSS v4.0 Req 10 (Log & Monitor)。",
         "consumes": [
           "application/json"
         ],
@@ -2126,9 +2132,23 @@
           "审计服务"
         ],
         "summary": "查询SoD规则",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "页码（默认 1）",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "每页条数（默认 20，上限 100）",
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "SoD规则",
+            "description": "SoD规则列表（items + total）",
             "schema": {
               "type": "object"
             }
@@ -2435,6 +2455,12 @@
               "$ref": "#/definitions/dto.Problem"
             }
           },
+          "403": {
+            "description": "跨租户访问（路径租户与认证租户不一致；平台管理员除外）",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
           "404": {
             "description": "哈希链未找到",
             "schema": {
@@ -2504,6 +2530,12 @@
           },
           "401": {
             "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "跨租户访问（路径租户与认证租户不一致；平台管理员除外）",
             "schema": {
               "$ref": "#/definitions/dto.Problem"
             }
@@ -2885,8 +2917,12 @@
             "in": "query"
           },
           {
-            "type": "string",
-            "description": "操作类型",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv",
+            "description": "操作类型（可重复传递实现多值 OR 查询）",
             "name": "action",
             "in": "query"
           },
@@ -2898,14 +2934,26 @@
           },
           {
             "type": "integer",
-            "description": "开始时间戳",
+            "description": "开始时间戳（start_date 串优先）",
             "name": "start_time",
             "in": "query"
           },
           {
             "type": "integer",
-            "description": "结束时间戳",
+            "description": "结束时间戳（end_date 串优先）",
             "name": "end_time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "开始日期(YYYY-MM-DD，UTC+8；优先于 start_time)",
+            "name": "start_date",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束日期(YYYY-MM-DD，UTC+8，含当日全量；优先于 end_time)",
+            "name": "end_date",
             "in": "query"
           },
           {
@@ -4004,48 +4052,6 @@
         }
       }
     },
-    "/admin/audit/stream": {
-      "get": {
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "description": "Server-Sent Events 实时推送审计日志、异常和告警。按租户过滤，支持重连。参考：ISO 27001:2022 Annex A.12.4 (Event Logging)、PCI DSS v4.0 Req 10 (Log & Monitor)。",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "text/event-stream"
-        ],
-        "tags": [
-          "审计服务"
-        ],
-        "summary": "实时审计事件流",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "租户ID",
-            "name": "tenant_id",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "SSE stream",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "401": {
-            "description": "未认证",
-            "schema": {
-              "$ref": "#/definitions/dto.Problem"
-            }
-          }
-        }
-      }
-    },
     "/admin/audit/tenant-config": {
       "get": {
         "security": [
@@ -4154,7 +4160,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "返回后台定时验证器对各租户哈希链的最新验证结果，用于自动化防篡改监控。参考：ISO 27001:2022 Annex A.12.4 (Event Logging)、PCI DSS v4.0 Req 10 (Log & Monitor)。",
+        "description": "返回后台定时验证器对各租户哈希链的最新验证结果（全平台快照），用于自动化防篡改监控。平台级聚合视图：仅平台租户可访问（RequirePlatformTenant fail-closed）；租户面链状态请用 GET /admin/audit/hashchain/{tenant_id}。参考：ISO 27001:2022 Annex A.12.4 (Event Logging)、PCI DSS v4.0 Req 10 (Log & Monitor)。",
         "consumes": [
           "application/json"
         ],
@@ -4174,6 +4180,12 @@
           },
           "401": {
             "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/dto.Problem"
+            }
+          },
+          "403": {
+            "description": "非平台租户（平台级聚合视图）",
             "schema": {
               "$ref": "#/definitions/dto.Problem"
             }
@@ -4460,8 +4472,12 @@
             "in": "query"
           },
           {
-            "type": "string",
-            "description": "操作类型",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv",
+            "description": "操作类型（可重复传递实现多值 OR 查询）",
             "name": "action",
             "in": "query"
           },
@@ -4473,14 +4489,26 @@
           },
           {
             "type": "integer",
-            "description": "开始时间戳",
+            "description": "开始时间戳（start_date 串优先）",
             "name": "start_time",
             "in": "query"
           },
           {
             "type": "integer",
-            "description": "结束时间戳",
+            "description": "结束时间戳（end_date 串优先）",
             "name": "end_time",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "开始日期(YYYY-MM-DD，UTC+8；优先于 start_time)",
+            "name": "start_date",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "结束日期(YYYY-MM-DD，UTC+8，含当日全量；优先于 end_time)",
+            "name": "end_date",
             "in": "query"
           },
           {
@@ -5519,6 +5547,11 @@
           "type": "integer",
           "example": 1713175800
         },
+        "trace_id": {
+          "description": "W3C 追踪ID",
+          "type": "string",
+          "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+        },
         "user_agent": {
           "description": "UA",
           "type": "string",
@@ -5547,9 +5580,6 @@
       "description": "审计日志统计信息",
       "type": "object",
       "properties": {
-        "active_tenants": {
-          "type": "integer"
-        },
         "avg_response_ms": {
           "type": "number"
         },
@@ -6155,6 +6185,10 @@
       "description": "哈希链详细信息",
       "type": "object",
       "properties": {
+        "chain_id": {
+          "description": "链身份（A19 粒度：tenant_id + app_id）",
+          "type": "string"
+        },
         "end_hash": {
           "description": "结束哈希",
           "type": "string",
@@ -6169,6 +6203,10 @@
           "description": "日志数",
           "type": "integer",
           "example": 100000
+        },
+        "message": {
+          "description": "链损坏说明（BrokenMsg）",
+          "type": "string"
         },
         "start_hash": {
           "description": "起始哈希",

@@ -1694,6 +1694,38 @@
         }
       }
     },
+    "/internal/oauth/cors-origins": {
+      "get": {
+        "description": "内部API端点，由 gateway-service 消费：网关是唯一 CORS 决策点，按本表做\nper-client 动态回显（docs/CLIENT-CORS-ORIGINS-DESIGN.md §6.3）。只返回 Origin\n字符串列表，不返回客户端明细。注册表跨租户，实现方在平台事务内读取。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "OAuth - 内部接口"
+        ],
+        "summary": "内部读取客户端 CORS 源并集",
+        "responses": {
+          "200": {
+            "description": "源并集",
+            "schema": {
+              "$ref": "#/definitions/handler.swaggerCORSOriginsDetailResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "503": {
+            "description": "未装配（CORSOriginsLister 为 nil）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
     "/internal/oauth/device-authorizations/authorize": {
       "post": {
         "security": [
@@ -2102,14 +2134,14 @@
         }
       }
     },
-    "/oauth/bind": {
+    "/oauth/bind/initiate": {
       "post": {
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "description": "将当前用户的 Autional 账号与第三方 OAuth 提供商账号绑定。需 JWT 认证，请求体中的 user_id 必须与 JWT subject 一致。",
+        "description": "需 JWT 认证。服务端生成 PKCE 与签名 state，返回 provider 授权 URL；回调在 oauth-service 完成并跳回 return_to。",
         "consumes": [
           "application/json"
         ],
@@ -2119,27 +2151,27 @@
         "tags": [
           "OAuth"
         ],
-        "summary": "绑定 OAuth 账号",
+        "summary": "发起 OAuth 账号绑定",
         "parameters": [
           {
-            "description": "绑定请求",
+            "description": "绑定发起请求",
             "name": "request",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.BindOAuthRequest"
+              "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.BindInitiateRequest"
             }
           }
         ],
         "responses": {
-          "201": {
-            "description": "绑定成功",
+          "200": {
+            "description": "授权 URL",
             "schema": {
-              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-oauth_internal_handler_dto_OAuthBindData"
+              "$ref": "#/definitions/dto.DataResponse-gitee_com_autional_service-oauth_internal_handler_dto_BindInitiateResponse"
             }
           },
           "400": {
-            "description": "请求参数错误",
+            "description": "参数错误或 return_to 不在白名单",
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
             }
@@ -2150,20 +2182,8 @@
               "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
             }
           },
-          "403": {
-            "description": "user_id 与 JWT 不匹配",
-            "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
-            }
-          },
-          "409": {
-            "description": "已绑定该提供商",
-            "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
-            }
-          },
-          "500": {
-            "description": "服务内部错误",
+          "503": {
+            "description": "流程存储或 provider 未配置",
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
             }
@@ -2173,7 +2193,7 @@
     },
     "/oauth/client/{client_id}": {
       "get": {
-        "description": "根据 client_id 返回客户端的非敏感公开信息（名称、Logo、Scopes、TenantID）。用于 consent 授权页面展示。",
+        "description": "根据 client_id 返回客户端的非敏感公开信息（名称、Logo、Scopes、TenantID、Kind）。用于 consent 授权页面展示与接入工具识别「门户客户端」。kind=portal 表示该 client 是租户门户自身的登录客户端，不可作为第三方应用 appId 使用。",
         "produces": [
           "application/json"
         ],
@@ -2317,7 +2337,7 @@
             "bearerAuth": []
           }
         ],
-        "description": "获取当前用户已授权的所有 OAuth 客户端同意记录，包括客户端 ID、授权范围及授权时间。",
+        "description": "获取当前用户在当前租户下授权过的 OAuth 应用（consent）列表，含客户端 ID、名称、Logo、官网、授权范围及授权时间。\n门户自身登录客户端（metadata.kind=portal，如各租户的默认客户端）不计入本列表；客户端已删除时名称等字段为空。",
         "produces": [
           "application/json"
         ],
@@ -2540,9 +2560,83 @@
         }
       }
     },
+    "/oauth/introspect": {
+      "post": {
+        "description": "OAuth 2.0 令牌自省端点。检查令牌的活跃状态，返回令牌的元数据（sub, client_id, scope, exp 等）。返回扁平 JSON（无 code/message 信封）。S9-A：端点要求机密客户端认证（RFC 7662 §2.1，Basic / client_secret_post / private_key_jwt）。参考：RFC 7662 (Token Introspection)。",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "OAuth"
+        ],
+        "summary": "令牌自省",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "待检查的令牌（access_token 或 refresh_token）",
+            "name": "token",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "客户端ID（client_secret_post / private_key_jwt）",
+            "name": "client_id",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "description": "客户端密钥（client_secret_post）",
+            "name": "client_secret",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "description": "客户端断言 JWT（private_key_jwt）",
+            "name": "client_assertion",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "description": "断言类型（private_key_jwt）",
+            "name": "client_assertion_type",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "自省结果（active=true 时包含完整令牌元数据；active=false 时仅返回 active 字段）",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.TokenIntrospectionResponse"
+            }
+          },
+          "400": {
+            "description": "invalid_request：缺少 token 参数。参考：RFC 7662 §2.1。",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.OAuthErrorResponse"
+            }
+          },
+          "401": {
+            "description": "invalid_client：客户端认证失败。参考：RFC 7662 §2.1。",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.OAuthErrorResponse"
+            }
+          },
+          "500": {
+            "description": "server_error：自省服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.OAuthErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/oauth/logout": {
       "get": {
-        "description": "OIDC RP-Initiated Logout 1.0。id_token_hint 必须为本服务 RSA 验签有效（含 iss 校验）；未携带 id_token_hint 时要求已认证会话（Bearer access token）；post_logout_redirect_uri 仅在命中客户端注册 URI 时精确匹配跳转，否则回退 JSON 响应。",
+        "description": "OIDC RP-Initiated Logout 1.0。id_token_hint 必须为本服务 RSA 验签有效（含 iss 校验）。无 hint 四支分流：已认证会话（Bearer）→ 200 JSON {logged_out, location}；无会话浏览器（Accept 含 text/html）→ 302 确认页；无会话机器流 → 401。post_logout_redirect_uri 仅在命中客户端注册白名单时精确匹配（302 回跳或 location 出），否则忽略/省略。",
         "consumes": [
           "application/json"
         ],
@@ -2568,26 +2662,26 @@
           },
           {
             "type": "string",
-            "description": "状态参数，随重定向原样返回（URL 转义）",
+            "description": "状态参数，随重定向/location 原样返回（URL 转义）",
             "name": "state",
             "in": "query"
           },
           {
             "type": "string",
-            "description": "无 id_token_hint 的已认证会话登出时的客户端标识（用于重定向白名单校验）",
+            "description": "无 id_token_hint 时的客户端标识（白名单校验；确认页透传）",
             "name": "client_id",
             "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "登出成功",
+            "description": "登出成功（无 hint 已认证会话：data={logged_out, location?}；hint 无回跳：message=logged_out）",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.LogoutJSONResponse"
             }
           },
           "302": {
-            "description": "重定向到已注册的 post_logout_redirect_uri",
+            "description": "重定向（hint 命中注册 URI；或无会话浏览器 → 确认页）",
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
             }
@@ -2599,7 +2693,7 @@
             }
           },
           "401": {
-            "description": "invalid_request：无有效 id_token_hint 且无已认证会话",
+            "description": "invalid_request：无有效 id_token_hint 且无已认证会话（机器流）",
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.OAuthErrorResponse"
             }
@@ -2613,7 +2707,7 @@
         }
       },
       "post": {
-        "description": "OIDC RP-Initiated Logout 1.0。id_token_hint 必须为本服务 RSA 验签有效（含 iss 校验）；未携带 id_token_hint 时要求已认证会话（Bearer access token）；post_logout_redirect_uri 仅在命中客户端注册 URI 时精确匹配跳转，否则回退 JSON 响应。",
+        "description": "OIDC RP-Initiated Logout 1.0。id_token_hint 必须为本服务 RSA 验签有效（含 iss 校验）。无 hint 四支分流：已认证会话（Bearer）→ 200 JSON {logged_out, location}；无会话浏览器（Accept 含 text/html）→ 302 确认页；无会话机器流 → 401。post_logout_redirect_uri 仅在命中客户端注册白名单时精确匹配（302 回跳或 location 出），否则忽略/省略。",
         "consumes": [
           "application/json"
         ],
@@ -2639,26 +2733,26 @@
           },
           {
             "type": "string",
-            "description": "状态参数，随重定向原样返回（URL 转义）",
+            "description": "状态参数，随重定向/location 原样返回（URL 转义）",
             "name": "state",
             "in": "query"
           },
           {
             "type": "string",
-            "description": "无 id_token_hint 的已认证会话登出时的客户端标识（用于重定向白名单校验）",
+            "description": "无 id_token_hint 时的客户端标识（白名单校验；确认页透传）",
             "name": "client_id",
             "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "登出成功",
+            "description": "登出成功（无 hint 已认证会话：data={logged_out, location?}；hint 无回跳：message=logged_out）",
             "schema": {
-              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+              "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.LogoutJSONResponse"
             }
           },
           "302": {
-            "description": "重定向到已注册的 post_logout_redirect_uri",
+            "description": "重定向（hint 命中注册 URI；或无会话浏览器 → 确认页）",
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
             }
@@ -2670,7 +2764,7 @@
             }
           },
           "401": {
-            "description": "invalid_request：无有效 id_token_hint 且无已认证会话",
+            "description": "invalid_request：无有效 id_token_hint 且无已认证会话（机器流）",
             "schema": {
               "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.OAuthErrorResponse"
             }
@@ -2764,8 +2858,9 @@
     },
     "/oauth/refresh": {
       "post": {
-        "description": "OAuth 2.0 刷新令牌端点。使用 refresh_token 换取新的 access_token 和 refresh_token（轮换）。返回扁平 JSON（无 code/message 信封）。参考：RFC 6749 §6 (Refreshing an Access Token)。",
+        "description": "OAuth 2.0 刷新令牌端点。使用 refresh_token 换取新的 access_token 和 refresh_token（轮换）。主接受 application/x-www-form-urlencoded（RFC 6749 §6，与 /oauth/token 同口径），兼容 JSON body（form 优先）。返回扁平 JSON（无 code/message 信封）。参考：RFC 6749 §6 (Refreshing an Access Token)。",
         "consumes": [
+          "application/x-www-form-urlencoded",
           "application/json"
         ],
         "produces": [
@@ -2777,13 +2872,23 @@
         "summary": "刷新访问令牌",
         "parameters": [
           {
-            "description": "请求体（包含 refresh_token, client_id）",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object"
-            }
+            "type": "string",
+            "description": "刷新令牌",
+            "name": "refresh_token",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "客户端ID",
+            "name": "client_id",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "description": "客户端密钥",
+            "name": "client_secret",
+            "in": "formData"
           }
         ],
         "responses": {
@@ -3458,6 +3563,57 @@
         }
       }
     },
+    "/oauth/{provider}/bind/callback": {
+      "get": {
+        "description": "第三方授权完成后由浏览器直接打开（绑定腿专用回调地址）。校验浏览器绑定 cookie → 换码 → 落连接 → 跳回 return_to。",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "OAuth"
+        ],
+        "summary": "OAuth 账号绑定回调",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "提供商名称",
+            "name": "provider",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "第三方返回的授权码",
+            "name": "code",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "签名后的 state 参数",
+            "name": "state",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "第三方返回的错误码（用户拒绝授权）",
+            "name": "error",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "跳回 return_to，附 oauth_bind=success|error 与 reason"
+          },
+          "400": {
+            "description": "state 无效或与浏览器不匹配",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
     "/oauth/{provider}/callback": {
       "get": {
         "description": "第三方 OAuth 提供商授权完成后的回调端点。交换授权码获取访问令牌并拉取用户信息。",
@@ -3639,14 +3795,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_autional_service-oauth_internal_handler_dto_CreateClientResponse": {
+    "dto.DataResponse-gitee_com_autional_service-oauth_internal_handler_dto_BindInitiateResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.CreateClientResponse"
+          "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.BindInitiateResponse"
         },
         "message": {
           "type": "string"
@@ -3656,14 +3812,14 @@
         }
       }
     },
-    "dto.DataResponse-gitee_com_autional_service-oauth_internal_handler_dto_OAuthBindData": {
+    "dto.DataResponse-gitee_com_autional_service-oauth_internal_handler_dto_CreateClientResponse": {
       "type": "object",
       "properties": {
         "code": {
           "type": "integer"
         },
         "data": {
-          "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.OAuthBindData"
+          "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.CreateClientResponse"
         },
         "message": {
           "type": "string"
@@ -3965,6 +4121,7 @@
           "type": "string"
         },
         "enabled": {
+          "description": "Enabled 缺省（不传）= true，保持既有 API 行为；显式 false 才创建为禁用。",
           "type": "boolean"
         },
         "name": {
@@ -4100,33 +4257,49 @@
         }
       }
     },
-    "gitee_com_autional_service-oauth_internal_handler_dto.BindOAuthRequest": {
+    "gitee_com_autional_service-oauth_internal_handler_dto.BindInitiateRequest": {
       "type": "object",
       "required": [
-        "access_token",
         "provider",
-        "provider_user_id",
-        "user_id"
+        "return_to"
       ],
       "properties": {
-        "access_token": {
-          "type": "string"
-        },
-        "profile_data": {
-          "type": "object",
-          "additionalProperties": true
-        },
         "provider": {
-          "type": "string"
+          "type": "string",
+          "example": "github"
         },
-        "provider_user_id": {
-          "type": "string"
+        "return_to": {
+          "type": "string",
+          "example": "https://user.autional.cn/platform/security"
+        }
+      }
+    },
+    "gitee_com_autional_service-oauth_internal_handler_dto.BindInitiateResponse": {
+      "type": "object",
+      "properties": {
+        "auth_url": {
+          "description": "授权跳转URL",
+          "type": "string",
+          "example": "https://github.com/login/oauth/authorize?..."
         },
-        "refresh_token": {
-          "type": "string"
-        },
-        "user_id": {
-          "type": "string"
+        "state": {
+          "description": "签名后的 state",
+          "type": "string",
+          "example": "random-state.hmac"
+        }
+      }
+    },
+    "gitee_com_autional_service-oauth_internal_handler_dto.CORSOriginsResponse": {
+      "type": "object",
+      "properties": {
+        "origins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"https://app.example.com\"]"
+          ]
         }
       }
     },
@@ -4579,9 +4752,18 @@
     "gitee_com_autional_service-oauth_internal_handler_dto.ConsentResponse": {
       "type": "object",
       "properties": {
+        "alias": {
+          "description": "Alias 显示简称（metadata.alias）：优先于 ClientName 展示，空则由前端回退。",
+          "type": "string",
+          "example": "小说"
+        },
         "client_id": {
           "type": "string",
           "example": "app-123"
+        },
+        "client_name": {
+          "type": "string",
+          "example": "My App"
         },
         "granted_at": {
           "type": "string",
@@ -4591,9 +4773,17 @@
           "type": "string",
           "example": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
         },
+        "logo_uri": {
+          "type": "string",
+          "example": "https://app.example.com/logo.png"
+        },
         "scopes": {
           "type": "string",
           "example": "openid profile email"
+        },
+        "website": {
+          "type": "string",
+          "example": "https://app.example.com"
         }
       }
     },
@@ -4618,7 +4808,17 @@
         "redirect_uris"
       ],
       "properties": {
+        "alias": {
+          "description": "Alias 显示简称（可选）：前台列表优先展示，空则用 Name。",
+          "type": "string"
+        },
         "client_auth_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cors_origins": {
           "type": "array",
           "items": {
             "type": "string"
@@ -4647,6 +4847,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "post_logout_redirect_uris": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "privacy_policy": {
           "type": "string"
@@ -4733,6 +4939,16 @@
         "name": {
           "type": "string",
           "example": "My Application"
+        },
+        "post_logout_redirect_uris": {
+          "description": "PostLogoutRedirectURIs 登出回跳白名单（OIDC RP-Initiated Logout 1.0 独立注册面，ADR-1）",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"https://app.example.com/\"]"
+          ]
         },
         "privacy_policy": {
           "type": "string",
@@ -4982,6 +5198,36 @@
         }
       }
     },
+    "gitee_com_autional_service-oauth_internal_handler_dto.LogoutJSONResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.LogoutResult"
+        },
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-oauth_internal_handler_dto.LogoutResult": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "string",
+          "example": "https://app.example.com/after-logout"
+        },
+        "logged_out": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
     "gitee_com_autional_service-oauth_internal_handler_dto.OAuthAuditLogItem": {
       "type": "object",
       "properties": {
@@ -5059,14 +5305,6 @@
         }
       }
     },
-    "gitee_com_autional_service-oauth_internal_handler_dto.OAuthBindData": {
-      "type": "object",
-      "properties": {
-        "connection": {
-          "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.OAuthConnectionItem"
-        }
-      }
-    },
     "gitee_com_autional_service-oauth_internal_handler_dto.OAuthCallbackResponse": {
       "description": "OAuth授权回调结果",
       "type": "object",
@@ -5098,6 +5336,11 @@
     "gitee_com_autional_service-oauth_internal_handler_dto.OAuthClientItem": {
       "type": "object",
       "properties": {
+        "alias": {
+          "description": "Alias 显示简称（metadata.alias）",
+          "type": "string",
+          "example": "小说"
+        },
         "client_auth_methods": {
           "type": "string",
           "example": "[\"client_secret_basic\",\"private_key_jwt\"]"
@@ -5154,6 +5397,16 @@
         "name": {
           "type": "string",
           "example": "My App"
+        },
+        "post_logout_redirect_uris": {
+          "description": "PostLogoutRedirectURIs 登出回跳白名单（OIDC RP-Initiated Logout 1.0 独立注册面，ADR-1）",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"https://admin.autional.cn/\"]"
+          ]
         },
         "privacy_policy": {
           "type": "string",
@@ -5405,6 +5658,11 @@
           "type": "string",
           "example": "https://docs.example.com/errors"
         },
+        "i18n_key": {
+          "description": "I18nKey 本地化键（AUTH-46①/U416）：协议字段 error/error_description 保持 RFC 6749 §5.2 原样，\n本字段是**附加**信息（omitempty；未知错误码不填），供前端/AI 客户端按键确定性渲染文案，\n无需解析英文原文。仅出现在 JSON 错误体，不写入 302 错误重定向的查询串。",
+          "type": "string",
+          "example": "error.oauth_invalid_request"
+        },
         "state": {
           "description": "状态",
           "type": "string",
@@ -5628,6 +5886,15 @@
           "type": "string",
           "example": "app-123"
         },
+        "email": {
+          "description": "Email Claims（scope=email 时填充；真源 = identity 的邮箱身份与验证状态）",
+          "type": "string",
+          "example": "user@example.com"
+        },
+        "email_verified": {
+          "type": "boolean",
+          "example": true
+        },
         "family_name": {
           "type": "string",
           "example": "Doe"
@@ -5692,6 +5959,10 @@
       "type": "object",
       "properties": {
         "client_name": {
+          "type": "string"
+        },
+        "kind": {
+          "description": "Kind 客户端用途分类（portal/idp；空 = 普通应用）。只用于同意页与接入工具\n区分「租户门户客户端」与「应用客户端」，不暴露 redirect_uris / metadata 其它键。",
           "type": "string"
         },
         "logo_uri": {
@@ -5901,10 +6172,70 @@
         }
       }
     },
+    "gitee_com_autional_service-oauth_internal_handler_dto.TokenIntrospectionResponse": {
+      "description": "令牌自检结果",
+      "type": "object",
+      "properties": {
+        "active": {
+          "description": "是否有效",
+          "type": "boolean",
+          "example": true
+        },
+        "aud": {
+          "description": "受众",
+          "type": "string",
+          "example": "auth-ms"
+        },
+        "client_id": {
+          "description": "客户端ID",
+          "type": "string",
+          "example": "app-123"
+        },
+        "exp": {
+          "description": "过期时间",
+          "type": "integer",
+          "example": 1713187200
+        },
+        "iat": {
+          "description": "签发时间",
+          "type": "integer",
+          "example": 1713183600
+        },
+        "scope": {
+          "description": "范围",
+          "type": "string",
+          "example": "openid profile"
+        },
+        "sub": {
+          "description": "用户ID",
+          "type": "string",
+          "example": "usr_abc123"
+        },
+        "token_type": {
+          "description": "令牌类型",
+          "type": "string",
+          "example": "Bearer"
+        },
+        "username": {
+          "description": "用户名",
+          "type": "string",
+          "example": "user@example.com"
+        }
+      }
+    },
     "gitee_com_autional_service-oauth_internal_handler_dto.UpdateClientRequest": {
       "type": "object",
       "properties": {
+        "alias": {
+          "type": "string"
+        },
         "client_auth_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cors_origins": {
           "type": "array",
           "items": {
             "type": "string"
@@ -5933,6 +6264,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "post_logout_redirect_uris": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "privacy_policy": {
           "type": "string"
@@ -6004,6 +6341,20 @@
         },
         "data": {
           "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.BatchRevokeUserTokensResponse"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "handler.swaggerCORSOriginsDetailResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/definitions/gitee_com_autional_service-oauth_internal_handler_dto.CORSOriginsResponse"
         },
         "message": {
           "type": "string"

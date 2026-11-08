@@ -5,14 +5,18 @@ Source: D:\\go\\auth_ms_new\\docker\\specs\\<service>\\swagger.json (Chinese, na
 Target: public/specs/<service>.json
 
 B2 单源双区（并入 com 仓后）：本脚本只管 zh 侧 `<service>.json`（27 个）。
-en 侧 `<service>-en.json`（24 个）在同一目录并存、为 en 权威资产，由本仓独立维护
+en 侧 `<service>-en.json`（23 个）在同一目录并存、为 en 权威资产，由本仓独立维护
 （源 = monorepo autional/scripts/translate_swagger.py 的既有 -en 导出；跟版口径见
-README「Specs 双源」与 B2 reference 执行报告）。en 侧唯三缺源 = captcha3d / config /
-stream，构建期回退读 zh 原版并在页内标注。故脚本不再清理 `*-en.json`——cn 单仓时代
+README「Specs 双源」与 B2 reference 执行报告）。en 侧缺源 4 个 = captcha3d / config /
+saml / stream，构建期回退读 zh 原版并在页内标注。故脚本不再清理 `*-en.json`——cn 单仓时代
 的清理逻辑已移除，避免误删 en 权威文件。
 
+发布规则：`responses` 为空的 operation 会被丢弃并打印（上游 swag 注解缺失时产物非法，
+Scalar 只能渲染空响应）；补齐注解后自动回来。
+
 Usage:
-    python scripts/sync-specs-zh.py
+    python scripts/sync-specs-zh.py            # 写入 public/specs/*.json
+    python scripts/sync-specs-zh.py --check    # 只比对，漂移则 exit 1（CI 门禁）
 """
 
 import json
@@ -128,7 +132,32 @@ def rebrand(node):
     return node
 
 
+METHODS = ("get", "put", "post", "delete", "options", "head", "patch")
+
+
+def strip_invalid_operations(spec: dict) -> list[str]:
+    """丢弃 responses 为空的操作（上游 swag 注解缺失）。
+
+    发布契约必须是合法 Swagger 2.0：`responses` 为空的 operation 会被
+    校验器判错、Scalar 只能渲染空响应。上游补齐注解后会自动回来，
+    因此这里丢弃并打印，不静默。
+    """
+    dropped = []
+    for path, item in list((spec.get("paths") or {}).items()):
+        if not isinstance(item, dict):
+            continue
+        for method in METHODS:
+            op = item.get(method)
+            if isinstance(op, dict) and not op.get("responses"):
+                dropped.append(f"{method.upper()} {path}")
+                del item[method]
+        if not any(m in item for m in METHODS):
+            del spec["paths"][path]
+    return dropped
+
+
 def main() -> int:
+    check = "--check" in sys.argv
     if not os.path.isdir(SPECS_SRC):
         print(f"ERROR: source not found: {SPECS_SRC}")
         return 1
@@ -136,6 +165,7 @@ def main() -> int:
     os.makedirs(PORTAL_SPECS, exist_ok=True)
 
     written = 0
+    changed = 0
     for svc in SERVICES:
         src = os.path.join(SPECS_SRC, svc, "swagger.json")
         if not os.path.isfile(src):
@@ -159,16 +189,38 @@ def main() -> int:
             spec["schemes"] = ["https"]
             spec["basePath"] = f"/bff/{short}{base}"
 
+        dropped = strip_invalid_operations(spec)
+        if dropped:
+            print(f"  [WARN] {svc}: dropped {len(dropped)} operation(s) without responses "
+                  f"(upstream swag 注解缺失): {', '.join(dropped[:3])}"
+                  f"{' …' if len(dropped) > 3 else ''}")
+
         dst = os.path.join(PORTAL_SPECS, f"{svc}.json")
+        payload = json.dumps(spec, ensure_ascii=False, indent=2)
+        old = None
+        if os.path.isfile(dst):
+            with open(dst, encoding="utf-8") as fh:
+                old = fh.read()
+        if check:
+            if old != payload:
+                changed += 1
+                print(f"  [DRIFT] {svc}: 门户规范与上游快照不一致")
+            written += 1
+            continue
         with open(dst, "w", encoding="utf-8", newline="") as fh:
-            json.dump(spec, fh, ensure_ascii=False, indent=2)
+            fh.write(payload)
         written += 1
 
-    # （B2 并入后）不再清理 `*-en.json`——它们是 en 权威规范（本仓 24 个资产），
-    # 由 en 侧独立维护；本脚本只负责 zh 侧 `X.json`。
+    # （B2 并入后）不再清理 `*-en.json`——它们是 en 权威规范（本仓 23 个资产，
+    # 缺源 4 个：captcha3d / config / saml / stream），由 en 侧独立维护；
+    # 本脚本只负责 zh 侧 `X.json`。
+    if check:
+        print(f"checked {written} Chinese specs, {changed} drifted")
+        return 1 if changed else 0
 
     print(f"wrote {written} Chinese specs -> {PORTAL_SPECS}")
     return 0
+
 
 
 if __name__ == "__main__":

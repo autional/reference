@@ -8139,7 +8139,12 @@
           "type": "string"
         },
         "deleted_at": {
-          "$ref": "#/definitions/gorm.DeletedAt"
+          "description": "DeletedAt 不带 `index` tag：单列 deleted_at 属低选择性列（DB-DESIGN-GUIDELINES §1.5）。\n移除后 AutoMigrate 不再派生 `idx_<table>_deleted_at`；存量索引由各库 S10 DROP 迁移清理\n（slug: db-design-remediation-20260921 · AC-303 · W3-S10 登记 §2）。",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gorm.DeletedAt"
+            }
+          ]
         },
         "description": {
           "type": "string"
@@ -8340,6 +8345,40 @@
         "reviewer": {
           "type": "string",
           "example": "compliance_officer"
+        }
+      }
+    },
+    "gitee_com_autional_service-compliance_internal_handler_dto.AssessmentCoverageItem": {
+      "type": "object",
+      "properties": {
+        "assessed": {
+          "type": "integer",
+          "example": 7
+        },
+        "percent": {
+          "type": "number",
+          "example": 70
+        },
+        "total": {
+          "type": "integer",
+          "example": 10
+        }
+      }
+    },
+    "gitee_com_autional_service-compliance_internal_handler_dto.AssessmentCoveragePublic": {
+      "type": "object",
+      "properties": {
+        "assessed": {
+          "type": "integer",
+          "example": 7
+        },
+        "percent": {
+          "type": "number",
+          "example": 70
+        },
+        "total": {
+          "type": "integer",
+          "example": 10
         }
       }
     },
@@ -8778,6 +8817,13 @@
     "gitee_com_autional_service-compliance_internal_handler_dto.ComplianceScoreResponse": {
       "type": "object",
       "properties": {
+        "assessment_coverage": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.AssessmentCoverageItem"
+        },
+        "assessment_version": {
+          "type": "string",
+          "example": "assessment-v2"
+        },
         "grade": {
           "type": "string",
           "example": "B"
@@ -8785,6 +8831,11 @@
         "overall_score": {
           "type": "number",
           "example": 85.5
+        },
+        "score_available": {
+          "description": "P2（2026-10-27）：无任何框架完成评估时 score_available=false，overall_score 无意义。",
+          "type": "boolean",
+          "example": true
         },
         "tenant_id": {
           "type": "string"
@@ -8812,14 +8863,47 @@
       "description": "整体合规状态",
       "type": "object",
       "properties": {
+        "assessment_coverage": {
+          "description": "覆盖度",
+          "allOf": [
+            {
+              "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.AssessmentCoverageItem"
+            }
+          ]
+        },
+        "assessment_version": {
+          "type": "string",
+          "example": "assessment-v2"
+        },
         "evaluation_error": {
           "description": "评估错误",
           "type": "string"
+        },
+        "framework_assessments": {
+          "description": "P2（2026-10-27）：四态评估视图。状态词表 compliant/non_compliant/not_assessed/evaluation_error。",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.FrameworkAssessmentItem"
+          }
+        },
+        "gate_disabled_assessments": {
+          "description": "选中但门禁未启用",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.FrameworkAssessmentItem"
+          }
         },
         "gdpr_compliant": {
           "description": "GDPR",
           "type": "boolean",
           "example": true
+        },
+        "invalid_overrides": {
+          "description": "被忽略的覆盖",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.InvalidOverrideItem"
+          }
         },
         "iso27001_compliant": {
           "description": "ISO27001",
@@ -8870,6 +8954,42 @@
           "description": "SOX",
           "type": "boolean",
           "example": true
+        },
+        "standalone_assessments": {
+          "description": "已选独立标准",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.FrameworkAssessmentItem"
+          }
+        },
+        "unknown_standards": {
+          "description": "未知标准ID",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "gitee_com_autional_service-compliance_internal_handler_dto.ConflictItem": {
+      "type": "object",
+      "properties": {
+        "detail": {
+          "type": "string"
+        },
+        "parameter": {
+          "type": "string",
+          "example": "data_residency_region"
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "[\"gdpr\"",
+            "\"pipl\"]"
+          ]
         }
       }
     },
@@ -8966,6 +9086,56 @@
         "total": {
           "description": "总条数（平铺，便于直接读取）",
           "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-compliance_internal_handler_dto.ControlAssessmentItem": {
+      "type": "object",
+      "properties": {
+        "control_id": {
+          "type": "string",
+          "example": "pci_8.6.3"
+        },
+        "current": {
+          "example": "8"
+        },
+        "name": {
+          "type": "string",
+          "example": "最小密码长度 (单因子)"
+        },
+        "operator": {
+          "type": "string",
+          "example": "gte"
+        },
+        "override_applied": {
+          "type": "boolean",
+          "example": false
+        },
+        "parameter": {
+          "type": "string",
+          "example": "password_min_length_sfa"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "required": {
+          "example": "12"
+        },
+        "requirement": {
+          "type": "string",
+          "example": "8.6.3"
+        },
+        "severity": {
+          "type": "string",
+          "example": "critical"
+        },
+        "source": {
+          "type": "string",
+          "example": "client_supplied"
+        },
+        "state": {
+          "type": "string",
+          "example": "non_compliant"
         }
       }
     },
@@ -10406,12 +10576,120 @@
         }
       }
     },
+    "gitee_com_autional_service-compliance_internal_handler_dto.FrameworkAssessmentItem": {
+      "type": "object",
+      "properties": {
+        "controls_assessed": {
+          "type": "integer",
+          "example": 7
+        },
+        "controls_failed": {
+          "type": "integer",
+          "example": 2
+        },
+        "controls_passed": {
+          "type": "integer",
+          "example": 5
+        },
+        "controls_total": {
+          "type": "integer",
+          "example": 10
+        },
+        "controls_unknown": {
+          "type": "integer",
+          "example": 3
+        },
+        "display_name": {
+          "type": "string",
+          "example": "ISO/IEC 27001:2022"
+        },
+        "evaluation_error": {
+          "type": "string"
+        },
+        "framework": {
+          "description": "门禁键；独立标准为空",
+          "type": "string",
+          "example": "iso27001"
+        },
+        "gate_disabled": {
+          "description": "选中但门禁未启用，不参与评估",
+          "type": "boolean"
+        },
+        "standard_id": {
+          "type": "string",
+          "example": "iso27001_2022"
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.StandardAssessmentItem"
+          }
+        },
+        "status": {
+          "description": "compliant/non_compliant/not_assessed/evaluation_error",
+          "type": "string",
+          "example": "not_assessed"
+        }
+      }
+    },
+    "gitee_com_autional_service-compliance_internal_handler_dto.FrameworkAssessmentPublic": {
+      "type": "object",
+      "properties": {
+        "controls_assessed": {
+          "type": "integer",
+          "example": 7
+        },
+        "controls_total": {
+          "type": "integer",
+          "example": 10
+        },
+        "controls_unknown": {
+          "type": "integer",
+          "example": 3
+        },
+        "display_name": {
+          "type": "string",
+          "example": "ISO/IEC 27001:2022"
+        },
+        "framework": {
+          "type": "string",
+          "example": "iso27001"
+        },
+        "standard_id": {
+          "type": "string",
+          "example": "iso27001_2022"
+        },
+        "status": {
+          "type": "string",
+          "example": "not_assessed"
+        }
+      }
+    },
     "gitee_com_autional_service-compliance_internal_handler_dto.GapReportResponse": {
       "type": "object",
       "properties": {
+        "assessed": {
+          "description": "P2（四态）：缺口计数只统计已测且失败；未评估单列 unknown，不算失败。",
+          "type": "integer",
+          "example": 8
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ConflictItem"
+          }
+        },
         "critical_gaps": {
           "type": "integer",
           "example": 2
+        },
+        "errors": {
+          "type": "integer",
+          "example": 0
+        },
+        "evaluation_error": {
+          "type": "string",
+          "example": ""
         },
         "high_gaps": {
           "type": "integer",
@@ -10435,11 +10713,19 @@
             "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ParameterGapItem"
           }
         },
+        "score_available": {
+          "type": "boolean",
+          "example": true
+        },
         "standards": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "unknown": {
+          "type": "integer",
+          "example": 2
         }
       }
     },
@@ -10614,6 +10900,19 @@
         "total": {
           "description": "总条数（平铺，便于直接读取）",
           "type": "integer"
+        }
+      }
+    },
+    "gitee_com_autional_service-compliance_internal_handler_dto.InvalidOverrideItem": {
+      "type": "object",
+      "properties": {
+        "parameter": {
+          "type": "string",
+          "example": "tls_min_version"
+        },
+        "reason": {
+          "type": "string",
+          "example": "value does not satisfy operator gte for control ITGC-OP-01"
         }
       }
     },
@@ -11134,6 +11433,9 @@
           "type": "string",
           "example": "password_min_length_sfa"
         },
+        "reason": {
+          "type": "string"
+        },
         "required": {
           "example": "12"
         },
@@ -11144,6 +11446,11 @@
         "standard": {
           "type": "string",
           "example": "pci_dss_v4"
+        },
+        "state": {
+          "description": "P2（四态）：状态词表 compliant / non_compliant / not_assessed / evaluation_error。\ncompliant=false 不再等于失败：not_assessed / evaluation_error 也非通过，但不算缺口。",
+          "type": "string",
+          "example": "non_compliant"
         }
       }
     },
@@ -11546,6 +11853,25 @@
     "gitee_com_autional_service-compliance_internal_handler_dto.PublicComplianceStatusResponse": {
       "type": "object",
       "properties": {
+        "assessment_coverage": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.AssessmentCoveragePublic"
+        },
+        "assessment_version": {
+          "type": "string",
+          "example": "assessment-v2"
+        },
+        "evaluation_error": {
+          "description": "EvaluationError 只暴露\"是否发生评估异常\"，不公开内部错误串。",
+          "type": "boolean",
+          "example": false
+        },
+        "framework_assessments": {
+          "description": "P2（2026-10-27）：显式四态 + 覆盖度。legacy 布尔保留（additive）。",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.FrameworkAssessmentPublic"
+          }
+        },
         "frameworks_enabled": {
           "type": "array",
           "items": {
@@ -12266,9 +12592,23 @@
     "gitee_com_autional_service-compliance_internal_handler_dto.ReadinessReportResponse": {
       "type": "object",
       "properties": {
+        "assessed_controls": {
+          "type": "integer",
+          "example": 7
+        },
         "compliance_rate": {
           "type": "number",
           "example": 77.8
+        },
+        "controls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.ControlAssessmentItem"
+          }
+        },
+        "error_controls": {
+          "type": "integer",
+          "example": 0
         },
         "failed_controls": {
           "type": "array",
@@ -12298,9 +12638,18 @@
           "type": "string",
           "example": "PCI DSS v4.0.1"
         },
+        "state": {
+          "description": "P2（四态）：缺证据的控制单列 unknown（含来源错误），不算失败；\n合规率按已评估控制计算；只有全部控制已测且通过 ready_for_audit 才为 true。",
+          "type": "string",
+          "example": "not_assessed"
+        },
         "total_controls": {
           "type": "integer",
           "example": 9
+        },
+        "unknown_controls": {
+          "type": "integer",
+          "example": 2
         }
       }
     },
@@ -12666,6 +13015,11 @@
           "type": "string",
           "example": "访问权限管理"
         },
+        "id": {
+          "description": "主键ID",
+          "type": "string",
+          "example": "01JQ..."
+        },
         "last_test_date": {
           "description": "测试日期",
           "type": "string",
@@ -12771,6 +13125,9 @@
     "gitee_com_autional_service-compliance_internal_handler_dto.SecurityScore": {
       "type": "object",
       "properties": {
+        "assessment_coverage": {
+          "$ref": "#/definitions/gitee_com_autional_service-compliance_internal_handler_dto.AssessmentCoveragePublic"
+        },
         "calculated_at": {
           "type": "string",
           "example": "2026-05-09T12:00:00Z"
@@ -12791,11 +13148,16 @@
         },
         "methodology_version": {
           "type": "string",
-          "example": "v1.0"
+          "example": "assessment-v2"
         },
         "overall_score": {
           "type": "integer",
           "example": 94
+        },
+        "score_available": {
+          "description": "P2（2026-10-27）：ScoreAvailable=false 表示无任何框架完成评估，overall_score 无意义。",
+          "type": "boolean",
+          "example": true
         }
       }
     },
@@ -12955,6 +13317,35 @@
         },
         "rule_name": {
           "type": "string"
+        }
+      }
+    },
+    "gitee_com_autional_service-compliance_internal_handler_dto.StandardAssessmentItem": {
+      "type": "object",
+      "properties": {
+        "controls_assessed": {
+          "type": "integer",
+          "example": 4
+        },
+        "controls_total": {
+          "type": "integer",
+          "example": 10
+        },
+        "controls_unknown": {
+          "type": "integer",
+          "example": 6
+        },
+        "standard_id": {
+          "type": "string",
+          "example": "sox_itgc"
+        },
+        "standard_name": {
+          "type": "string",
+          "example": "SOX ITGC"
+        },
+        "status": {
+          "type": "string",
+          "example": "not_assessed"
         }
       }
     },

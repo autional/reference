@@ -1629,6 +1629,52 @@
         }
       }
     },
+    "/admin/notifications/templates/available": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "与用户面 /notifications/templates/available 同体（含 code 字段，供选择器按 code 取值）；",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "通知服务"
+        ],
+        "summary": "列出可用通知模板（管理端）",
+        "responses": {
+          "200": {
+            "description": "可用模板列表",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-notification_internal_handler_dto.AvailableTemplateListResponse"
+            }
+          },
+          "401": {
+            "description": "未认证",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          },
+          "500": {
+            "description": "服务内部错误",
+            "schema": {
+              "$ref": "#/definitions/gitee_com_autional_service-core_base_dto.SimpleResponse"
+            }
+          }
+        }
+      }
+    },
     "/admin/notifications/templates/{announcement_id}": {
       "get": {
         "security": [
@@ -5372,7 +5418,7 @@
       "type": "object",
       "properties": {
         "enabled": {
-          "description": "启用",
+          "description": "Enabled 指针：区分「未传」与「显式 false」——客户端只发 types 不带 enabled 时不得误关渠道（UP-75）。",
           "type": "boolean",
           "example": true
         },
