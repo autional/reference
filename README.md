@@ -1,5 +1,10 @@
 # Autional API Reference Portal
 
+> 🚨 **2026-11-10 托管变更**：`*.autional.cn` **已迁出 Vercel** —— 改为 mf01 构建（node:24-alpine + 钉版 pnpm）→ 香港自建托管。
+> `.cn` 的构建 env 由 workspace `shared/infra-ops/sites/sites.manifest.json` 注入；push 后由 mf01 cron（约 10 分钟）构建发布，不经 Vercel。
+> `*.autional.com` 仍在 Vercel —— 本文中涉及 Vercel 的构建/部署描述对 `.com` 仍然成立。
+> 现行口径：workspace `docs/AUTIONAL-CN-SITES-SELF-HOST.md`。
+
 **Sites**: [reference.autional.com](https://reference.autional.com) (com) / [reference.autional.cn](https://reference.autional.cn) (cn)
 **Stack**: Astro 5 + Tailwind 3.4 + Scalar UI（vendored `public/scalar/1.59.2/`）
 **Repository**: [github.com/autional/reference](https://github.com/autional/reference)
@@ -34,4 +39,4 @@ REGION=com SITE_URL=https://reference.autional.com DEFAULT_LANG=en FALLBACK_LANG
 
 ## Deploy
 
-Push 到 main — Vercel 自动部署。Projects: `reference` (com) / `cn-reference` (cn)；env 按项目分别注入。
+Push 到 main — `.com` 由 Vercel 自动部署（项目 ``reference``）；`.cn` 由 mf01 cron 构建发布（约 10 分钟，不经 Vercel）。env 按区分别注入。
